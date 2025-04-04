@@ -9,8 +9,7 @@ export const Header = () => {
       <header>
          <div className="container mx-auto px-4 py-6">
             <div className="flex flex-col lg:flex-row gap-6">
-               {/* Popular Novels Section - Left Side */}
-               <section className="w-full lg:w-1/2 border border-black p-4 rounded-lg">
+               <section className="w-full lg:w-1/2 border border-slate-300 shadow-lg p-4 rounded-lg">
                   <h2 className="text-xl font-extrabold text-gray-900 mb-6 tracking-tight font-poppins">Popular Novels</h2>
                   <div className="h-full">
                   <Splide
@@ -55,11 +54,10 @@ export const Header = () => {
                </section>
 
                {/* Latest Novels Section - Right Side */}
-               <section className="w-full lg:w-1/2 border border-black p-4 rounded-lg">
+               <section className="w-full lg:w-1/2 border border-slate-300 shadow-lg p-4 rounded-lg">
                   <h2 className="text-xl font-extrabold text-gray-900 mb-6 tracking-tight font-poppins">Latest Choices</h2>
                   <div className="flex flex-col gap-4">
                      <LatestNovel />
-                     <hr className="border-surface" />
                      <LatestNovel />
                   </div>
                </section>
