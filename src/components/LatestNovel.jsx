@@ -9,7 +9,7 @@ import zeus from "../assets/imgs/zeus.webp";
 
 export const LatestNovel = () => {
       return (
-      <Card className="w-full border-none shadow-none p-2">
+      <Card className="w-full border border-slate-300 shadow-none p-2">
          <Card.Header className="mx-0 flex items-center gap-2">
             <Avatar
             size="lg"
