@@ -7,7 +7,6 @@ import {
    Input,
 } from "@material-tailwind/react";
 import {
-   Archive,
    Menu,
    MultiplePages,
    ProfileCircle,
@@ -19,41 +18,39 @@ import {
 const LINKS = [
    {
       icon: MultiplePages,
-      title: "Pages",
-      href: "#",
+      title: "သိမ်းထားသည့် စာအုပ်များ",
+      href: "/my-books",
    },
    {
       icon: ProfileCircle,
-      title: "Account",
-      href: "#",
+      title: "အကောင့်",
+      href: "/account",
    },
    {
       icon: SelectFace3d,
-      title: "Blocks",
-      href: "#",
-   },
-   {
-      icon: Archive,
-      title: "Docs",
-      href: "#",
-   },
+      title: "စာဖတ်သူ လမ်းညွှန်",
+      href: "/guides",
+   }
 ];
 
 function NavList() {
    return (
       <ul className="mt-4 flex flex-col gap-x-3 gap-y-1.5 lg:mt-0 lg:flex-row lg:items-center">
          {LINKS.map(({ icon: Icon, title, href }) => (
-         <li key={title}>
+            <li key={title}>
             <Typography
                as="a"
                href={href}
                type="small"
-               className="flex items-center gap-x-2 p-1 hover:text-primary"
+               className="flex items-center gap-x-2 p-1 transition-all duration-200 ease-in-out 
+                        hover:-translate-y-1 hover:text-gray-800 active:text-gray-900
+                        [&>svg]:transition-transform [&>svg]:duration-200 [&>svg]:ease-in-out
+                        [&>svg]:hover:scale-110 [&>svg]:active:scale-105"
             >
                <Icon className="h-4 w-4" />
                {title}
             </Typography>
-         </li>
+            </li>
          ))}
       </ul>
    );
@@ -71,11 +68,11 @@ export const NavigationBar = () => {
    }, []);
 
    return (
-      <Navbar className="mx-auto w-full max-w-screen-xl ">
+      <Navbar className="w-full max-w-screen-xl top-0 sticky border border-b-slate-300 shwdow-none rounded-none z-20">
          <div className="flex items-center">
          <Typography
             as="a"
-            href="#"
+            href="/"
             type="small"
             className="ml-2 mr-2 block py-1 font-semibold"
          >
@@ -85,8 +82,8 @@ export const NavigationBar = () => {
          <div className="hidden lg:block">
             <NavList />
          </div>
-         <div className="ml-auto w-40">
-            <Input size="sm" type="search" placeholder="Search here...">
+         <div className="ml-auto w-56 border border-slate-900 rounded-md">
+            <Input size="md" type="search"placeholder="ရှာဖွေရန်...">
                <Input.Icon>
                <Search className="h-full w-full" />
                </Input.Icon>

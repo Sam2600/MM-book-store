@@ -3,7 +3,7 @@ import zeus from "../assets/imgs/zeus.webp";
 
 export const NovelCard = () => {
    return (
-      <Card className={`flex flex-col sm:flex-row w-full h-full max-w-lg border shadow-md rounded-lg overflow-hidden`}>
+      <Card className={`flex flex-col sm:flex-row w-full h-full max-w-lg border border-slate-400 shadow-lg rounded-md overflow-hidden`}>
          {/* Image Section - Added h-full and fixed height behavior */}
          <div className="w-full sm:w-1/3 h-48 sm:h-full">
             <img

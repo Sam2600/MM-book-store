@@ -2,15 +2,16 @@ import React from 'react';
 import { Profile } from './Profile';
 import { Splide, SplideSlide } from '@splidejs/react-splide';
 import '@splidejs/splide/dist/css/splide.min.css';
+import { NavLink } from 'react-router-dom';
 
 export const Body = () => {
-  const totalItems = 21;
+  const totalItems = 2;
   const itemsPerPage = 5;
 
   return (
     <div className="container mx-auto w-full px-4 py-6 relative"> {/* Added relative here */}
       <h2 className="text-xl font-extrabold text-gray-900 mb-6 tracking-tight font-poppins">Popular Novels</h2>
-      <div className="relative overflow-hidden"> {/* Prevents horizontal scrolling */}
+      <div className="relative border border-slate-400 border-solid rounded-md shadow-xl overflow-hidden"> {/* Prevents horizontal scrolling */}
         <Splide
           options={{
             type: 'loop',
@@ -32,8 +33,10 @@ export const Body = () => {
         >
           {Array.from({ length: totalItems }).map((_, index) => (
             <SplideSlide key={index} className="px-1">
-              <div className="transform scale-90"> {/* Shrinking the cards */}
-                <Profile />
+              <div className="transform scale-75"> {/* Shrinking the cards */}
+                <NavLink to={`novels/100`}>
+                  <Profile />
+                </NavLink>
               </div>
             </SplideSlide>
           ))}
@@ -63,8 +66,7 @@ export const Body = () => {
           right: 0.5rem; /* Adjusted to keep it inside the container */
         }
         .splide__arrow:hover {
-          background: #3b82f6;
-          transform: scale(1.1);
+          background: #000000;
         }
         .splide__arrow:hover svg {
           fill: white;
