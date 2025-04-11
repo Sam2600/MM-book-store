@@ -9,7 +9,7 @@ const LINKS = [
    },
    {
       title: "စာရေးဆရာအဖြစ် စာရင်းသွင်းရန်",
-      href: "/register-as-author",
+      href: "/register",
    },
    {
       title: "ဆက်သွယ်ရန်",

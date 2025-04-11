@@ -5,7 +5,7 @@ import { AutoScroll } from "@splidejs/splide-extension-auto-scroll";
 import "@splidejs/react-splide/css";
 import zeus from "../assets/imgs/zeus.webp";
 import { ChapterList } from '../components/ChapterList';
-import { Link } from 'react-router-dom';
+import { Link, NavLink } from 'react-router-dom';
 
 export const NovelDetail = () => {
 
@@ -104,18 +104,18 @@ export const NovelDetail = () => {
                   {Array.from({ length: 8 }).map((movie) => {
                      return (
                         <SplideSlide key={movie?.movieId}>
-                        <div className="group relative me-2">
-                           <img
-                              className="w-full rounded-md transition-all duration-500 hover:opacity-80"
-                              src={zeus}
-                              alt={movie?.title}
-                           />
-                           <Link to={"/novels/100"}>
-                              <p className="hidden opacity-70 group-hover:block absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-slate-50 text-black py-2 px-4 rounded-lg">
-                              View
-                              </p>
-                           </Link>
-                        </div>
+                           <div className="group relative me-2">
+                              <img
+                                 className="w-full rounded-md transition-all duration-500 hover:opacity-80"
+                                 src={zeus}
+                                 alt={movie?.title}
+                              />
+                              <NavLink to={"/novels/101"}>
+                                 <p className="hidden opacity-70 group-hover:block absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-slate-50 text-black py-2 px-4 rounded-lg">
+                                    View
+                                 </p>
+                              </NavLink>
+                           </div>
                         </SplideSlide>
                      );
                   })}
