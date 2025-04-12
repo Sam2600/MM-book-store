@@ -180,7 +180,7 @@ export const Upload = () => {
                                     <option value="">Pick</option>
                                     {
                                        novelsByAuthor?.length > 0 && (
-                                          novelsByAuthor.map(nba => {
+                                          novelsByAuthor?.map(nba => {
                                              return <option key={nba?.id} value={nba?.id}>{nba?.title}</option>
                                           })
                                        )
@@ -307,44 +307,14 @@ export const Upload = () => {
                                  Choose categories
                               </option>
                               {
-                                 categories.length > 0 && (
-                                    categories.map(cate => {
+                                 categories?.length > 0 && (
+                                    categories?.map(cate => {
                                        return (<option value={cate?.id} className="hover:bg-slate-400 hover:text-white my-1">
                                           {cate?.name}
                                        </option>);
                                     })
                                  )
                               }
-                              {/* <option value="1" className="hover:bg-slate-400 hover:text-white my-1">
-                                 Action
-                              </option>
-                              <option value="2" className="hover:bg-slate-400 hover:text-white">
-                                 Adventure
-                              </option>
-                              <option value="3" className="hover:bg-slate-400 hover:text-white">
-                                 BL
-                              </option>
-                              <option value="4" className="hover:bg-slate-400 hover:text-white">
-                                 Cringe
-                              </option>
-                              <option value="5" className="hover:bg-slate-400 hover:text-white">
-                                 Delusional
-                              </option>
-                              <option value="6" className="hover:bg-slate-400 hover:text-white">
-                                 Emotional
-                              </option>
-                              <option value="7" className="hover:bg-slate-400 hover:text-white">
-                                 Fighting
-                              </option>
-                              <option value="8" className="hover:bg-slate-400 hover:text-white">
-                                 Horror
-                              </option>
-                              <option value="9" className="hover:bg-slate-400 hover:text-white">
-                                 Sci-fi
-                              </option>
-                              <option value="10" className="hover:bg-slate-400 hover:text-white">
-                                 Mystery
-                              </option> */}
                            </select>
                         </div>
 
