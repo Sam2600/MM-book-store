@@ -1,5 +1,4 @@
 import {
-   Card,
    Input,
    Button,
    Typography,
@@ -10,13 +9,27 @@ import {
    DialogOverlay,
    DialogContent,
    DialogDismissTrigger,
-   IconButton,
-   Select
+   IconButton
 } from "@material-tailwind/react";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useForm } from "react-hook-form";
 import { Xmark } from "iconoir-react";
+import { api } from "../axios/axios";
+import ReactQuill from "react-quill";
+import 'react-quill/dist/quill.snow.css';
+import { Controller } from "react-hook-form";
+
+
+const modules = {
+   toolbar: [
+      [{ header: [1, 2, 3, false] }],
+      ["bold", "italic", "underline", "strike"],
+      [{ list: "ordered" }, { list: "bullet" }],
+      ["link", "image"],
+      ["clean"],
+   ],
+};
 
 export const Upload = () => {
 
@@ -26,8 +39,8 @@ export const Upload = () => {
       formState: { errors, isSubmitting },
       handleSubmit,
       reset,
-      setValue,
-   } = useForm({ defaultValues: { file: null } });
+      control,
+   } = useForm();
 
    // Modal box form
    const {
@@ -35,7 +48,7 @@ export const Upload = () => {
       handleSubmit: handleSubmit2,
       formState: { errors: errors2 },
       reset: reset2
-   } = useForm({ defaultValues: { img: null } });
+   } = useForm();
 
    const [isMultiple, setIsMultiple] = useState(false);
    const [loading, setLoading] = useState(false);
@@ -44,21 +57,27 @@ export const Upload = () => {
    const [preview, setPreview] = useState(null);
    const [open, setOpen] = useState(false);
 
+   const [isNovelSuccess, setIsNovelSuccess] = useState(false);
+   const [categories, setCategories] = useState([]);
+   const [novelsByAuthor, setNovelsByAuthor] = useState([]);
+
    const onSubmit = async (data) => {
 
-      console.log("on submit 1");
-
       setLoading(true);
+
       try {
-         const formData = new FormData();
-         formData.append("file", data.file[0]);
-         // TODO: your upload logic here
-         setSuccess(true);
+
+         const response = await api.post("/chapters", data);
+
+         console.log("Upload Success:", response.data);
+
          reset();
-      } catch (error) {
-         setServerError("Upload failed");
-      } finally {
+
          setLoading(false);
+
+      } catch (error) {
+         setLoading(false);
+         console.error("Upload Error:", error);
       }
    };
 
@@ -69,10 +88,28 @@ export const Upload = () => {
 
    const onSubmit2 = async (data) => {
 
-      // Handle modal form submission
-      console.log(data);
-      setOpen(false);
-      reset2();
+      if (data.cover_image.length) {
+         data.cover_image = data.cover_image[0];
+      }
+      
+      try {
+
+         const response = await api.post("/novels", data, {
+
+            headers: {
+               "Content-Type": "multipart/form-data",
+            },
+         });
+
+         console.log("Upload Success:", response.data);
+
+         setOpen(false);
+         setIsNovelSuccess(true);
+         reset2();
+
+      } catch (error) {
+         console.error("Upload Error:", error);
+      }
    };
 
    const onError2 = (error) => {
@@ -80,6 +117,24 @@ export const Upload = () => {
       
       window.scrollTo({ top: 0 });
    }
+
+   useEffect(() => {
+
+      api.get("/novelsByAuthors").then((res) => {
+         setNovelsByAuthor(res.data);
+      })
+      .catch((err) => {
+         console.error(err);
+      });
+
+      api.get("/categories").then((res) => {
+         setCategories(res.data);
+      })
+      .catch((err) => {
+         console.error(err);
+      });
+
+   }, [isNovelSuccess])
 
    return (
       <>
@@ -113,16 +168,23 @@ export const Upload = () => {
                         <div>
                            <div className="flex justify-between items-center mb-1">
                               <label className="font-semibold">Novels *</label>
-                              <p className="text-red-500 text-sm">{errors.novel?.message}</p>
+                                 {errors.novel_id && <p className="text-red-500 text-sm">{errors.novel_id?.message}</p>}
                            </div>
                            <div className="flex gap-4">
                               <select
                                  className="w-full bg-white p-2 border border-slate-400 rounded-md shadow-md"
-                                 {...register("novel", {
+                                 {...register("novel_id", {
                                     required: "Novel is required",
                                  })}
                               >
-                                 <option value="">Pick</option>
+                                    <option value="">Pick</option>
+                                    {
+                                       novelsByAuthor?.length > 0 && (
+                                          novelsByAuthor.map(nba => {
+                                             return <option key={nba?.id} value={nba?.id}>{nba?.title}</option>
+                                          })
+                                       )
+                                    }
                               </select>
                               <Button onClick={() => setOpen(true)} type="button">
                                  +
@@ -133,48 +195,41 @@ export const Upload = () => {
                         <div>
                            <div className="flex flex-row justify-between">
                               <label className="block font-semibold mb-1">Volume *</label>
-                              {errors.from_name && <p className="text-red-500 text-sm">{errors.from_name.message}</p>}
+                              {errors.volume_id && <p className="text-red-500 text-sm">{errors.volume_id.message}</p>}
                            </div>
                               <Input
                                  type="number"
                                  className="w-full bg-white p-2 border border-slate-400 rounded-md shadow-md"
-                                 placeholder="Name"
-                                 {...register("from_name", {
-                                    required: "Name is required",
-                                    pattern: {
-                                       value: /^[A-Za-z\s]+$/,
-                                       message: "Only alphabet characters allowed"
-                                    }
+                                 {...register("volume_id", {
+                                    required: "Volume is required",
+                                       pattern: {
+                                          value: /^[0-9]+$/,
+                                          message: "Only numeric characters allowed"
+                                       }
                                  })}
                            />
                         </div>
 
                         <div>
                            <div className="flex flex-row justify-between">
-                              <label className="block font-semibold mb-1">File *</label>
-                              {errors.file && <p className="text-red-500 text-sm">{errors.file.message}</p>}
+                              <label className="block font-semibold mb-1">Content *</label>
+                              {errors.content && (
+                                 <p className="text-red-500 text-sm">{errors.content.message}</p>
+                              )}
                            </div>
-                              <input
-                              type="file"
-                              accept="image/*"
-                              className="w-full bg-white p-2 border border-slate-400 rounded-md shadow-md"
-                              {...register("file", {
-                                 required: "File is required",
-                                 validate: {
-                                    size: (files) => files?.[0]?.size < 2097152 || "Max 2MB",
-                                    type: (files) => files?.[0]?.type.startsWith("image/") || "Must be an image"
-                                 }
-                              })}
-                              onChange={(e) => {
-                                 const file = e.target.files[0];
-                                 if (file) {
-                                    const reader = new FileReader();
-                                    reader.onloadend = () => setPreview(reader.result);
-                                    reader.readAsDataURL(file);
-                                 } else {
-                                    setPreview(null);
-                                 }
-                              }}
+
+                           <Controller
+                              control={control}
+                              name="content"
+                              rules={{ required: "Content is required" }}
+                              render={({ field }) => (
+                                 <ReactQuill
+                                    {...field}
+                                    theme="snow"
+                                    placeholder="Paste here or start writing..."
+                                    modules={modules}
+                                 />
+                              )}
                            />
                         </div>
 
@@ -212,14 +267,14 @@ export const Upload = () => {
 
                         <div>
                            <div className="flex flex-row justify-between">
-                              <label className="block font-semibold mb-1">Name *</label>
-                              {errors2.novel_name && <p className="text-red-500 text-sm">{errors2.novel_name.message}</p>}
+                              <label className="block font-semibold mb-1">Title *</label>
+                              {errors2.title && <p className="text-red-500 text-sm">{errors2.title.message}</p>}
                            </div>
                            <Input
                               className="w-full bg-white p-2 border border-slate-400 rounded-md shadow-md"
-                              placeholder="Item Name"
-                              {...register2("novel_name", {
-                                 required: "Novel name is required"
+                              placeholder="Novel title"
+                              {...register2("title", {
+                                 required: "Novel title is required"
                               })}
                            />
                         </div>
@@ -251,7 +306,16 @@ export const Upload = () => {
                               <option value="" disabled className="text-slate-900">
                                  Choose categories
                               </option>
-                              <option value="1" className="hover:bg-slate-400 hover:text-white my-1">
+                              {
+                                 categories.length > 0 && (
+                                    categories.map(cate => {
+                                       return (<option value={cate?.id} className="hover:bg-slate-400 hover:text-white my-1">
+                                          {cate?.name}
+                                       </option>);
+                                    })
+                                 )
+                              }
+                              {/* <option value="1" className="hover:bg-slate-400 hover:text-white my-1">
                                  Action
                               </option>
                               <option value="2" className="hover:bg-slate-400 hover:text-white">
@@ -280,43 +344,47 @@ export const Upload = () => {
                               </option>
                               <option value="10" className="hover:bg-slate-400 hover:text-white">
                                  Mystery
-                              </option>
+                              </option> */}
                            </select>
                         </div>
 
                         <div>
                            <div className="flex flex-row justify-between">
                               <label className="block font-semibold mb-1">Image *</label>
-                              {errors2.novel_image && <p className="text-red-500 text-sm">{errors2.novel_image.message}</p>}
+                              {errors2.cover_image && <p className="text-red-500 text-sm">{errors2.cover_image.message}</p>}
                            </div>
                            <input
                               type="file"
                               accept="image/*"
                               className="w-full bg-white p-2 border border-slate-400 rounded-md shadow-md"
-                              {...register2("novel_image", {
+                              {...register2("cover_image", {
                                  required: "Image is required",
                                  validate: {
                                     size: (files) => files?.[0]?.size < 2097152 || "Max 2MB",
                                     type: (files) => files?.[0]?.type.startsWith("image/") || "Must be an image"
                                  }
                               })}
-                              // onChange={(e) => {
-                              //    const file = e.target.files[0];
-                              //    if (file) {
-                              //       const reader = new FileReader();
-                              //       reader.onloadend = () => setPreview(reader.result);
-                              //       reader.readAsDataURL(file);
-                              //    } else {
-                              //       setPreview(null);
-                              //    }
-                              // }}
+                              onChange={(e) => {
+                                 const file = e.target.files[0];
+                                 setFile2(file);
+                              }}
                            />
                         </div>
+                        <div className="flex flex-row gap-x-3 items-center">
+                           <input type="checkbox" className="border border-slate-400" {...register2("status")} />
+                              <Typography
+                                 as="label"
+                                 htmlFor="checkbox"
+                                 className="cursor-pointer font-semibold"
+                              >
+                                 Ongoing?
+                              </Typography>
+                           </div>
                      </CardBody>
 
                      <CardFooter className="pt-0 mt-5">
                         <Button type="submit" isFullWidth={true}>
-                           Add Item
+                           Register
                         </Button>
                      </CardFooter>
                   </form>

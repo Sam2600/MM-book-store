@@ -1,3 +1,19 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.ql-toolbar {
+   @apply rounded-t-md bg-gray-100 border-b border-gray-300;
+}
+
+.ql-container {
+   @apply border border-gray-300 rounded-b-md;
+}
+
+.ql-editor {
+   @apply p-4 text-gray-800 min-h-[200px];
+}
+
+.ql-editor.ql-blank::before {
+   @apply text-gray-400;
+}
