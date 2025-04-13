@@ -2,16 +2,10 @@ import {
    Card,
    Typography,
    Rating,
-   Chip,
 } from "@material-tailwind/react";
 import zeus from "../assets/imgs/zeus.webp";
 
-export const Profile = ({ status }) => {
-
-   const categoryList = [
-      "Sports",
-      "Art",
-   ];
+export const Profile = ({ novel }) => {
 
    return (
       <Card className="group relative w-[250px] h-[350px] overflow-hidden cursor-pointer">
@@ -32,9 +26,9 @@ export const Profile = ({ status }) => {
          <div className="absolute inset-0 flex flex-col items-center justify-end p-6 text-center">
             {/* Status badge with original styling */}
             <div className={`absolute top-4 left-4 z-10 px-2 py-0.5 text-xs font-bold rounded-md
-                        ${status === "Complete" ? "bg-green-600 text-white shadow-sm" : "bg-yellow-400 text-black shadow-sm"}
+                        ${novel?.status === "completed" ? "bg-green-600 text-white shadow-sm" : "bg-yellow-400 text-black shadow-sm"}
                         border border-gray-900/30`}>
-            {status || "Ongoing"}
+               {novel?.status}
             </div>
    
             {/* Typography with enhanced styling */}
@@ -46,12 +40,13 @@ export const Profile = ({ status }) => {
                   textStroke: '2px white'
                }}
             >
-               တန်ခိုးရှင်
+               {novel?.title}
             </Typography>
             
             <div className="flex gap-x-2">
-               {categoryList.map((category, index) => (
+               {novel?.categories?.length > 0 && novel?.categories?.map((category) => (
                   <Typography
+                     key={category?.id}
                      variant="h6"
                      className="mb-2 text-white font-bold drop-shadow-lg"
                      style={{ 
@@ -59,7 +54,7 @@ export const Profile = ({ status }) => {
                         textStroke: '2px white'
                      }}
                   >
-                     {category}
+                     {category?.name}
                   </Typography>
                ))}
             </div>   
@@ -67,7 +62,7 @@ export const Profile = ({ status }) => {
             {/* Rating with enhanced styling */}
             <Rating
                color="warning"
-               value={5}
+               value={Math.floor(Math.random() * 5) + 1}
                readonly
                className="font-bold text-xl"
             />

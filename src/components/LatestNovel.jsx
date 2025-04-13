@@ -6,8 +6,9 @@ import {
    Rating,
 } from "@material-tailwind/react";
 import zeus from "../assets/imgs/zeus.webp";
+import { toHumanReadableDates } from "../functions/helpers";
 
-export const LatestNovel = () => {
+export const LatestNovel = ({novel}) => {
       return (
       <Card className="w-full border border-slate-400 shadow-lg rounded-md p-2">
          <Card.Header className="mx-0 flex items-center gap-2">
@@ -20,15 +21,15 @@ export const LatestNovel = () => {
             <div className="flex w-full flex-col gap-0.5">
             <div className="flex items-center justify-between">
             <Typography variant="h6" className="text-sm text-gray-600">
-               တန်ခိုးရှင်
+               {novel?.title}
             </Typography>
-               <Rating color="warning" value={5} readonly />
+               {novel?.created_at && toHumanReadableDates(novel?.created_at)}
             </div>
             </div>
          </Card.Header>
          <CardBody className="p-0">
             <Typography className="text-gray-700 text-sm sm:text-base flex-1">
-               ကလန်တစ်ခုလုံး လုပ်ကြံခံရပြီးနောက် သိုင်းဆရာဟာ ဆိုက်ကားနင်းစားနေပါတယ်..
+                  {novel?.description?.length > 50 ? novel?.description?.slice(0, 59) + " ..." : novel?.description}
             </Typography>
          </CardBody>
       </Card>

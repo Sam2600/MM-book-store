@@ -1,7 +1,8 @@
-import { Button, Card, Typography } from "@material-tailwind/react";
 import zeus from "../assets/imgs/zeus.webp";
+import { Card, Chip, Typography } from "@material-tailwind/react";
 
-export const NovelCard = () => {
+export const NovelCard = ({novel}) => {
+   
    return (
       <Card className={`flex flex-col sm:flex-row w-full h-full max-w-lg border border-slate-400 shadow-lg rounded-md overflow-hidden`}>
          {/* Image Section - Added h-full and fixed height behavior */}
@@ -17,23 +18,28 @@ export const NovelCard = () => {
          <div className="flex flex-col gap-y-2 p-4 w-full sm:w-2/3 flex-1">
             <Typography
                variant="small"
-               className="font-bold uppercase text-gray-700"
+               className="font-bold uppercase text-black"
             >
-               နှောင်ဖွဲ့ခြင်းကင်း တန်ခိုးရှင်
+               {novel?.title}
             </Typography>
-            <Typography variant="h6" className="text-sm text-gray-600">
+            <Typography variant="h6" className="text-sm text-gray-600 font-semibold">
                ဇာတ်လမ်းအကျဥ်း
             </Typography>
             <Typography className="text-gray-700 text-sm sm:text-base flex-1">
-               ကလန်တစ်ခုလုံး လုပ်ကြံခံရပြီးနောက် သိုင်းဆရာဟာ ဆိုက်ကားနင်းစားနေပါတယ်..
+               {novel?.description?.length > 100 ? novel?.description?.slice(0, 100) + " ..." : novel?.description}
             </Typography>
-            <div className="flex gap-x-3 flex-wrap mt-auto">
-               <Button color="secondary" className="w-full sm:w-auto">
-                  Action
-               </Button>
-               <Button color="secondary" className="w-full sm:w-auto">
-                  Chill
-               </Button>
+            <div className="flex gap-2 flex-wrap mt-auto">
+               {
+                  novel?.categories.length > 0 && (
+                     novel?.categories.map(cate => {
+                        return (
+                           <Chip isPill={false} key={cate?.id} color="primary" className="w-auto sm:w-auto">
+                              <Chip.Label>{cate?.name}</Chip.Label>
+                           </Chip>
+                        );
+                     })
+                  )
+               }
             </div>
          </div>
       </Card>

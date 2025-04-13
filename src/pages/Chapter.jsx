@@ -1,17 +1,32 @@
 import { Button, ButtonGroup, Typography } from '@material-tailwind/react'
-import React from 'react'
+import React, { useEffect } from 'react'
 import { Breadcrumber } from '../components/BreadCrumber'
-import { NavLink } from 'react-router-dom'
-import { Bold, Book, Italic, SkipNext, Underline } from 'iconoir-react'
+import { NavLink, useParams } from 'react-router-dom'
+import { Book, SkipNext } from 'iconoir-react'
+import { useDispatch, useSelector } from 'react-redux'
+import { getChapterByID, getChapterByIdStatus, getChapterByNovel } from '../states/features/novel/novelSlice'
+import { Loader } from '../components/Loader'
 
 export const Chapter = () => {
 
-   // https://www.phind.com/search/cm9bjvokn00002a6k9im9zjyg
+   const {novel, volume, chapter} = useParams();
 
-   return (
+   const dispatch = useDispatch();
+
+   const chapterById = useSelector(getChapterByID);
+   const status = useSelector(getChapterByIdStatus);
+
+   useEffect(() => {
+         window.scrollTo({ top: 0 })
+         dispatch(getChapterByNovel({novel, volume, chapter}));
+   }, [])
+
+   const content = status == "pending" ? (
+      <Loader />
+   ) : (
       <div className="w-10/12 mx-auto flex flex-col gap-y-3">
 
-         <div className='flex flex-row justify-between'>
+         {/* <div className='flex flex-row justify-between'>
 
             <Breadcrumber />
 
@@ -26,24 +41,22 @@ export const Chapter = () => {
                   <SkipNext className="ml-1.5 h-4 w-4 stroke-2" />
                </Button>
             </ButtonGroup>
+         </div> */}
+      
+      <div className="p-5 border border-slate-400 rounded-md shadow-lg">
+         <div className="flex flex-col mb-10 gap-y-3 items-center">
+            <Typography type="h6">အပိုင်း {chapterById?.chapter?.id}</Typography>
+            <Typography type="h5">{chapterById?.chapter?.title}</Typography>
          </div>
-         
-         <p className="p-5 border border-slate-400 rounded-md shadow-lg">
-            <div className="flex flex-col mb-10 gap-y-3 items-center">
-               <Typography type='h6'>အပိုင်း ၁</Typography>
-               <Typography type='h5'>ပါရမီရှင်</Typography>
-            </div>
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Dolorum itaque asperiores quibusdam! Harum esse sint enim! Similique eligendi sapiente autem tenetur dolorum. Deserunt est voluptates obcaecati ratione dolorem nobis culpa.
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Dolorum itaque asperiores quibusdam! Harum esse sint enim! Similique eligendi sapiente autem tenetur dolorum. Deserunt est voluptates obcaecati ratione dolorem nobis culpa.
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Dolorum itaque asperiores quibusdam! Harum esse sint enim! Similique eligendi sapiente autem tenetur dolorum. Deserunt est voluptates obcaecati ratione dolorem nobis culpa.
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Dolorum itaque asperiores quibusdam! Harum esse sint enim! Similique eligendi sapiente autem tenetur dolorum. Deserunt est voluptates obcaecati ratione dolorem nobis culpa.
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Dolorum itaque asperiores quibusdam! Harum esse sint enim! Similique eligendi sapiente autem tenetur dolorum. Deserunt est voluptates obcaecati ratione dolorem nobis culpa.
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Dolorum itaque asperiores quibusdam! Harum esse sint enim! Similique eligendi sapiente autem tenetur dolorum. Deserunt est voluptates obcaecati ratione dolorem nobis culpa.
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Dolorum itaque asperiores quibusdam! Harum esse sint enim! Similique eligendi sapiente autem tenetur dolorum. Deserunt est voluptates obcaecati ratione dolorem nobis culpa.
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Dolorum itaque asperiores quibusdam! Harum esse sint enim! Similique eligendi sapiente autem tenetur dolorum. Deserunt est voluptates obcaecati ratione dolorem nobis culpa.
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Dolorum itaque asperiores quibusdam! Harum esse sint enim! Similique eligendi sapiente autem tenetur dolorum. Deserunt est voluptates obcaecati ratione dolorem nobis culpa.
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Dolorum itaque asperiores quibusdam! Harum esse sint enim! Similique eligendi sapiente autem tenetur dolorum. Deserunt est voluptates obcaecati ratione dolorem nobis culpa.
-         </p>
+
+         <div
+            className="leading-8"
+            dangerouslySetInnerHTML={{ __html: chapterById?.chapter?.content }}
+         />
       </div>
-   )
+
+   </div>
+   );
+
+   return content;
 }

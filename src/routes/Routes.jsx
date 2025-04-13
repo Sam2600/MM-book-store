@@ -21,7 +21,7 @@ export const Routes = createBrowserRouter([
             element: <NovelDetail />,
          },
          {
-            path: "/novels/:id/:chapter",
+            path: "/novels/:novel/volumes/:volume/chapters/:chapter",
             element: <Chapter />,
          },
          {
