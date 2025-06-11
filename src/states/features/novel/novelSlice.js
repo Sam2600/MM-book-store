@@ -73,9 +73,9 @@ export const novelSlice = createSlice({
    
          .addCase(getNovels.fulfilled, (state, action) => {
 
-            state.novels = action.payload;
-            state.categories = action.payload.categories;
-            state.all_novel = action.payload.all_novel;
+            state.novels = action.payload?.data?.novels;
+            state.categories = action.payload?.data?.categories;
+            state.all_novel = action.payload?.data?.all_novel;
             state.status.getNovels = "success";
          })
    
@@ -91,7 +91,7 @@ export const novelSlice = createSlice({
          })
    
          .addCase(getNovelById.fulfilled, (state, action) => {
-            state.novelById = action.payload;
+            state.novelById = action.payload?.data;
             state.status.getNovelById = "success";
          })
    
@@ -107,7 +107,7 @@ export const novelSlice = createSlice({
          })
    
          .addCase(getChapterByNovel.fulfilled, (state, action) => {
-            state.chapterById = action.payload;
+            state.chapterById = action.payload?.data;
             state.status.getChapterById = "success";
          })
    
@@ -123,7 +123,7 @@ export const novelSlice = createSlice({
          })
    
          .addCase(getNovelsByAuthors.fulfilled, (state, action) => {
-            state.novelByAuthor = action.payload;
+            state.novelByAuthor = action.payload?.data;
             state.status.getNovelsByAuthor = "success";
          })
    
