@@ -1,13 +1,12 @@
 import React from 'react';
-import { PopularWeek } from './PopularWeek';
-import { PopularMonth } from './PopularMonth';
+import { Popular } from './Popular';
 
 export const Populars = ({popular_week, popular_month}) => {
 
   return (
     <>
-      <PopularWeek popular_week={popular_week} />
-      <PopularMonth popular_month={popular_month} />
+      <Popular time="တစ်ပတ်" popular={popular_week} />
+      <Popular time="တစ်လ" popular={popular_month} />
     </>
   );
 };

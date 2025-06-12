@@ -6,10 +6,10 @@ import { NavLink } from 'react-router-dom';
 
 const itemsPerPage = 5;
 
-export const PopularMonth = ({popular_month}) => {
+export const Popular = ({time, popular}) => {
    return (
       <div className="container mx-auto w-full px-4 py-6 relative"> {/* Added relative here */}
-         <h2 className="text-xl font-extrabold text-gray-900 mb-6 tracking-tight font-poppins">{ "တစ်လအတွင်း လူကြိုက်အများဆုံး" }</h2>
+         <h2 className="text-xl font-extrabold text-gray-900 mb-6 tracking-tight font-poppins">{ `${time}အတွင်း လူကြိုက်အများဆုံး` }</h2>
          <div className="relative border border-slate-400 border-solid rounded-md shadow-xl overflow-hidden"> {/* Prevents horizontal scrolling */}
             <Splide
                options={{
@@ -30,7 +30,7 @@ export const PopularMonth = ({popular_month}) => {
                }}
                className="splide-container"
             >
-               {popular_month?.length > 0 && popular_month?.map((novel) => (
+               {popular?.length > 0 && popular?.map((novel) => (
                   <SplideSlide key={novel?.id} className="px-1">
                      <div className="transform scale-75"> {/* Shrinking the cards */}
                         <NavLink to={`novels/${novel?.id}`}>
