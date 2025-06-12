@@ -73,7 +73,7 @@ export const novelSlice = createSlice({
    
          .addCase(getNovels.fulfilled, (state, action) => {
 
-            state.novels = action.payload?.data?.novels;
+            state.novels = action.payload?.data;
             state.categories = action.payload?.data?.categories;
             state.all_novel = action.payload?.data?.all_novel;
             state.status.getNovels = "success";
@@ -148,6 +148,13 @@ export const getFilteredNovels = (state) => state.novel.filtered_novels;
 export const getAllNovels = (state) => state.novel.all_novel;
 
 export const getAllCategories = (state) => state.novel.categories;
+
+export const getAllMappedCategories = (state) => state.novel.categories?.map(cate => {
+   return {
+      value: cate.id,
+      label: cate.name,
+   }
+});
 
 export const getAllNovelsStatus = (state) => state.novel.status.getNovels;
 
