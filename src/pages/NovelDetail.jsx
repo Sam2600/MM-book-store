@@ -1,17 +1,14 @@
-import React, { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { motion } from "framer-motion";
-import { Splide, SplideSlide } from "@splidejs/react-splide";
-import { AutoScroll } from "@splidejs/splide-extension-auto-scroll";
 import "@splidejs/react-splide/css";
-import zeus from "../assets/imgs/zeus.webp";
-import { ChapterList } from '../components/ChapterList';
-import { NavLink, useParams } from 'react-router-dom';
+import { NavLink, useNavigate, useParams } from 'react-router-dom';
 import { useSelector, useDispatch } from "react-redux";
-import { getNovelById, getNovelByID, getNovelByIdStatus } from '../states/features/novel/novelSlice';
-import { Accordion } from '@material-tailwind/react';
+import { attachNovelByIdBookmark, emptyNovelByIdBookmark, getNovelById, getNovelByID, getNovelByIdStatus } from '../states/features/novel/novelSlice';
+import { Accordion, Chip, Typography, Rating } from '@material-tailwind/react';
 import { NavArrowDown } from 'iconoir-react';
 import { Loader } from '../components/Loader';
-import { toHumanReadableDates } from '../functions/helpers';
+import { scrollToTop } from '../functions/helpers';
+import { api } from '../axios/axios';
 
 export const NovelDetail = () => {
 
@@ -22,89 +19,146 @@ export const NovelDetail = () => {
    const novelById = useSelector(getNovelByID);
    const status = useSelector(getNovelByIdStatus);
 
+   const navigate = useNavigate();
+
+   const [bookMarkText, setBookMarkText] = useState("Add to library");
+
    useEffect(() => {
-      window.scrollTo({ top: 0 })
+
+      scrollToTop();
       dispatch(getNovelById(id));
    }, [])
 
+   const handleBookmark = async () => {
+
+      if (localStorage.getItem("token")) {
+
+         try {
+
+            let response;
+
+            if (novelById?.isAlreadyBooked) {
+
+               response = await api.patch(`/novels/bookmarks/${id}`);
+
+               if (response.data.status == "OK") {
+                  console.log("Bookmark removed successfully");
+                  dispatch(emptyNovelByIdBookmark());
+                  setBookMarkText("Add to library");
+               }
+
+            } else {
+
+               response = await api.post("/bookmarks", { novel_id: id });
+
+               if (response.data.status == "OK") {
+                  console.log("Bookmark added successfully");
+                  dispatch(attachNovelByIdBookmark());
+                  setBookMarkText("Remove from library");
+               }
+            }
+         } catch (error) {
+            alert("Internal Server Error. Please try again later.");
+            console.error("Error bookmarking novel:", error);
+         }
+
+      } else {
+         navigate("/account");
+      }
+   }
+
    const content = status == "pending" ? (
-         <Loader/>
-   ): (
-      <div className="flex flex-wrap w-11/12 mx-auto h-fit">
-         <motion.div
-            className="min-w-custom flex flex-col w-8/2 sm:flex-col sm:w-8/12 sm:ms-12 md:flex-row md:gap-3 md:w-11/12 lg:flex-col lg:my-5 lg:w-4/12 px-10 m-auto"
-            initial={{ opacity: 0, x: "-100vw" }}
-            animate={{ opacity: 1, x: 0, transition: { duration: 1.2 } }}
-            exit={{ opacity: 0 }}
-         >
-         <div className="my-5 w-full sm:w-full md:w-5/12 md:me-10 lg:w-10/12 m-auto">
-            <img
-               className="rounded-md h-auto w-full"
-               src={zeus}
-               alt={novelById?.title}
-            />
-         </div>
-         </motion.div>
+      <Loader/>
+   ) : (
+      <div className="flex flex-col w-11/12 mx-auto h-fit gap-7 my-5">
+         <div className="w-full flex flex-row items-start">
+            <motion.div
+               className="w-full sm:w-8/12 md:w-6/12 lg:w-4/12"
+               initial={{ opacity: 0, x: "-100vw" }}
+               animate={{ opacity: 1, x: 0, transition: { duration: 1.2 } }}
+               exit={{ opacity: 0 }}
+            >
+               <img
+                  className="rounded-md w-full h-auto max-w-xs object-contain"
+                  src={novelById?.cover_image}
+                  alt={novelById?.title}
+               />
+            </motion.div>
 
-         <motion.div
-            className=" flex flex-col justify-start w-10/2 sm:w-10/12 sm:mt-10 sm:m-auto md:w-10/12 md:m-auto lg:w-7/12 lg:my-5 min-w-customOne px-10"
-            initial={{ opacity: 0, x: "100vw" }}
-            animate={{ opacity: 1, x: 0, transition: { duration: 1.2 } }}
-            exit={{ opacity: 0 }}
-         >
-         <div className='flex flex-col gap-y-4'>
-            <p className="text-lg font-bold mb-5">
-               {novelById?.title}
-            </p>
-         </div>
-
-         <div>
-            <p className="leading-8">{novelById?.description}</p>
-         </div>
-            
-         <div className="flex flex-wrap gap-4 mt-3">
-            <div className='border border-slate-400 shadow-xl p-2 rounde-md'>
-               <p className="text-sm"> Views: {novelById?.view_count}</p>
-            </div>
-            
-            <div className='border border-slate-400 shadow-xl p-2 rounde-md'>
-               <p className="text-sm">Release Date: {toHumanReadableDates(novelById?.created_at)}</p>
-            </div>
-               
-            <div className='border border-slate-400 shadow-xl p-2 rounde-md'>
-               <p className="text-sm">Translator: {novelById?.translator?.name}</p>
-            </div>
-               
-            <div className='border border-slate-400 shadow-xl p-2 rounde-md'>
-               <p className="text-sm">Original Book Name: {novelById?.original_book_name}</p>
+            <motion.div
+               className="flex flex-col justify-start sm:w-10/12 md:w-6/12 lg:w-8/12 gap-7"
+               initial={{ opacity: 0, x: "100vw" }}
+               animate={{ opacity: 1, x: 0, transition: { duration: 1.2 } }}
+               exit={{ opacity: 0 }}
+            >
+               <Typography variant="h1" className="font-semibold text-xl font-serif">
+                  {novelById?.title}
+               </Typography>
+               <div>
+                  <p className="font-serif text-md leading-6 text-justify">{novelById?.description}</p>
+               </div>
+               {novelById?.categories?.length > 0 && 
+                  <div className="flex flex-row items-center gap-2">
+                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="size-5">
+                        <path fillRule="evenodd" d="M4.5 2A2.5 2.5 0 0 0 2 4.5v3.879a2.5 2.5 0 0 0 .732 1.767l7.5 7.5a2.5 2.5 0 0 0 3.536 0l3.878-3.878a2.5 2.5 0 0 0 0-3.536l-7.5-7.5A2.5 2.5 0 0 0 8.38 2H4.5ZM5 6a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z" clipRule="evenodd" />
+                     </svg>
+                     {
+                        novelById?.categories?.map((cat, i) => (
+                           <Chip isPill={false} key={i} color="primary" className="w-auto text-sm sm:w-auto">
+                              <Chip.Label>{cat?.name}</Chip.Label>
+                           </Chip>
+                        ))
+                     }
                   </div>
-                  
-            <div className='border border-slate-400 shadow-xl p-2 rounde-md'>
-               <p className="text-sm">Original Author Name: {novelById?.original_author_name	}</p>
-            </div>
-         </div>   
-         </motion.div>
+               }
+               <div className="flex flex-col gap-5">
+                  <div className="flex flex-row items-center gap-2">
+                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="size-5">
+                        <path d="M10 12.5a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5Z" />
+                        <path fillRule="evenodd" d="M.664 10.59a1.651 1.651 0 0 1 0-1.186A10.004 10.004 0 0 1 10 3c4.257 0 7.893 2.66 9.336 6.41.147.381.146.804 0 1.186A10.004 10.004 0 0 1 10 17c-4.257 0-7.893-2.66-9.336-6.41ZM14 10a4 4 0 1 1-8 0 4 4 0 0 1 8 0Z" clipRule="evenodd" />
+                     </svg>
+                     <p className="font-serif text-slate-800 text-md"> {novelById?.view_count} views</p>
+                  </div>
+                  <div className="flex flex-row items-center gap-2">
+                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="size-5">
+                        <path fillRule="evenodd" d="M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0Zm-5.5-2.5a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0ZM10 12a5.99 5.99 0 0 0-4.793 2.39A6.483 6.483 0 0 0 10 16.5a6.483 6.483 0 0 0 4.793-2.11A5.99 5.99 0 0 0 10 12Z" clipRule="evenodd" />
+                     </svg>
+                     <p className="font-serif text-slate-800 text-md">{novelById?.translator?.name}</p>
+                  </div>
+                  <div className="flex flex-row items-center gap-2">
+                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="size-5">
+                        <path fillRule="evenodd" d="M4.25 2A2.25 2.25 0 0 0 2 4.25v11.5A2.25 2.25 0 0 0 4.25 18h11.5A2.25 2.25 0 0 0 18 15.75V4.25A2.25 2.25 0 0 0 15.75 2H4.25ZM6 13.25V3.5h8v9.75a.75.75 0 0 1-1.064.681L10 12.576l-2.936 1.355A.75.75 0 0 1 6 13.25Z" clipRule="evenodd" />
+                     </svg>
+                     <p className="font-serif text-slate-800 text-md hover:underline cursor-pointer"
+                        onClick={handleBookmark}
+                     >
+                        { localStorage.getItem("token") ? novelById?.bookmarks?.length > 0 ? "Remove from library" : bookMarkText : "Login to bookmark ✔" }
+                     </p>
+                  </div>
+               </div>
+            </motion.div>
+         </div>
 
-         <div className="my-10 sm:w-10/12 sm:mt-10 sm:m-auto w-11/12 md:w-10/12 md:m-auto lg:w-11/12 lg:my-5 min-w-customOne px-10">
-            
+         {/* <div className="sm:w-10/12 bg-blue-300 sm:m-auto w-11/12 md:w-10/12 md:m-auto m-auto lg:w-11/12"> */}
+         <div className="flex flex-col gap-5 mx-auto w-full">
             {novelById?.volumes?.length > 0 && (
                novelById?.volumes?.map((vol, i) => {
                   return (
                      <Accordion key={i} className="w-full">
                         <Accordion.Item
                            value="react"
-                           className="mb-2 rounded-lg border border-slate-400 shadow-lg p-3"
+                           className="p-3 bg-[#F2F2F2] shadow-md"
                         >
-                           <Accordion.Trigger className="p-0">
-                              {vol?.volume_title}
+                           <Accordion.Trigger className="text-black font-semibold p-0 font-serif">
+                              {vol?.volume_title ? vol?.volume_title : `Volume ${vol?.volume_number}`}
                               <NavArrowDown className="h-4 w-4 group-data-[open=true]:rotate-180" />
                            </Accordion.Trigger>
-                           <Accordion.Content className="p-4 flex flex-wrap">
+                           <Accordion.Content className="p-4 flex flex-col gap-2">
                               {
                                  vol?.chapters?.length > 0 && (
                                     vol?.chapters?.map((chapt, j) => {
                                        return (
-                                          <NavLink to={`volumes/${vol?.id}/chapters/${chapt?.id}`} className="w-auto border mx-2 my-2 border-slate-400 shadow-lg rounded-md p-4" key={j}>{chapt?.title}</NavLink>
+                                          <NavLink to={`volumes/${vol?.id}/chapters/${chapt?.id}`} className="w-auto mx-2 shadow-lg rounded-md p-4 bg-[#FFFFFF]" key={j}>Chapter({chapt?.chapter_number}) {chapt?.title}</NavLink>
                                        )
                                     })
                                  )
@@ -118,46 +172,8 @@ export const NovelDetail = () => {
          </div>
 
          <div className="flex-col bg-red-50 mx-auto w-10/12 sm:w-10/12 md:w-11/12 lg:w-10/12 ">
-
-               {/* <section className="flex justify-start items-start mb-5">
-                  <Splide
-                     options={{
-                        perPage: 5,
-                        drag: "free",
-                        type: "slide",
-                        rewind: true,
-                        arrows: false,
-                        pagination: false,
-                        autoScroll: {
-                           pauseOnHover: false,
-                           pauseOnFocus: false,
-                           rewind: false,
-                           speed: 0.5
-                        }
-                     }}
-                  extensions={{ AutoScroll }}
-               >
-                  {Array.from({ length: 8 }).map((movie) => {
-                     return (
-                        <SplideSlide key={movie?.id}>
-                           <div className="group relative me-2">
-                              <img
-                                 className="w-full rounded-md transition-all duration-500 hover:opacity-80"
-                                 src={zeus}
-                                 alt={movie?.title}
-                              />
-                              <NavLink to={"/novels/101"}>
-                                 <p className="hidden opacity-70 group-hover:block absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-slate-50 text-black py-2 px-4 rounded-lg">
-                                    View
-                                 </p>
-                              </NavLink>
-                           </div>
-                        </SplideSlide>
-                     );
-                  })}
-                  </Splide>
-               </section> */}
-            </div>
+            {/* ...other code... */}
+         </div>
       </div>
    )
    
