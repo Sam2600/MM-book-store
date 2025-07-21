@@ -63,6 +63,14 @@ export const novelSlice = createSlice({
    
          state.filtered_novels = filter;
       },
+
+      emptyNovelByIdBookmark: (state) => {
+         state.novelById.isAlreadyBooked = false;
+      },
+
+      attachNovelByIdBookmark: (state) => {
+         state.novelById.isAlreadyBooked = true;
+      }
    },
    extraReducers: (builer) => {
       builer
@@ -92,6 +100,8 @@ export const novelSlice = createSlice({
    
          .addCase(getNovelById.fulfilled, (state, action) => {
             state.novelById = action.payload?.data;
+
+            state.novelById.isAlreadyBooked = !!(action.payload?.data?.bookmarks?.length);
             state.status.getNovelById = "success";
          })
    
@@ -166,4 +176,4 @@ export const getChapterByIdStatus = (state) => state.novel.status.getChapterById
 
 export default novelSlice.reducer;
 
-export const { filterNovel } = novelSlice.actions;
+export const { filterNovel, emptyNovelByIdBookmark, attachNovelByIdBookmark } = novelSlice.actions;
