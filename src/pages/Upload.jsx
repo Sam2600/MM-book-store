@@ -20,8 +20,10 @@ import 'react-quill/dist/quill.snow.css';
 import { Controller } from "react-hook-form";
 import { Loader } from "../components/Loader";
 import { useDispatch, useSelector } from "react-redux";
-import { getAllCategories, getNovelsByAuthors, getNovelsByAuthorStatus, novelsByAuthor } from "../states/features/novel/novelSlice";
-
+import { getAllMappedCategories, getNovelsByAuthors, getNovelsByAuthorStatus, novelsByAuthor } from "../states/features/novel/novelSlice";
+import Select from 'react-select';
+import makeAnimated from 'react-select/animated';
+import { scrollToTop } from "../functions/helpers";
 
 const modules = {
    toolbar: [
@@ -49,46 +51,54 @@ export const Upload = () => {
       register: register2,
       handleSubmit: handleSubmit2,
       formState: { errors: errors2 },
-      reset: reset2
+      reset: reset2,
+      control: control2
    } = useForm();
 
-   const [isMultiple, setIsMultiple] = useState(false);
-   const [loading, setLoading] = useState(false);
    const [success, setSuccess] = useState(false);
    const [serverError, setServerError] = useState("");
-   const [open, setOpen] = useState(false);
-
-   const [isNovelSuccess, setIsNovelSuccess] = useState(false);
+   const [isPopUpOpen, setIsPopUpOpen] = useState(false);
+   const [isNovelRegisterSuccess, setIsNovelRegisterSuccess] = useState(false);
 
    const dispatch = useDispatch();
 
    const novelByAuthor = useSelector(novelsByAuthor);
-   const categories = useSelector(getAllCategories);
+   const categories = useSelector(getAllMappedCategories);
    const status = useSelector(getNovelsByAuthorStatus);
 
    const onSubmit = async (data) => {
 
-      setLoading(true);
-
       try {
+
+         const novel_name = novelByAuthor?.find(nba => nba.id == data.novel_id)?.title;
+
+         data = {
+            ...data,
+            novel_name,
+         }
 
          const response = await api.post("/chapters", data);
 
          console.log("Upload Success:", response.data);
 
+         setServerError("");
+         setSuccess(true);
+
          reset();
 
-         setLoading(false);
-
       } catch (error) {
-         setLoading(false);
-         console.error("Upload Error:", error);
+
+         console.error("Server Error:", error);
+         setServerError(error?.response?.data?.message || "An error occurred while uploading the chapter.");
+         setSuccess(false);
       }
+
+      scrollToTop();
    };
 
    const onError = (error) => {
-      console.log("error 1");
-      window.scrollTo({ top: 0 });
+      console.log(error);
+      scrollToTop();
    }
 
    const onSubmit2 = async (data) => {
@@ -96,6 +106,8 @@ export const Upload = () => {
       if (data.cover_image.length) {
          data.cover_image = data.cover_image[0];
       }
+
+      data.categories = data.categories.map(cat => cat.value);
       
       try {
 
@@ -108,41 +120,94 @@ export const Upload = () => {
 
          console.log("Upload Success:", response.data);
 
-         setOpen(false);
-         setIsNovelSuccess(true);
+         setIsPopUpOpen(false);
+         setIsNovelRegisterSuccess(true);
+         setSuccess(true);
          reset2();
 
       } catch (error) {
+         setSuccess(false);
+         setServerError(error?.response?.data?.message || "An error occurred while registering the novel.");
          console.error("Upload Error:", error);
       }
    };
 
    const onError2 = (error) => {
-      console.log("error 2");
-      
-      window.scrollTo({ top: 0 });
+      console.log(error);
+      scrollToTop();
    }
 
    useEffect(() => {
 
       dispatch(getNovelsByAuthors());
 
-   }, [isNovelSuccess])
+   }, [isNovelRegisterSuccess])
+
+   const animatedComponents = makeAnimated();
+
+   const customSelectStyles = {
+      control: (provided, state) => ({
+         ...provided,
+         backgroundColor: 'white',
+         borderColor: state.isFocused ? '#64748b' : '#94a3b8', // slate-500 for focus, slate-400 for normal
+         borderRadius: '0.375rem', // Corresponds to rounded-md
+         padding: '0.1rem', // Adjust as needed, react-select has internal padding
+         boxShadow: state.isFocused ? '0 0 0 1px #64748b' : '0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px -1px rgba(0, 0, 0, 0.1)', // shadow-md, focus ring
+         '&:hover': {
+            borderColor: '#64748b' // slate-500 for hover
+         }
+      }),
+      input: (provided) => ({
+         ...provided,
+         // If you need to style the input text itself
+      }),
+      menu: (provided) => ({
+         ...provided,
+         borderRadius: '0.375rem',
+         boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1)', // Corresponds to shadow-lg for dropdown
+      }),
+      option: (provided, state) => ({
+         ...provided,
+         backgroundColor: state.isSelected ? '#3b82f6' : state.isFocused ? '#eff6ff' : 'white', // Example: blue-500 for selected, blue-50 for focused
+         color: state.isSelected ? 'white' : 'black',
+         '&:hover': {
+            backgroundColor: 'black', // Example: blue-100 for hover
+            color: 'white',
+         }
+      }),
+      multiValue: (provided) => ({
+         ...provided,
+         backgroundColor: '#e0e7ff', // indigo-100 or similar for selected items
+      }),
+      multiValueLabel: (provided) => ({
+         ...provided,
+         color: '#3730a3', // indigo-800 or similar
+      }),
+      multiValueRemove: (provided) => ({
+         ...provided,
+         color: '#4338ca', // indigo-700 or similar
+         '&:hover': {
+            backgroundColor: '#black', // indigo-200 or similar
+            color: '#white', // indigo-900 or similar
+         },
+      }),
+      // You can add more custom styles for other parts like placeholder, singleValue, etc.
+   };
 
    const content = status == 'pending' ? (
       <Loader />
    ) : (
          <>
-            <div className="container my-12 mx-auto px-4 md:px-4">
+            <div className="container my-4 mx-auto px-4 md:px-4">
                <div className="flex flex-col w-11/12 lg:w-6/12 mx-auto">
-                  <div className="flex items-center justify-center mb-6">
-                     <div className="flex flex-col sm:flex-row items-center gap-4">
+                  <div className="flex flex-col items-center justify-center gap-4">
+                     {/* <div className="flex flex-col sm:flex-row items-center gap-4"> */}
                         <h1 className="text-xl font-semibold border border-slate-400 shadow-lg rounded-md px-4 py-2">
                            Chapter Register
                         </h1>
-                        {success && <p className="bg-green-500 text-white px-3 py-1 rounded">Upload success!</p>}
-                        {serverError && <p className="bg-red-500 text-white px-3 py-1 rounded">{serverError}</p>}
-                     </div>
+                     {/* </div> */}
+                     {success && <p className="bg-green-500 text-white px-3 py-1 rounded">Upload success!</p>}
+                     {serverError && <p className="bg-red-500 text-white px-3 py-1 rounded">{serverError}</p>}
                   </div>
 
                   <AnimatePresence>
@@ -176,7 +241,7 @@ export const Upload = () => {
                                        )
                                     }
                               </select>
-                              <Button onClick={() => setOpen(true)} type="button">
+                              <Button onClick={() => setIsPopUpOpen(true)} type="button">
                                  +
                               </Button>
                            </div>
@@ -184,14 +249,14 @@ export const Upload = () => {
 
                         <div>
                            <div className="flex flex-row justify-between">
-                              <label className="block font-semibold mb-1">Volume title *</label>
+                              <label className="block font-semibold mb-1">Volume title</label>
                               {errors.volume_title && <p className="text-red-500 text-sm">{errors.volume_title.message}</p>}
                            </div>
                            <Input
                               className="w-full bg-white p-2 border border-slate-400 rounded-md shadow-md"
                               placeholder="Volume title"
                               {...register("volume_title", {
-                                 required: "Volume title is required"
+                                 //required: "Volume title is required"
                               })}
                            />
                         </div>
@@ -199,12 +264,12 @@ export const Upload = () => {
                         <div>
                            <div className="flex flex-row justify-between">
                               <label className="block font-semibold mb-1">Volume *</label>
-                              {errors.volume_id && <p className="text-red-500 text-sm">{errors.volume_id.message}</p>}
+                              {errors.volume_number && <p className="text-red-500 text-sm">{errors.volume_number.message}</p>}
                            </div>
                               <Input
                                  type="number"
                                  className="w-full bg-white p-2 border border-slate-400 rounded-md shadow-md"
-                                 {...register("volume_id", {
+                                 {...register("volume_number", {
                                     required: "Volume is required",
                                        pattern: {
                                           value: /^[0-9]+$/,
@@ -217,12 +282,12 @@ export const Upload = () => {
                         <div>
                            <div className="flex flex-row justify-between">
                               <label className="block font-semibold mb-1">Chapter *</label>
-                              {errors.volume_id && <p className="text-red-500 text-sm">{errors.volume_id.message}</p>}
+                              {errors.volume_number && <p className="text-red-500 text-sm">{errors.volume_number.message}</p>}
                            </div>
                               <Input
                                  type="number"
                                  className="w-full bg-white p-2 border border-slate-400 rounded-md shadow-md"
-                                 {...register("chapter_id", {
+                                 {...register("chapter_number", {
                                     required: "Chapter is required",
                                        pattern: {
                                           value: /^[0-9]+$/,
@@ -277,12 +342,12 @@ export const Upload = () => {
                </div>
             </div>
             {/* ✅ MODAL MOVED OUTSIDE */}
-            <Dialog open={open} size="xl">
+            <Dialog open={isPopUpOpen} size="xl">
                <DialogOverlay>
                   <DialogContent className="max-w-2xl">
                      <DialogDismissTrigger
                         onClick={() => {
-                           setOpen(false);
+                           setIsPopUpOpen(false);
                            reset2();
                         }}
                         as={IconButton}
@@ -357,27 +422,21 @@ export const Upload = () => {
                                  <label className="block font-semibold mb-1">Categories *</label>
                                  {errors2.categories && <p className="text-red-500 text-sm">{errors2.categories.message}</p>}
                               </div>   
-                              <select
-                                 multiple={isMultiple}
-                                 onClick={() => setIsMultiple(true)}
-                                 className="w-full bg-white p-2 border border-slate-400 rounded-md shadow-md focus:border-slate-700"
-                                 {...register2("categories", {
-                                    required: "At least one category is required",
-                                 })}
-                              >
-                                 <option value="" disabled className="text-slate-900">
-                                    Choose categories
-                                 </option>
-                                 {
-                                    categories?.length > 0 && (
-                                       categories?.map(cate => {
-                                          return (<option key={cate?.id} value={cate?.id} className="hover:bg-slate-400 hover:text-white my-1">
-                                             {cate?.name}
-                                          </option>);
-                                       })
-                                    )
-                                 }
-                              </select>
+                           <Controller
+                              control={control2}
+                              name="categories"
+                              rules={{ required: "At least one category is required" }}
+                              render={({ field }) => (
+                                 <Select
+                                    {...field}
+                                    closeMenuOnSelect={false}
+                                    components={animatedComponents}
+                                    isMulti
+                                    options={categories}
+                                    styles={customSelectStyles}
+                                 />
+                              )}
+                           />
                            </div>
 
                            <div>
