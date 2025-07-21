@@ -1,4 +1,3 @@
-import * as React from "react";
 import {
    IconButton,
    Typography,
@@ -8,94 +7,31 @@ import {
 } from "@material-tailwind/react";
 import {
    Menu,
-   MultiplePages,
-   ProfileCircle,
    Search,
-   SelectFace3d,
-   Xmark,
-   CloudUpload
+   Xmark
 } from "iconoir-react";
 import { NavLink } from "react-router-dom";
 import { useSelector, useDispatch } from 'react-redux'
 import { filterNovel, getFilteredNovels } from "../states/features/novel/novelSlice.js";
 import { useDebounce } from "../hooks/useDebounce.jsx";
 import { useEffect, useState } from "react";
-
-let LINKS = [];
-
-if (localStorage.getItem("token")) {
-
-   LINKS = [
-      {
-         icon: MultiplePages,
-         title: "သိမ်းထားသည့် စာအုပ်များ",
-         href: "/my-books",
-      },
-      {
-         icon: ProfileCircle,
-         title: "အကောင့်",
-         href: "/account",
-      },
-      {
-         icon: SelectFace3d,
-         title: "စာဖတ်သူ လမ်းညွှန်",
-         href: "/guides",
-      },
-      {
-         icon: CloudUpload,
-         title: "စာတင်မယ်",
-         href: "/upload-chapters",
-      }
-   ];
-} else {
-   LINKS = [
-      {
-         icon: MultiplePages,
-         title: "သိမ်းထားသည့် စာအုပ်များ",
-         href: "/my-books",
-      },
-      {
-         icon: ProfileCircle,
-         title: "အကောင့်",
-         href: "/account",
-      },
-      {
-         icon: SelectFace3d,
-         title: "စာဖတ်သူ လမ်းညွှန်",
-         href: "/guides",
-      }
-   ];
-}
-   
-
-function NavList() {
-   return (
-      <ul className="mt-4 flex flex-col gap-x-3 gap-y-1.5 lg:mt-0 lg:flex-row lg:items-center">
-         {LINKS.map(({ icon: Icon, title, href }) => (
-            <li key={title}>
-               <Typography
-                  as="a"
-                  href={href}
-                  type="small"
-                  className="flex items-center gap-x-2 p-1 transition-all duration-200 ease-in-out 
-                           hover:-translate-y-1 hover:text-gray-800 active:text-gray-900
-                           [&>svg]:transition-transform [&>svg]:duration-200 [&>svg]:ease-in-out
-                           [&>svg]:hover:scale-110 [&>svg]:active:scale-105"
-               >
-                  <Icon className="h-4 w-4" />
-                  {title}
-               </Typography>
-            </li>
-         ))}
-      </ul>
-   );
-}
+import { getFetchNavMenuList, removeUploadNavMenuList } from "../states/features/nav/navMenuListSlice.js";
+import { iconMap } from "../functions/helpers.js";
+import { LogOut } from "iconoir-react/regular";
+import { api } from "../axios/axios.js";
 
 export const NavigationBar = () => {
 
    const dispatch = useDispatch();
 
    const filteredNovels = useSelector(getFilteredNovels);
+
+   const navMenus = useSelector(getFetchNavMenuList);
+
+   const navMenuList = navMenus.map(menu => ({
+      ...menu,
+      icon: iconMap[menu.icon]
+   }));
 
    const [search, setSearch] = useState("");
 
@@ -104,7 +40,7 @@ export const NavigationBar = () => {
    useEffect(() => {
       dispatch(filterNovel(_search));
    }, [_search, dispatch]);
-   
+
    const [openNav, setOpenNav] = useState(false);
 
    const handleNavClick = (e) => {
@@ -119,8 +55,43 @@ export const NavigationBar = () => {
       );
    }, []);
 
+   const NavList = () => {
+      return (
+         <ul className="mt-4 flex flex-col gap-x-3 gap-y-1.5 lg:mt-0 lg:flex-row lg:items-center">
+            {navMenuList.map(({ icon: Icon, title, href }) => (
+               <li key={title}>
+                  <Typography
+                     as="a"
+                     href={href}
+                     type="small"
+                     className="flex items-center gap-x-2 p-1 transition-all duration-200 ease-in-out 
+                              hover:-translate-y-1 hover:text-gray-800 active:text-gray-900
+                              [&>svg]:transition-transform [&>svg]:duration-200 [&>svg]:ease-in-out
+                              [&>svg]:hover:scale-110 [&>svg]:active:scale-105"
+                  >
+                     <Icon className="h-4 w-4" />
+                     {title}
+                  </Typography>
+               </li>
+            ))}
+         </ul>
+      );
+   }
+
+   const handleLogOut = async () => {
+
+      try {
+         const response = await api.get("/logout");
+         console.log("Logout successful:", response.data);
+         localStorage.clear();
+         dispatch(removeUploadNavMenuList());
+      } catch (error) {
+         console.error("Logout failed:", error);
+      }
+   }
+
    return (
-      <Navbar className="w-full max-w-screen-xl top-0 sticky border border-b-slate-300 shadow-none rounded-none z-20 overflow-visible">
+      <Navbar className="w-full top-0 sticky border border-b-slate-300 shadow-none rounded-none z-20 overflow-visible">
          <div className="flex items-center">
             <Typography
                as="a"
@@ -134,7 +105,7 @@ export const NavigationBar = () => {
             <div className="hidden lg:block">
                <NavList />
             </div>
-            <div className="ml-auto w-56 rounded-md relative">
+            <div className="ml-auto mr-5 w-56 rounded-md relative">
                <Input
                   onChange={(e) => setSearch(e.target.value)}
                   size="md"
@@ -164,6 +135,20 @@ export const NavigationBar = () => {
                      </ul>
                   </div>
                )}
+            </div>
+            <div>
+               <Typography
+                  as="button"
+                  type="small"
+                  className="flex items-center gap-x-2 p-1 transition-all duration-200 ease-in-out 
+                           hover:-translate-y-1 hover:text-gray-800 active:text-gray-900
+                           [&>svg]:transition-transform [&>svg]:duration-200 [&>svg]:ease-in-out
+                           [&>svg]:hover:scale-110 [&>svg]:active:scale-105"
+                  onClick={handleLogOut}
+               >
+                  <LogOut className="h-4 w-4" />
+                  ထွက်မယ်
+               </Typography>
             </div>
             <IconButton
                size="sm"
