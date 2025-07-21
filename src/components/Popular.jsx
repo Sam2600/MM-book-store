@@ -8,7 +8,7 @@ const itemsPerPage = 5;
 
 export const Popular = ({time, popular}) => {
    return (
-      <div className="container mx-auto w-full px-4 py-6 relative"> {/* Added relative here */}
+      <div className="mx-auto w-full px-4 py-6 relative"> {/* Added relative here */}
          <h2 className="text-xl font-extrabold text-gray-900 mb-6 tracking-tight font-poppins">{ `${time}အတွင်း လူကြိုက်အများဆုံး` }</h2>
          <div className="relative border border-slate-400 border-solid rounded-md shadow-xl overflow-hidden"> {/* Prevents horizontal scrolling */}
             <Splide
@@ -17,7 +17,7 @@ export const Popular = ({time, popular}) => {
                   perPage: itemsPerPage,
                   perMove: 1,
                   gap: '1rem',
-                  arrows: true,
+                  arrows: false,
                   pagination: false,
                   drag: true,
                   keyboard: true,
@@ -28,7 +28,7 @@ export const Popular = ({time, popular}) => {
                   1280: { perPage: itemsPerPage },
                   },
                }}
-               className="splide-container"
+               className="splide-container items-center justify-center justify-items-center"
             >
                {popular?.length > 0 && popular?.map((novel) => (
                   <SplideSlide key={novel?.id} className="px-1">
@@ -41,48 +41,6 @@ export const Popular = ({time, popular}) => {
                ))}
             </Splide>
          </div>
-         <style jsx="true" global="true">{`
-            .splide-container {
-               padding: 0 2rem; /* Adjusted padding to bring arrows inside */
-               position: relative;
-            }
-            .splide__arrow {
-               background: white;
-               width: 2.5rem;
-               height: 2.5rem;
-               border-radius: 50%;
-               box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-               opacity: 1;
-               border: none;
-               transition: all 0.2s ease;
-               pointer-events: auto;
-               z-index: 10;
-            }
-            .splide__arrow--prev {
-               left: 0.5rem; /* Adjusted to keep it inside the container */
-            }
-            .splide__arrow--next {
-               right: 0.5rem; /* Adjusted to keep it inside the container */
-            }
-            .splide__arrow:hover {
-               background: #000000;
-            }
-            .splide__arrow:hover svg {
-               fill: white;
-            }
-            @media (max-width: 768px) {
-               .splide__arrow {
-                  width: 2rem;
-                  height: 2rem;
-               }
-               .splide__arrow--prev {
-                  left: 0.2rem;
-               }
-               .splide__arrow--next {
-                  right: 0.2rem;
-               }
-            }
-         `}</style>
       </div>
    )
 }

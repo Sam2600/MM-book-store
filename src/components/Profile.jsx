@@ -3,21 +3,20 @@ import {
    Typography,
    Rating,
 } from "@material-tailwind/react";
-import zeus from "../assets/imgs/zeus.webp";
 
 export const Profile = ({ novel }) => {
 
    return (
-      <Card className="group relative w-[250px] h-[350px] overflow-hidden cursor-pointer">
+      <Card className="group relative w-full aspect-[3/4] overflow-hidden cursor-pointer">
          <div className="absolute inset-0">
             <img
-            src={zeus}
+            src={novel?.cover_image}
             alt="profile-picture"
             className="w-full h-full object-cover transition-transform group-hover:scale-110"
             />
             
             {/* Gradient overlay for better text visibility */}
-            <div className="absolute inset-0 m-0 h-full w-full rounded-none bg-[url(${zeus})] bg-cover bg-center">
+            <div className={`absolute inset-0 m-0 h-full w-full rounded-none bg-[url(${novel?.cover_image})] bg-cover bg-center`}>
             <div className="absolute inset-0 h-full w-full bg-gradient-to-t 
                            from-black/80 via-black/50 to-black/10 dark:from-black/90 dark:via-black/60 dark:to-black/20" />
             </div>

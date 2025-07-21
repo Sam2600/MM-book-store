@@ -14,11 +14,11 @@ export const Novels = () => {
 
    const content =  status == "pending" ?
       <Loader /> :
-      <>
+      <div className="flex flex-col gap-4">
          <Header popular_all_time={novels?.popular_all_time} latest_novel={novels?.latest_novel} />
          <Populars popular_week={novels?.popular_week} popular_month={novels?.popular_month} />
          <Categories categories={novels?.categories} />
-      </>;
+      </div>;
 
    return content;
 }

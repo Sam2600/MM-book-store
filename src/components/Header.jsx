@@ -1,15 +1,20 @@
-import React from 'react';
+import { useEffect } from 'react';
 import { NovelCard } from './NovelCard';
 import { Splide, SplideSlide } from '@splidejs/react-splide';
 import { AutoScroll } from '@splidejs/splide-extension-auto-scroll';
 import { LatestNovel } from './LatestNovel';
 import { NavLink } from 'react-router-dom';
+import { scrollToTop } from '../functions/helpers';
 
 export const Header = ({ popular_all_time, latest_novel}) => {
 
+   useEffect(() => {
+      scrollToTop();
+   }, []);
+
    return (
-      <header>
-         <div className="container mx-auto px-4 py-6">
+      <header className="w-full">
+         <div className="mx-auto px-4 py-6">
             <div className="flex flex-col lg:flex-row gap-6">
                <section className="w-full lg:w-1/2 border border-slate-400 border-solid rounded-md shadow-xl p-4">
                   <h2 className="text-xl font-extrabold text-gray-900 mb-6 tracking-tight font-poppins">{ "အယ်ဒီတာ စိတ်ကြိုက်များ" }</h2>
