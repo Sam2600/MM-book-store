@@ -6,6 +6,7 @@ import { Book, SkipNext } from 'iconoir-react'
 import { useDispatch, useSelector } from 'react-redux'
 import { getChapterByID, getChapterByIdStatus, getChapterByNovel } from '../states/features/novel/novelSlice'
 import { Loader } from '../components/Loader'
+import { scrollToTop } from '../functions/helpers'
 
 export const Chapter = () => {
 
@@ -17,7 +18,7 @@ export const Chapter = () => {
    const status = useSelector(getChapterByIdStatus);
 
    useEffect(() => {
-         window.scrollTo({ top: 0 })
+         scrollToTop();
          dispatch(getChapterByNovel({novel, volume, chapter}));
    }, [])
 
@@ -45,7 +46,7 @@ export const Chapter = () => {
       
       <div className="p-5 border border-slate-400 rounded-md shadow-lg">
          <div className="flex flex-col mb-10 gap-y-3 items-center">
-            <Typography type="h6">အပိုင်း {chapterById?.chapter?.id}</Typography>
+            <Typography type="h6">အပိုင်း {chapterById?.chapter?.chapter_number}</Typography>
             <Typography type="h5">{chapterById?.chapter?.title}</Typography>
          </div>
 
