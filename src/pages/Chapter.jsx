@@ -44,7 +44,7 @@ export const Chapter = () => {
             </ButtonGroup>
          </div> */}
       
-      <div className="p-5 border border-slate-400 rounded-md shadow-lg">
+      <div className="p-5 mt-10 border border-slate-400 rounded-md shadow-lg">
          <div className="flex flex-col mb-10 gap-y-3 items-center">
             <Typography type="h6">အပိုင်း {chapterById?.chapter?.chapter_number}</Typography>
             <Typography type="h5">{chapterById?.chapter?.title}</Typography>
