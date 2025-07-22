@@ -13,7 +13,7 @@ export const Popular = ({ isWeek, popular }) => {
 
    return (
       <div className="flex flex-col gap-5 mx-auto w-full px-4 py-6 relative"> {/* Added relative here */}
-         <h2 className="text-xl font-bold tracking-tight font-poppins">{ t( isWeek ? LOCALIZE_CONST.POPULAR_IN_THIS_WEEK: LOCALIZE_CONST.POPULAR_IN_THIS_MONTH) }</h2>
+         <h2 className="text-xl font-bold font-poppins">{ t( isWeek ? LOCALIZE_CONST.POPULAR_IN_THIS_WEEK: LOCALIZE_CONST.POPULAR_IN_THIS_MONTH) }</h2>
          <div className="relative border border-slate-400 border-solid rounded-md shadow-xl overflow-hidden"> {/* Prevents horizontal scrolling */}
             <Splide
                options={{

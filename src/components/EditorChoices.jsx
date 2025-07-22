@@ -1,6 +1,10 @@
 import { Card, Chip, Typography } from "@material-tailwind/react";
+import { LOCALIZE_CONST } from "../consts/Consts";
+import { useTranslation } from "react-i18next";
 
 export const EditorChoices = ({novel}) => {
+   
+   const { t } = useTranslation();
    
    return (
       <Card className="flex flex-col sm:flex-row w-full border border-slate-400 shadow-lg rounded-md overflow-hidden h-full">
@@ -19,7 +23,7 @@ export const EditorChoices = ({novel}) => {
             {novel?.title}
          </Typography>
          <Typography variant="h6" className="text-sm text-gray-600 font-semibold">
-            ဇာတ်လမ်းအကျဥ်း
+            {t(LOCALIZE_CONST.DESCRIPTION)}
          </Typography>
          <Typography className="text-gray-700 text-sm sm:text-base flex-1">
             {novel?.description?.length > 100 ? novel?.description?.slice(0, 100) + " ..." : novel?.description}
