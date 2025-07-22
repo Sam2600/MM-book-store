@@ -10,7 +10,7 @@ export const Footer = () => {
    const { t } = useTranslation();
 
    return (
-      <footer className="mx-auto w-full px-4 py-6 relative bg-slate-50">
+      <footer className="mx-auto w-full px-4 py-6 relative">
          <hr className="my-4 border-slate-900" />
          <div className="flex w-full flex-row flex-wrap items-center justify-center gap-x-12 gap-y-3 text-center md:justify-between">
          <Typography className="text-center text-slate-800">
