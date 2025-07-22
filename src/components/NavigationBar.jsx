@@ -157,20 +157,23 @@ export const NavigationBar = () => {
                      {isEnglish ? LOCALIZE_CODE.ENGLISH : LOCALIZE_CODE.MYANMAR}
                   </Typography>
                </div>
-               <div className="bg-black text-white rounded-md">
-                  <Typography
-                     as="button"
-                     type="small"
-                     className="flex items-center gap-x-2 p-3 transition-all duration-200 ease-in-out 
-                              hover:-translate-y-1 hover:text-white active:text-gray-900
-                              [&>svg]:transition-transform [&>svg]:duration-200 [&>svg]:ease-in-out
-                              [&>svg]:hover:scale-110 [&>svg]:active:scale-105"
-                     onClick={handleLogOut}
-                  >
-                     <LogOut className="h-4 w-4" />
-                     {t(LOCALIZE_CONST.LOGOUT)}
-                  </Typography>
-               </div>
+
+               {localStorage.getItem("token") && (
+                  <div className="bg-black text-white rounded-md">
+                     <Typography
+                        as="button"
+                        type="small"
+                        className="flex items-center gap-x-2 p-3 transition-all duration-200 ease-in-out 
+                                 hover:-translate-y-1 hover:text-white active:text-gray-900
+                                 [&>svg]:transition-transform [&>svg]:duration-200 [&>svg]:ease-in-out
+                                 [&>svg]:hover:scale-110 [&>svg]:active:scale-105"
+                        onClick={handleLogOut}
+                     >
+                        <LogOut className="h-4 w-4" />
+                        {t(LOCALIZE_CONST.LOGOUT)}
+                     </Typography>
+                  </div>
+               )}
             </div>
             <IconButton
                size="sm"
@@ -188,20 +191,22 @@ export const NavigationBar = () => {
          <Collapse open={openNav}>
             <NavList />
             <div className="flex flex-row gap-x-4 my-4">
-               <div className="bg-black text-white rounded-md">
-                  <Typography
-                     as="button"
-                     type="small"
-                     className="flex items-center gap-x-2 p-3 transition-all duration-200 ease-in-out 
+               {localStorage.getItem("token") && (
+                  <div className="bg-black text-white rounded-md">
+                     <Typography
+                        as="button"
+                        type="small"
+                        className="flex items-center gap-x-2 p-3 transition-all duration-200 ease-in-out 
                               hover:-translate-y-1 hover:text-white active:text-gray-900
                               [&>svg]:transition-transform [&>svg]:duration-200 [&>svg]:ease-in-out
                               [&>svg]:hover:scale-110 [&>svg]:active:scale-105"
-                     onClick={handleLogOut}
-                  >
-                     <LogOut className="h-4 w-4" />
-                     {t(LOCALIZE_CONST.LOGOUT)}
-                  </Typography>
-               </div>
+                        onClick={handleLogOut}
+                     >
+                        <LogOut className="h-4 w-4" />
+                        {t(LOCALIZE_CONST.LOGOUT)}
+                     </Typography>
+                  </div>
+               )}
                <div className="flex items-center gap-2 mr-3">
                   <Switch id="switch" color="primary" onClick={handleLangChange} />
                   <Typography as="label"
