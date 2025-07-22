@@ -5,7 +5,7 @@ import { Loader } from '../components/Loader';
 import { api } from "../axios/axios";
 import { scrollToTop } from "../functions/helpers";
 import { useDispatch } from "react-redux";
-import { addUploadNavMenuList } from "../states/features/nav/navMenuListSlice";
+import { addExtraMenuItems } from "../states/features/nav/navMenuListSlice";
 import { useTranslation } from "react-i18next";
 import { LOCALIZE_CONST } from "../consts/Consts";
 
@@ -57,7 +57,7 @@ export const Register = () => {
 
       scrollToTop();
 
-      dispatch(addUploadNavMenuList());
+      dispatch(addExtraMenuItems());
    };
 
    const onError = (errors, e) => {

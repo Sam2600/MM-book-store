@@ -15,7 +15,7 @@ import { useSelector, useDispatch } from 'react-redux'
 import { filterNovel, getFilteredNovels } from "../states/features/novel/novelSlice.js";
 import { useDebounce } from "../hooks/useDebounce.jsx";
 import { useEffect, useState } from "react";
-import { getFetchNavMenuList, removeUploadNavMenuList } from "../states/features/nav/navMenuListSlice.js";
+import { getFetchNavMenuList, removeExtraMenuItems } from "../states/features/nav/navMenuListSlice.js";
 import { iconMap } from "../functions/helpers.js";
 import { LogOut } from "iconoir-react/regular";
 import { api } from "../axios/axios.js";
@@ -96,7 +96,7 @@ export const NavigationBar = () => {
          const response = await api.get("/logout");
          console.log("Logout successful:", response.data);
          localStorage.clear();
-         dispatch(removeUploadNavMenuList());
+         dispatch(removeExtraMenuItems());
       } catch (error) {
          console.error("Logout failed:", error);
       }
