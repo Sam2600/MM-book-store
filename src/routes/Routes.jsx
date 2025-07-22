@@ -6,31 +6,37 @@ import DefaultLayout from "../layouts/DefaultLayout";
 import { Chapter } from "../pages/Chapter";
 import { Register } from "../pages/Register";
 import { Upload } from "../pages/Upload";
+import { ROUTES } from "../consts/Consts";
+import { MyBooks } from "../pages/MyBooks";
 
 export const Routes = createBrowserRouter([
    {
-      path: "/",
+      path: ROUTES.HOME,
       element: <DefaultLayout />,
       children: [
          {
-            path: "/",
+            path: ROUTES.HOME,
             element: <Novels />,
          },
          {
-            path: "/novels/:id",
+            path: ROUTES.NOVEL_BY_ID,
             element: <NovelDetail />,
          },
          {
-            path: "/novels/:novel/volumes/:volume/chapters/:chapter",
+            path: ROUTES.CHAPTER_BY_ID,
             element: <Chapter />,
          },
          {
-            path: "/account",
+            path: ROUTES.ACCOUNT,
             element: <Register />,
          },
          {
-            path: "/upload-chapters",
+            path: ROUTES.UPLOAD_CHAPTER,
             element: <Upload />,
+         },
+         {
+            path: ROUTES.MY_BOOKS,
+            element: <MyBooks />,
          }
       ],
    },

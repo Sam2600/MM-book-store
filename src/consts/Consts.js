@@ -2,7 +2,7 @@ export const LOCALIZE_CONST = {
    APP_NAME: "appName",
    ACCOUNT: "account",
    READER_GUIDE: "readerGuide",
-   UPLOAD_NOVEL: "uploadNovel",
+   UPLOAD_CHAPTER: "uploadNovel",
    MY_BOOKS: "myBooks",
    LOGOUT: "logout",
    SEARCH_PLACEHOLDER: "searchPlaceholder",
@@ -52,11 +52,13 @@ export const ROUTES = {
    MY_BOOKS: "/my-books",
    ACCOUNT: "/account",
    READER_GUIDE: "/guides",
-   UPLOAD_NOVEL: "/upload-chapters",
+   UPLOAD_CHAPTER: "/upload-chapters",
    LOGOUT: "/logout",
    SEARCH: "/search",
    ABOUT_US: "/about-us",
-   CONTACT_US: "/contact-us"
+   CONTACT_US: "/contact-us",
+   NOVEL_BY_ID: "/novels/:id",
+   CHAPTER_BY_ID: "/novels/:novel/volumes/:volume/chapters/:chapter"
 }
 
 export const LINKS = [
@@ -90,6 +92,6 @@ export const FOOTER_LINKS = [
 
 export const UPLOAD_MENU = {
    icon: "CloudUpload",
-   title: LOCALIZE_CONST.UPLOAD_NOVEL,
-   href: ROUTES.UPLOAD_NOVEL,
+   title: LOCALIZE_CONST.UPLOAD_CHAPTER,
+   href: ROUTES.UPLOAD_CHAPTER,
 };
