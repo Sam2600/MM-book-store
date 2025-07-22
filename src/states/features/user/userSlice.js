@@ -37,6 +37,7 @@ export const userSlice = createSlice({
 
          .addCase(getBookMarkedCollection.rejected, (state, action) => {   
             console.log(action.error);
+            state.bookMarks = [];
             state.status.getBookMarkedStatus = "failed";
          })
    }

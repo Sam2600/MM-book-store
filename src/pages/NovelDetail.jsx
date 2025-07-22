@@ -21,6 +21,8 @@ export const NovelDetail = () => {
 
    const navigate = useNavigate();
 
+   const [isLoading, setIsLoading] = useState(false);
+
    const [bookMarkText, setBookMarkText] = useState("Add to library");
 
    useEffect(() => {
@@ -30,6 +32,8 @@ export const NovelDetail = () => {
    }, [])
 
    const handleBookmark = async () => {
+
+      setIsLoading(true);
 
       if (localStorage.getItem("token")) {
 
@@ -44,7 +48,7 @@ export const NovelDetail = () => {
                if (response.data.status == "OK") {
                   console.log("Bookmark removed successfully");
                   dispatch(emptyNovelByIdBookmark());
-                  setBookMarkText("Add to library");
+                  setBookMarkText(prev  => "Add to library");
                }
 
             } else {
@@ -54,13 +58,15 @@ export const NovelDetail = () => {
                if (response.data.status == "OK") {
                   console.log("Bookmark added successfully");
                   dispatch(attachNovelByIdBookmark());
-                  setBookMarkText("Remove from library");
+                  setBookMarkText(prev => "Remove from library");
                }
             }
          } catch (error) {
             alert("Internal Server Error. Please try again later.");
             console.error("Error bookmarking novel:", error);
          }
+
+         setIsLoading(false);
 
       } else {
          navigate("/account");
@@ -129,11 +135,11 @@ export const NovelDetail = () => {
                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="size-5">
                         <path fillRule="evenodd" d="M4.25 2A2.25 2.25 0 0 0 2 4.25v11.5A2.25 2.25 0 0 0 4.25 18h11.5A2.25 2.25 0 0 0 18 15.75V4.25A2.25 2.25 0 0 0 15.75 2H4.25ZM6 13.25V3.5h8v9.75a.75.75 0 0 1-1.064.681L10 12.576l-2.936 1.355A.75.75 0 0 1 6 13.25Z" clipRule="evenodd" />
                      </svg>
-                     <p className="font-serif text-slate-800 text-md hover:underline cursor-pointer"
-                        onClick={handleBookmark}
+                     <button className="font-serif text-slate-800 text-md hover:underline cursor-pointer"
+                        disabled={isLoading} onClick={handleBookmark}
                      >
-                        { localStorage.getItem("token") ? novelById?.bookmarks?.length > 0 ? "Remove from library" : bookMarkText : "Login to bookmark ✔" }
-                     </p>
+                        { localStorage.getItem("token") ? novelById?.isAlreadyBooked ? "Remove from library" : bookMarkText : "Login to bookmark ✔" }
+                     </button>
                   </div>
                </div>
             </motion.div>
