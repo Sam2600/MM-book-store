@@ -79,6 +79,8 @@ i18n
                registerHere: "Register Here!",
                loadingPopulerNovels: "Loading Popular Novels...",
                pick: "Pick",
+               read: "Read",
+               noBookMark: "There is no book yet",
             },
          },
          // Burmese
@@ -125,6 +127,8 @@ i18n
                registerHere: "ဒီမှာ စာရင်းသွင်းပါ!",
                loadingPopulerNovels: "နာမည်ကြီး စာစဥ်များ ယူနေသည်...",
                pick: "စာစဥ်ရွေးပါ",
+               read: "ဖတ်မယ်",
+               noBookMark: "မှတ်ထားသောစာအုပ် မရှိသေးပါ.."
             },
          },
       },

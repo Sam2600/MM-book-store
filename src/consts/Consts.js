@@ -40,6 +40,8 @@ export const LOCALIZE_CONST = {
    REGISTER_HERE: "registerHere",
    LOADING_POPULAR_NOVELS: "loadingPopulerNovels",
    PICK: "pick",
+   READ: "read",
+   NO_BOOKMARK: "noBookMark",
 }
 
 export const LOCALIZE_CODE = {
@@ -62,11 +64,6 @@ export const ROUTES = {
 }
 
 export const LINKS = [
-   {
-      icon: "MultiplePages",
-      title: LOCALIZE_CONST.MY_BOOKS,
-      href: ROUTES.MY_BOOKS,
-   },
    {
       icon: "ProfileCircle",
       title: LOCALIZE_CONST.ACCOUNT,
@@ -95,3 +92,9 @@ export const UPLOAD_MENU = {
    title: LOCALIZE_CONST.UPLOAD_CHAPTER,
    href: ROUTES.UPLOAD_CHAPTER,
 };
+
+export const BOOKMARK_MENU = {
+   icon: "MultiplePages",
+   title: LOCALIZE_CONST.MY_BOOKS,
+   href: ROUTES.MY_BOOKS,
+}
