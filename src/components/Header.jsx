@@ -1,12 +1,16 @@
 import { useEffect } from 'react';
-import { NovelCard } from './NovelCard';
+import { EditorChoices } from './EditorChoices';
 import { Splide, SplideSlide } from '@splidejs/react-splide';
 import { AutoScroll } from '@splidejs/splide-extension-auto-scroll';
 import { LatestNovel } from './LatestNovel';
 import { NavLink } from 'react-router-dom';
 import { scrollToTop } from '../functions/helpers';
+import { useTranslation } from 'react-i18next';
+import { LOCALIZE_CONST } from '../consts/Consts';
 
 export const Header = ({ popular_all_time, latest_novel}) => {
+
+   const { t } = useTranslation();
 
    useEffect(() => {
       scrollToTop();
@@ -16,8 +20,8 @@ export const Header = ({ popular_all_time, latest_novel}) => {
       <header className="w-full">
          <div className="mx-auto px-4 py-6">
             <div className="flex flex-col lg:flex-row gap-6">
-               <section className="w-full lg:w-1/2 border border-slate-400 border-solid rounded-md shadow-xl p-4">
-                  <h2 className="text-xl font-extrabold text-gray-900 mb-6 tracking-tight font-poppins">{ "အယ်ဒီတာ စိတ်ကြိုက်များ" }</h2>
+               <section className="flex flex-col gap-5 w-full lg:w-1/2 border border-slate-400 border-solid rounded-md shadow-xl p-4">
+                  <h2 className="text-xl font-bold tracking-tight font-poppins">{ t(LOCALIZE_CONST.EDITOR_CHOICES) }</h2>
                   <div className="h-full">
                      <Splide
                         className="w-full h-full"
@@ -49,14 +53,14 @@ export const Header = ({ popular_all_time, latest_novel}) => {
                               <SplideSlide key={novel.id}>
                                  <NavLink to={`novels/${novel?.id}`}>
                                     <div className='px-2'>
-                                       <NovelCard novel={novel} />
+                                       <EditorChoices novel={novel} />
                                     </div>
                                  </NavLink>
                               </SplideSlide>
                            ))
                         ) : (
                            <SplideSlide>
-                              <div className="px-2 text-gray-500">Loading popular novels...</div>
+                                 <div className="px-2 text-gray-500">{ t(LOCALIZE_CONST.LOADING_POPULAR_NOVELS)}</div>
                            </SplideSlide>
                         )}
                      </Splide>
@@ -64,8 +68,8 @@ export const Header = ({ popular_all_time, latest_novel}) => {
                </section>
 
                {/* Latest Novels Section - Right Side */}
-               <section className="w-full lg:w-1/2 border border-slate-400 border-solid rounded-md shadow-xl p-4">
-                  <h2 className="text-xl font-extrabold text-gray-900 mb-6 tracking-tight font-poppins">{ "နောက်ဆုံး ထွက်ရှိထားသည်များ" }</h2>
+               <section className="flex flex-col gap-5 w-full lg:w-1/2 border border-slate-400 border-solid rounded-md shadow-xl p-4">
+                  <h2 className="text-xl font-bold tracking-tight font-poppins">{ t(LOCALIZE_CONST.LATEST_NOVELS) }</h2>
                   <div className="flex flex-col gap-4">
                      <Splide
                         className="w-full h-full px-4 gap-y-3"
@@ -97,7 +101,7 @@ export const Header = ({ popular_all_time, latest_novel}) => {
                               ))
                            ) : (
                               <SplideSlide>
-                                 <div className="px-2 text-gray-500">Loading popular novels...</div>
+                                 <div className="px-2 text-gray-500">{ t(LOCALIZE_CONST.LOADING_POPULAR_NOVELS)}</div>
                               </SplideSlide>
                            )}
                         </Splide>

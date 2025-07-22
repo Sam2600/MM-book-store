@@ -1,23 +1,95 @@
+export const LOCALIZE_CONST = {
+   APP_NAME: "appName",
+   ACCOUNT: "account",
+   READER_GUIDE: "readerGuide",
+   UPLOAD_NOVEL: "uploadNovel",
+   MY_BOOKS: "myBooks",
+   LOGOUT: "logout",
+   SEARCH_PLACEHOLDER: "searchPlaceholder",
+   EDITOR_CHOICES: "editorChoices",
+   LATEST_NOVELS: "latestNovels",
+   POPULAR_IN_THIS_WEEK: "popularInThisWeek",
+   POPULAR_IN_THIS_MONTH: "popularInThisMonth",
+   CATEGORIES: "categories",
+   ABOUT_US: "aboutUs",
+   CONTACT_US: "contactUs",
+   CHAPTER_REGISTER: "chapterRegister",
+   NOVELS: "novels",
+   VOLUME_TITLE: "volumeTitle",
+   VOLUME: "volume",
+   CHAPTER: "chapter",
+   TITLE: "title",
+   CONTENT: "content",
+   UPLOAD: "upload",
+   NOVEL_REGISTER: "novelRegister",
+   ORIGINAL_AUTHOR_NAME: "originalAuthorName",
+   ORIGINAL_NOVEL_NAME: "originalNovelName",
+   DESCRIPTION: "description",
+   COVER_IMAGE: "coverImage",
+   ONGOING: "ongoing",
+   ACCOUNT_REGISTER: "accountRegister",
+   NAME: "name",
+   EMAIL: "email",
+   PASSWORD: "password",
+   CONFIRM_PASSWORD: "confirmPassword",
+   REGISTER: "register",
+   LOGIN: "login",
+   IS_HAVE_ACC: "isHaveAccount",
+   LOGIN_HERE: "loginHere",
+   IS_DONT_HAVE_ACC: "isDontHaveAccount",
+   REGISTER_HERE: "registerHere",
+   LOADING_POPULAR_NOVELS: "loadingPopulerNovels",
+   PICK: "pick",
+}
+
+export const LOCALIZE_CODE = {
+   MYANMAR: "mm",
+   ENGLISH: "en"
+}
+
+export const ROUTES = {
+   HOME: "/",
+   MY_BOOKS: "/my-books",
+   ACCOUNT: "/account",
+   READER_GUIDE: "/guides",
+   UPLOAD_NOVEL: "/upload-chapters",
+   LOGOUT: "/logout",
+   SEARCH: "/search",
+   ABOUT_US: "/about-us",
+   CONTACT_US: "/contact-us"
+}
+
 export const LINKS = [
    {
       icon: "MultiplePages",
-      title: "သိမ်းထားသည့် စာအုပ်များ",
-      href: "/my-books",
+      title: LOCALIZE_CONST.MY_BOOKS,
+      href: ROUTES.MY_BOOKS,
    },
    {
       icon: "ProfileCircle",
-      title: "အကောင့်",
-      href: "/account",
+      title: LOCALIZE_CONST.ACCOUNT,
+      href: ROUTES.ACCOUNT,
    },
    {
       icon: "SelectFace3d",
-      title: "စာဖတ်သူ လမ်းညွှန်",
-      href: "/guides",
+      title: LOCALIZE_CONST.READER_GUIDE,
+      href: ROUTES.READER_GUIDE,
    },
 ];
 
+export const FOOTER_LINKS = [
+   {
+      title: LOCALIZE_CONST.ABOUT_US,
+      href: ROUTES.ABOUT_US,
+   },
+   {
+      title: LOCALIZE_CONST.CONTACT_US,
+      href: ROUTES.CONTACT_US,
+   },
+]
+
 export const UPLOAD_MENU = {
    icon: "CloudUpload",
-   title: "စာတင်မယ်",
-   href: "/upload-chapters",
+   title: LOCALIZE_CONST.UPLOAD_NOVEL,
+   href: ROUTES.UPLOAD_NOVEL,
 };

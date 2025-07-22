@@ -19,13 +19,13 @@ export const LatestNovel = ({novel}) => {
             {/* <div className="flex w-full flex-col gap-0.5"> */}
                <div className="flex flex-row w-full gap-3 items-center justify-between">
                   <div className="flex flex-col gap-1 w-3/4">
-                     <Typography variant="h4" className="text-sm font-semibold text-gray-600">
+                     <Typography variant="h4" className="font-semibold tracking-tight font-poppins">
                         {novel?.title}
                      </Typography>
-                     <Typography variant="small" className="text-gray-500">
+                     <Typography variant="small" className="text-gray-700">
                         {novel?.author?.name}
                      </Typography>
-                     <Typography variant="small" className="text-gray-500">
+                     <Typography variant="small" className="text-gray-600">
                         {novel?.description && novel?.description.length > 50 ?
                            novel?.description?.slice(0, 50) + " ..." :
                            novel?.description}

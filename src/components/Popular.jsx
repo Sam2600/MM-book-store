@@ -1,15 +1,19 @@
-import React from 'react';
 import { Profile } from './Profile';
 import { Splide, SplideSlide } from '@splidejs/react-splide';
 import '@splidejs/splide/dist/css/splide.min.css';
 import { NavLink } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
+import { LOCALIZE_CONST } from '../consts/Consts';
 
 const itemsPerPage = 5;
 
-export const Popular = ({time, popular}) => {
+export const Popular = ({ isWeek, popular }) => {
+   
+   const { t } = useTranslation();
+
    return (
-      <div className="mx-auto w-full px-4 py-6 relative"> {/* Added relative here */}
-         <h2 className="text-xl font-extrabold text-gray-900 mb-6 tracking-tight font-poppins">{ `${time}အတွင်း လူကြိုက်အများဆုံး` }</h2>
+      <div className="flex flex-col gap-5 mx-auto w-full px-4 py-6 relative"> {/* Added relative here */}
+         <h2 className="text-xl font-bold tracking-tight font-poppins">{ t( isWeek ? LOCALIZE_CONST.POPULAR_IN_THIS_WEEK: LOCALIZE_CONST.POPULAR_IN_THIS_MONTH) }</h2>
          <div className="relative border border-slate-400 border-solid rounded-md shadow-xl overflow-hidden"> {/* Prevents horizontal scrolling */}
             <Splide
                options={{

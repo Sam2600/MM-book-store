@@ -24,6 +24,8 @@ import { getAllMappedCategories, getNovelsByAuthors, getNovelsByAuthorStatus, no
 import Select from 'react-select';
 import makeAnimated from 'react-select/animated';
 import { scrollToTop } from "../functions/helpers";
+import { useTranslation } from "react-i18next";
+import { LOCALIZE_CONST } from "../consts/Consts";
 
 const modules = {
    toolbar: [
@@ -36,6 +38,8 @@ const modules = {
 };
 
 export const Upload = () => {
+
+   const { t } = useTranslation();
 
    // Main Form
    const {
@@ -203,7 +207,7 @@ export const Upload = () => {
                   <div className="flex flex-col items-center justify-center gap-4">
                      {/* <div className="flex flex-col sm:flex-row items-center gap-4"> */}
                         <h1 className="text-xl font-semibold border border-slate-400 shadow-lg rounded-md px-4 py-2">
-                           Chapter Register
+                           { t(LOCALIZE_CONST.CHAPTER_REGISTER) }
                         </h1>
                      {/* </div> */}
                      {success && <p className="bg-green-500 text-white px-3 py-1 rounded">Upload success!</p>}
@@ -222,7 +226,7 @@ export const Upload = () => {
                      >
                         <div>
                            <div className="flex justify-between items-center mb-1">
-                              <label className="font-semibold">Novels *</label>
+                              <label className="font-semibold">{t(LOCALIZE_CONST.NOVELS)} *</label>
                                  {errors.novel_id && <p className="text-red-500 text-sm">{errors.novel_id?.message}</p>}
                            </div>
                            <div className="flex gap-4">
@@ -232,7 +236,7 @@ export const Upload = () => {
                                     required: "Novel is required",
                                  })}
                               >
-                                    <option value="">Pick</option>
+                                    <option value="">{t(LOCALIZE_CONST.PICK)}</option>
                                     {
                                        novelByAuthor?.length > 0 && (
                                           novelByAuthor?.map(nba => {
@@ -249,7 +253,7 @@ export const Upload = () => {
 
                         <div>
                            <div className="flex flex-row justify-between">
-                              <label className="block font-semibold mb-1">Volume title</label>
+                              <label className="block font-semibold mb-1">{t(LOCALIZE_CONST.VOLUME_TITLE)}</label>
                               {errors.volume_title && <p className="text-red-500 text-sm">{errors.volume_title.message}</p>}
                            </div>
                            <Input
@@ -263,7 +267,7 @@ export const Upload = () => {
 
                         <div>
                            <div className="flex flex-row justify-between">
-                              <label className="block font-semibold mb-1">Volume *</label>
+                              <label className="block font-semibold mb-1">{t(LOCALIZE_CONST.VOLUME)} *</label>
                               {errors.volume_number && <p className="text-red-500 text-sm">{errors.volume_number.message}</p>}
                            </div>
                               <Input
@@ -281,7 +285,7 @@ export const Upload = () => {
                            
                         <div>
                            <div className="flex flex-row justify-between">
-                              <label className="block font-semibold mb-1">Chapter *</label>
+                              <label className="block font-semibold mb-1">{t(LOCALIZE_CONST.CHAPTER)} *</label>
                               {errors.volume_number && <p className="text-red-500 text-sm">{errors.volume_number.message}</p>}
                            </div>
                               <Input
@@ -299,7 +303,7 @@ export const Upload = () => {
                            
                         <div>
                            <div className="flex flex-row justify-between">
-                              <label className="block font-semibold mb-1">Title *</label>
+                              <label className="block font-semibold mb-1">{t(LOCALIZE_CONST.TITLE)} *</label>
                               {errors.title && <p className="text-red-500 text-sm">{errors.title.message}</p>}
                            </div>
                            <Input
@@ -313,7 +317,7 @@ export const Upload = () => {
 
                         <div>
                            <div className="flex flex-row justify-between">
-                              <label className="block font-semibold mb-1">Content *</label>
+                              <label className="block font-semibold mb-1">{t(LOCALIZE_CONST.CONTENT)} *</label>
                               {errors.content && (
                                  <p className="text-red-500 text-sm">{errors.content.message}</p>
                               )}
@@ -335,7 +339,7 @@ export const Upload = () => {
                         </div>
 
                         <Button type="submit" isFullWidth={true} disabled={isSubmitting}>
-                           Upload
+                           {t(LOCALIZE_CONST.UPLOAD)}
                         </Button>
                      </motion.form>
                   </AnimatePresence>
@@ -361,12 +365,12 @@ export const Upload = () => {
                      <form onSubmit={handleSubmit2(onSubmit2, onError2)} className="w-full mx-auto">
                         <CardBody className="flex flex-col gap-6">
                            <h1 className="text-xl font-semibold text-center">
-                              Novel Register
+                              {t(LOCALIZE_CONST.NOVEL_REGISTER)}
                            </h1>
 
                            <div>
                               <div className="flex flex-row justify-between">
-                                 <label className="block font-semibold mb-1">Title *</label>
+                                 <label className="block font-semibold mb-1">{t(LOCALIZE_CONST.TITLE)} *</label>
                                  {errors2.title && <p className="text-red-500 text-sm">{errors2.title.message}</p>}
                               </div>
                               <Input
@@ -380,7 +384,7 @@ export const Upload = () => {
 
                            <div>
                               <div className="flex flex-row justify-between">
-                                 <label className="block font-semibold mb-1">Author Name *</label>
+                                 <label className="block font-semibold mb-1">{t(LOCALIZE_CONST.ORIGINAL_AUTHOR_NAME)} *</label>
                                  {errors2.original_author_name && <p className="text-red-500 text-sm">{errors2.original_author_name.message}</p>}
                               </div>
                               <Input
@@ -394,7 +398,7 @@ export const Upload = () => {
 
                            <div>
                               <div className="flex flex-row justify-between">
-                                 <label className="block font-semibold mb-1">Original Name *</label>
+                                 <label className="block font-semibold mb-1">{t(LOCALIZE_CONST.ORIGINAL_NOVEL_NAME)} *</label>
                                  {errors2.original_book_name && <p className="text-red-500 text-sm">{errors2.original_book_name.message}</p>}
                               </div>
                               <Input
@@ -408,7 +412,7 @@ export const Upload = () => {
 
                            <div>
                               <div> 
-                                 <label className="block font-semibold mb-1">Description</label>
+                                 <label className="block font-semibold mb-1">{t(LOCALIZE_CONST.DESCRIPTION)}</label>
                               </div>   
                               <Input
                                  className="w-full bg-white p-2 border border-slate-400 rounded-md shadow-md"
@@ -419,7 +423,7 @@ export const Upload = () => {
 
                            <div>
                               <div className="flex flex-row justify-between">
-                                 <label className="block font-semibold mb-1">Categories *</label>
+                                 <label className="block font-semibold mb-1">{t(LOCALIZE_CONST.CATEGORIES)} *</label>
                                  {errors2.categories && <p className="text-red-500 text-sm">{errors2.categories.message}</p>}
                               </div>   
                            <Controller
@@ -441,7 +445,7 @@ export const Upload = () => {
 
                            <div>
                               <div className="flex flex-row justify-between">
-                                 <label className="block font-semibold mb-1">Image *</label>
+                                 <label className="block font-semibold mb-1">{t(LOCALIZE_CONST.COVER_IMAGE)} *</label>
                                  {errors2.cover_image && <p className="text-red-500 text-sm">{errors2.cover_image.message}</p>}
                               </div>
                               <input
@@ -464,14 +468,14 @@ export const Upload = () => {
                                     htmlFor="checkbox"
                                     className="cursor-pointer font-semibold"
                                  >
-                                    Ongoing?
+                                    {t(LOCALIZE_CONST.ONGOING)}?
                                  </Typography>
                               </div>
                         </CardBody>
 
                         <CardFooter className="pt-0 mt-5">
                            <Button type="submit" isFullWidth={true}>
-                              Register
+                              {t(LOCALIZE_CONST.REGISTER)}
                            </Button>
                         </CardFooter>
                      </form>

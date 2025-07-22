@@ -1,32 +1,23 @@
 import { Typography } from "@material-tailwind/react";
+import { FOOTER_LINKS } from "../consts/Consts.js";
+import { useTranslation } from "react-i18next";
+import { LOCALIZE_CONST } from "../consts/Consts.js";
 
 const YEAR = new Date().getFullYear();
 
-const LINKS = [
-   {
-      title: "ကျုပ်တို့အကြောင်း",
-      href: "/about-us",
-   },
-   {
-      title: "စာရေးဆရာအဖြစ် စာရင်းသွင်းရန်",
-      href: "/register",
-   },
-   {
-      title: "ဆက်သွယ်ရန်",
-      href: "/contact-us",
-   },
-];
-
 export const Footer = () => {
+
+   const { t } = useTranslation();
+
    return (
       <footer className="mx-auto w-full px-4 py-6 relative bg-slate-50">
          <hr className="my-4 border-slate-900" />
          <div className="flex w-full flex-row flex-wrap items-center justify-center gap-x-12 gap-y-3 text-center md:justify-between">
          <Typography className="text-center text-slate-800">
-            &copy; {YEAR} MM-BOOK-STORE
+            &copy; {YEAR} {t(LOCALIZE_CONST.APP_NAME)}
          </Typography>
          <ul className="flex flex-wrap items-center gap-x-6 gap-y-2">
-            {LINKS.map(({ title, href }, key) => (
+            {FOOTER_LINKS.map(({ title, href }, key) => (
                <li key={key}>
                <Typography 
                   as="a" 
@@ -39,7 +30,7 @@ export const Footer = () => {
                      }
                   }}
                >
-                  {title}
+                  {t(title)}
                </Typography>
                </li>
             ))}

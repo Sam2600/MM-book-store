@@ -1,6 +1,6 @@
 import { Card, Chip, Typography } from "@material-tailwind/react";
 
-export const NovelCard = ({novel}) => {
+export const EditorChoices = ({novel}) => {
    
    return (
       <Card className="flex flex-col sm:flex-row w-full border border-slate-400 shadow-lg rounded-md overflow-hidden h-full">
@@ -15,7 +15,7 @@ export const NovelCard = ({novel}) => {
 
       {/* Content Section */}
       <div className="flex flex-col justify-center gap-y-2 p-4 w-full sm:w-2/3">
-         <Typography variant="small" className="font-bold uppercase text-black">
+         <Typography variant="small" className="font-semibold tracking-tight font-poppins">
             {novel?.title}
          </Typography>
          <Typography variant="h6" className="text-sm text-gray-600 font-semibold">

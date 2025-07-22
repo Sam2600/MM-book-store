@@ -6,8 +6,12 @@ import { api } from "../axios/axios";
 import { scrollToTop } from "../functions/helpers";
 import { useDispatch } from "react-redux";
 import { addUploadNavMenuList } from "../states/features/nav/navMenuListSlice";
+import { useTranslation } from "react-i18next";
+import { LOCALIZE_CONST } from "../consts/Consts";
 
 export const Register = () => {
+
+   const { t } = useTranslation();
 
    const dispatch = useDispatch();
 
@@ -72,7 +76,7 @@ export const Register = () => {
             <div className="flex flex-wrap justify-center">
                <div className="flex flex-col sm:flex-row text-center items-baseline md:max-w-xl lg:max-w-3xl">
                <h1 className="inline-block mr-5 md:ml-3 lg:ml-6 mb-3 text-center w-50 lg:w-50 md:w-auto border border-gray-800 shadow-lg text-lg sm:text-xl md:text-xl font-semibold text-gray-900 capitalize p-3 rounded-md">
-                  {isForRegister ? "Register" : "Login"}
+                  {isForRegister ? t(LOCALIZE_CONST.REGISTER) : t(LOCALIZE_CONST.LOGIN)}
                </h1>
 
                {success && (
@@ -105,7 +109,7 @@ export const Register = () => {
                            className="block font-semibold mb-[2px] text-gray-800"
                            htmlFor="name_"
                         >
-                           Name <span className="text-red-600">*</span>
+                           { t(LOCALIZE_CONST.NAME) } <span className="text-red-600">*</span>
                         </label>{" "}
                         <p className="block font-semibold mb-[2px] text-red-500">
                            {errors?.name?.message}
@@ -139,7 +143,7 @@ export const Register = () => {
                         className="block font-semibold mb-[2px] text-gray-800"
                         htmlFor="email_"
                      >
-                        Email <span className="text-red-600">*</span>
+                        { t(LOCALIZE_CONST.EMAIL) } <span className="text-red-600">*</span>
                      </label>
                      <p className="block font-semibold mb-[2px] text-red-500">
                         {errors?.email?.message}
@@ -187,7 +191,7 @@ export const Register = () => {
                         className="block font-semibold mb-[2px] text-gray-800"
                         htmlFor="password_"
                      >
-                        Password <span className="text-red-600">*</span>
+                        { t(LOCALIZE_CONST.PASSWORD) } <span className="text-red-600">*</span>
                      </label>
                      <p className="block font-semibold mb-[2px] text-red-500">
                         {errors?.password?.message}
@@ -228,7 +232,7 @@ export const Register = () => {
                            className="block font-semibold mb-[2px] text-gray-800"
                            htmlFor="confirm_password_"
                         >
-                           Confirm Password <span className="text-red-600">*</span>
+                           { t(LOCALIZE_CONST.CONFIRM_PASSWORD) } <span className="text-red-600">*</span>
                         </label>
                         <p className="block font-semibold mb-[2px] text-red-500">
                            {errors?.confirm_password?.message}
@@ -266,11 +270,11 @@ export const Register = () => {
                      value="Send"
                      className="mb-6 mt-5 inline-block w-full rounded bg-gray-800 px-6 py-2.5 font-medium uppercase leading-normal text-white border border-transparent hover:shadow-md hover:bg-white hover:border-gray-800 hover:text-gray-800"
                   >
-                     {isForRegister ? "Register" : "Login"}
+                     {isForRegister ? t(LOCALIZE_CONST.REGISTER) : t(LOCALIZE_CONST.LOGIN)}
                   </button>
                   {isForRegister ? (
                      <p className="text-center text-gray-600">
-                        Already have an account?{" "}
+                        { t(LOCALIZE_CONST.IS_HAVE_ACC) }{" "}
                         <span
                            className="cursor-pointer text-blue-500 hover:underline"
                            onClick={() => {
@@ -282,12 +286,12 @@ export const Register = () => {
                               reset();
                            }}
                         >
-                           Login Here!
+                           { t(LOCALIZE_CONST.LOGIN_HERE) }
                         </span>
                      </p>)
                      : (
                      <p className="text-center text-gray-600">
-                        Don't have an account?{" "}
+                        { t(LOCALIZE_CONST.IS_DONT_HAVE_ACC) }{" "}
                         <span
                            className="cursor-pointer text-blue-500 hover:underline"
                            onClick={() => {
@@ -299,7 +303,7 @@ export const Register = () => {
                               reset();
                            }}
                         >
-                           Register Here!
+                           { t(LOCALIZE_CONST.REGISTER_HERE) }
                         </span>
                      </p>
                      )
