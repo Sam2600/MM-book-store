@@ -13,9 +13,9 @@ export const toHumanReadableDates = (timestamp) => {
 
    // Format it to a human-readable string
    const humanReadable = date.toLocaleString('en-US', {
-      weekday: 'short',    // Day of the week (e.g., "Saturday")
+      weekday: 'long',    // Day of the week (e.g., "Saturday")
       year: 'numeric',    // Full year (e.g., "2025")
-      month: 'short',      // Full month (e.g., "April")
+      month: 'long',      // Full month (e.g., "April")
       day: 'numeric',     // Day of the month (e.g., "12")
    });
 

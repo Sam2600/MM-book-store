@@ -1,4 +1,4 @@
-import { Card, Chip, Typography } from "@material-tailwind/react";
+import { Avatar, Card, Chip, Typography } from "@material-tailwind/react";
 import { LOCALIZE_CONST } from "../consts/Consts";
 import { useTranslation } from "react-i18next";
 
@@ -7,15 +7,16 @@ export const EditorChoices = ({novel}) => {
    const { t } = useTranslation();
    
    return (
-      <Card className="flex flex-col sm:flex-row w-full border border-slate-400 shadow-lg rounded-md overflow-hidden h-full">
+      <Card className="flex flex-col sm:flex-row w-full border border-slate-400 shadow-lg rounded-md overflow-hidden h-full bg-[#F7F7F7]">
       {/* Image Section */}
-      <div className="w-full sm:w-1/3 h-60 sm:h-auto sm:flex-shrink-0">
-         <img
+      {/* <div className="w-full sm:w-1/3 h-60 sm:h-auto sm:flex-shrink-0"> */}
+            <Avatar
+            className="w-auto h-56"
+            shape="square"
+            alt={novel?.title}
             src={novel?.cover_image}
-            alt="card-image"
-            className="w-full h-full object-cover"
-         />
-      </div>
+            />
+      {/* </div> */}
 
       {/* Content Section */}
       <div className="flex flex-col justify-center gap-y-2 p-4 w-full sm:w-2/3">

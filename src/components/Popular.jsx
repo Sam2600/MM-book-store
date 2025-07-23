@@ -32,7 +32,7 @@ export const Popular = ({ isWeek, popular }) => {
                   1280: { perPage: itemsPerPage },
                   },
                }}
-               className="splide-container items-center justify-center justify-items-center"
+               className="splide-container bg-[#F7F7F7] items-center justify-center justify-items-center"
             >
                {popular?.length > 0 && popular?.map((novel) => (
                   <SplideSlide key={novel?.id} className="px-1">

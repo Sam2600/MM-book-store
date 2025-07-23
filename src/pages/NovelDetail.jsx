@@ -4,7 +4,7 @@ import "@splidejs/react-splide/css";
 import { NavLink, useNavigate, useParams } from 'react-router-dom';
 import { useSelector, useDispatch } from "react-redux";
 import { attachNovelByIdBookmark, emptyNovelByIdBookmark, getNovelById, getNovelByID, getNovelByIdStatus } from '../states/features/novel/novelSlice';
-import { Accordion, Chip, Typography, Rating } from '@material-tailwind/react';
+import { Accordion, Chip, Typography, Rating, Avatar } from '@material-tailwind/react';
 import { NavArrowDown } from 'iconoir-react';
 import { Loader } from '../components/Loader';
 import { scrollToTop } from '../functions/helpers';
@@ -84,8 +84,9 @@ export const NovelDetail = () => {
                animate={{ opacity: 1, x: 0, transition: { duration: 1.2 } }}
                exit={{ opacity: 0 }}
             >
-               <img
-                  className="rounded-md w-full h-auto max-w-xs object-contain"
+               <Avatar
+                  className="w-80 h-72 object-contain"
+                  shape="square"
                   src={novelById?.cover_image}
                   alt={novelById?.title}
                />
@@ -153,7 +154,7 @@ export const NovelDetail = () => {
                      <Accordion key={i} className="w-full">
                         <Accordion.Item
                            value="react"
-                           className="p-3 bg-[#F2F2F2] shadow-md"
+                           className="p-3 bg-[#F7F7F7] shadow-md"
                         >
                            <Accordion.Trigger className="text-black font-semibold p-0 font-serif">
                               {vol?.volume_title ? vol?.volume_title : `Volume ${vol?.volume_number}`}

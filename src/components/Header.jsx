@@ -17,25 +17,21 @@ export const Header = ({ popular_all_time, latest_novel}) => {
    }, []);
 
    return (
-      <header className="w-full">
-         <div className="mx-auto px-4 py-6">
-            <div className="flex flex-col lg:flex-row gap-6">
-               <section className="flex flex-col gap-5 w-full lg:w-1/2 border border-slate-400 border-solid rounded-md shadow-xl p-4">
+      <header className="w-full h-auto lg:-mb-7">
+         {/* <div className="mx-auto px-4 py-6"> */}
+            <div className="flex flex-col lg:flex-row gap-6 p-5">
+               <section className="flex flex-col gap-5 w-full lg:w-1/2 rounded-md ">
                   <h2 className="text-xl font-bold tracking-tight font-poppins">{ t(LOCALIZE_CONST.EDITOR_CHOICES) }</h2>
-                  <div className="h-full">
                      <Splide
-                        className="w-full h-full"
+                        className="h-full w-full"
                         options={{
                            perPage: 1,
-                           drag: "free",
                            type: "loop",
                            arrows: false,
                            pagination: false,
-                           autoScroll: {
-                              speed: 0.75,
-                              pauseOnHover: false,
-                              pauseOnFocus: false,
-                           },
+                           wheel: true,
+                           autoplay: true,
+                           interval: 4000,
                            breakpoints: {
                               640: {
                                  perPage: 1,
@@ -46,36 +42,33 @@ export const Header = ({ popular_all_time, latest_novel}) => {
                            },
                         }}
                         
-                        extensions={{ AutoScroll }}
+                        //extensions={{ AutoScroll }}
                      >
                         {popular_all_time && popular_all_time.length > 0 ? (
                            popular_all_time.map((novel) => (
                               <SplideSlide key={novel.id}>
                                  <NavLink to={`novels/${novel?.id}`}>
-                                    <div className='px-2'>
-                                       <EditorChoices novel={novel} />
-                                    </div>
+                                    <EditorChoices novel={novel} />
                                  </NavLink>
                               </SplideSlide>
                            ))
                         ) : (
                            <SplideSlide>
-                                 <div className="px-2 text-gray-500">{ t(LOCALIZE_CONST.LOADING_POPULAR_NOVELS)}</div>
+                              <div className="px-2 text-gray-500">{ t(LOCALIZE_CONST.LOADING_POPULAR_NOVELS)}</div>
                            </SplideSlide>
                         )}
                      </Splide>
-                  </div>
                </section>
 
                {/* Latest Novels Section - Right Side */}
-               <section className="flex flex-col gap-5 w-full lg:w-1/2 border border-slate-400 border-solid rounded-md shadow-xl p-4">
+               <section className="flex flex-col gap-5 w-full lg:w-1/2 rounded-md ">
                   <h2 className="text-xl font-bold tracking-tight font-poppins">{ t(LOCALIZE_CONST.LATEST_NOVELS) }</h2>
-                  <div className="flex flex-col gap-4">
+                  {/* <div className="flex flex-col gap-4"> */}
                      <Splide
-                        className="w-full h-full px-4 gap-y-3"
+                        className=""
                         options={{
                            direction: 'ttb',
-                           height: '240px',
+                           height: '255px',
                            perPage: 2,   
                            wheel: true,
                            autoplay: true,
@@ -86,7 +79,7 @@ export const Header = ({ popular_all_time, latest_novel}) => {
                            breakpoints: {
                               640: {
                                  perPage: 2,
-                                 height: '300px'
+                                 height: '255px'
                               },
                            },
                         }}
@@ -103,12 +96,13 @@ export const Header = ({ popular_all_time, latest_novel}) => {
                               <SplideSlide>
                                  <div className="px-2 text-gray-500">{ t(LOCALIZE_CONST.LOADING_POPULAR_NOVELS)}</div>
                               </SplideSlide>
-                           )}
-                        </Splide>
-                  </div>
+                           )
+                        }
+                     </Splide>
+                  {/* </div> */}
                </section>
             </div>
-         </div>
+         {/* </div> */}
       </header>
    );
 };

@@ -103,7 +103,7 @@ export const NavigationBar = () => {
    }
 
    return (
-      <Navbar className="w-full top-0 sticky border border-b-slate-500 shadow-md rounded-none z-20 overflow-visible">
+      <Navbar className="w-full top-0 sticky border bg-white border-b-slate-500 shadow-md rounded-none z-20 overflow-visible">
          <div className="flex items-center">
             <Link
                to="/"
@@ -159,7 +159,7 @@ export const NavigationBar = () => {
                </div>
 
                {localStorage.getItem("token") && (
-                  <div className="bg-black text-white rounded-md">
+                  <div className="bg-[#1E293B] text-white rounded-md">
                      <Typography
                         as="button"
                         type="small"
