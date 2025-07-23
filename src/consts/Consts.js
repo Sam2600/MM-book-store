@@ -42,6 +42,7 @@ export const LOCALIZE_CONST = {
    PICK: "pick",
    READ: "read",
    NO_BOOKMARK: "noBookMark",
+   REMOVE: "remove",
 }
 
 export const LOCALIZE_CODE = {

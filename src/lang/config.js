@@ -81,6 +81,7 @@ i18n
                pick: "Pick",
                read: "Read",
                noBookMark: "There is no book yet",
+               remove: "Remove",
             },
          },
          // Burmese
@@ -128,7 +129,8 @@ i18n
                loadingPopulerNovels: "နာမည်ကြီး စာစဥ်များ ယူနေသည်...",
                pick: "စာစဥ်ရွေးပါ",
                read: "ဖတ်မယ်",
-               noBookMark: "မှတ်ထားသောစာအုပ် မရှိသေးပါ.."
+               noBookMark: "မှတ်ထားသောစာအုပ် မရှိသေးပါ..",
+               remove: "ဖျက်မည်",
             },
          },
       },

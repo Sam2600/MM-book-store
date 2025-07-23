@@ -21,6 +21,12 @@ export const userSlice = createSlice({
    initialState,
 
    reducers: {
+      removeBookMark: (state, action) => {
+         console.log(action.payload)
+         console.log(state.bookMarks)
+         state.bookMarks = state.bookMarks.filter(bm => bm?.id != action.payload)
+         console.log(state.bookMarks.length)
+      }
    },
 
    extraReducers: (builer) => {
@@ -48,4 +54,4 @@ export const getBookMarkStatus = (state) => state.user.status.getBookMarkedStatu
 
 export default userSlice.reducer;
 
-export const { } = userSlice.actions;
+export const { removeBookMark } = userSlice.actions;

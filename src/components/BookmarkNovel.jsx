@@ -1,24 +1,47 @@
-import { Card, Typography, Button } from "@material-tailwind/react";
+import { Card, Typography, Button, Avatar } from "@material-tailwind/react";
 import { Link } from "react-router-dom";
 import { LOCALIZE_CONST, ROUTES } from "../consts/Consts";
 import { useTranslation } from "react-i18next";
+import { api } from "../axios/axios";
+import { useDispatch } from "react-redux";
+import { removeBookMark } from "../states/features/user/userSlice";
 
 
 export const BookmarkNovel = ({ bookmark }) => {
 
    const { t } = useTranslation();
 
+   const dispatch = useDispatch();
+
+   const handleRemove = async (id) => {
+      
+      try {
+
+         const response = await api.patch(`/novels/bookmarks/${id}`);
+
+         if (response.data.status == "OK") {
+            console.log("Bookmark removed successfully");
+            dispatch(removeBookMark(id));
+         }
+
+      } catch (error) {
+         alert("Internal Server Error. Please try again later.");
+         console.error("Error bookmarking novel:", error);
+      }
+   }
+
    return (
       <Card className="flex h-full w-full max-w-[48rem] flex-row shadow-lg">
-         <Card.Header className="m-0 h-full w-2/5 shrink-0 rounded-r-none">
-         <img
-            src={bookmark?.cover_image}
-            alt={bookmark?.title}
-            className="h-full w-full object-cover"
-         />
+         <Card.Header className="m-0 h-auto w-auto shrink-0 rounded-r-none">
+            <Avatar
+               className="w-32 h-36 object-fill"
+               shape="rounded"
+               src={bookmark?.cover_image}
+               alt={bookmark?.title}
+            />
          </Card.Header>
 
-         <Card.Body className="p-4 flex flex-col gap-4">
+         <Card.Body className="flex flex-col h-auto justify-between">
             <Typography
                type="small"
                className="font-bold uppercase font-poppins"
@@ -34,29 +57,27 @@ export const BookmarkNovel = ({ bookmark }) => {
                {bookmark?.view_count}
             </Typography>
 
-            <Typography className="font-poppins text-foreground">
+            {/* <Typography className="font-poppins text-foreground">
                {bookmark?.description}
-            </Typography>
+            </Typography> */}
 
-            <Link to={ ROUTES.NOVEL_BY_ID.replace(":id", bookmark?.id)}>
-               <Button as="button" className="flex w-fit items-center gap-2">
-                  { t(LOCALIZE_CONST.READ) }
-                  <svg
-                     xmlns="http://www.w3.org/2000/svg"
-                     fill="none"
-                     viewBox="0 0 24 24"
-                     stroke="currentColor"
-                     strokeWidth={2}
-                     className="h-4 w-4"
-                  >
-                     <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        d="M17.25 8.25L21 12m0 0l-3.75 3.75M21 12H3"
-                     />
+            <div className="flex gap-3">
+               <Link to={ ROUTES.NOVEL_BY_ID.replace(":id", bookmark?.id)}>
+                  <Button as="button" className="flex w-fit items-center gap-2">
+                     { t(LOCALIZE_CONST.READ) }
+                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-6">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M12 6.042A8.967 8.967 0 0 0 6 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 0 1 6 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 0 1 6-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0 0 18 18a8.967 8.967 0 0 0-6 2.292m0-14.25v14.25" />
+                     </svg>
+                  </Button>
+               </Link>
+
+               <Button as="button" onClick={() => handleRemove(bookmark?.id)} className="flex bg-inherit text-gray-900 w-fit items-center gap-2 hover:bg-[#EEEEEE]">
+                  { t(LOCALIZE_CONST.REMOVE) }
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="red" className="size-5">
+                     <path strokeLinecap="round" strokeLinejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" />
                   </svg>
                </Button>
-            </Link>
+            </div>
          </Card.Body>
       </Card>
    );
