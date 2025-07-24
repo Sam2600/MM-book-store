@@ -9,6 +9,7 @@ import { NavArrowDown } from 'iconoir-react';
 import { Loader } from '../components/Loader';
 import { scrollToTop } from '../functions/helpers';
 import { api } from '../axios/axios';
+import { ROUTES } from '../consts/Consts';
 
 export const NovelDetail = () => {
 
@@ -165,7 +166,7 @@ export const NovelDetail = () => {
                                  vol?.chapters?.length > 0 && (
                                     vol?.chapters?.map((chapt, j) => {
                                        return (
-                                          <NavLink to={`volumes/${vol?.id}/chapters/${chapt?.id}`} className="w-auto mx-2 shadow-lg rounded-md p-4 bg-[#FFFFFF]" key={j}>Chapter({chapt?.chapter_number}) {chapt?.title}</NavLink>
+                                          <NavLink to={ROUTES.CHAPTER_BY_ID.replace(":novel", id).replace(":chapter", chapt?.chapter_number)} className="w-auto mx-2 shadow-lg rounded-md p-4 bg-[#FFFFFF]" key={j}>Chapter({chapt?.chapter_number}) {chapt?.title}</NavLink>
                                        )
                                     })
                                  )

@@ -3,7 +3,7 @@ import { Splide, SplideSlide } from '@splidejs/react-splide';
 import '@splidejs/splide/dist/css/splide.min.css';
 import { NavLink } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { LOCALIZE_CONST } from '../consts/Consts';
+import { LOCALIZE_CONST, ROUTES } from '../consts/Consts';
 
 const itemsPerPage = 5;
 
@@ -37,7 +37,7 @@ export const Popular = ({ isWeek, popular }) => {
                {popular?.length > 0 && popular?.map((novel) => (
                   <SplideSlide key={novel?.id} className="px-1">
                      <div className="transform scale-75"> {/* Shrinking the cards */}
-                        <NavLink to={`novels/${novel?.id}`}>
+                        <NavLink to={ROUTES.NOVEL_BY_ID.replace(":id", novel?.id)}>
                            <Profile novel={novel} />
                         </NavLink>
                      </div>

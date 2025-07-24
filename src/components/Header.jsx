@@ -6,7 +6,7 @@ import { LatestNovel } from './LatestNovel';
 import { NavLink } from 'react-router-dom';
 import { scrollToTop } from '../functions/helpers';
 import { useTranslation } from 'react-i18next';
-import { LOCALIZE_CONST } from '../consts/Consts';
+import { LOCALIZE_CONST, ROUTES } from '../consts/Consts';
 
 export const Header = ({ popular_all_time, latest_novel}) => {
 
@@ -47,7 +47,7 @@ export const Header = ({ popular_all_time, latest_novel}) => {
                         {popular_all_time && popular_all_time.length > 0 ? (
                            popular_all_time.map((novel) => (
                               <SplideSlide key={novel.id}>
-                                 <NavLink to={`novels/${novel?.id}`}>
+                                 <NavLink to={ROUTES.NOVEL_BY_ID.replace(":id", novel?.id)}>
                                     <EditorChoices novel={novel} />
                                  </NavLink>
                               </SplideSlide>
@@ -87,7 +87,7 @@ export const Header = ({ popular_all_time, latest_novel}) => {
                         {latest_novel && latest_novel.length > 0 ? (
                               latest_novel.map((novel) => (
                                  <SplideSlide key={novel.id}>
-                                    <NavLink to={`novels/${novel?.id}`}>
+                                    <NavLink to={ROUTES.NOVEL_BY_ID.replace(":id", novel?.id)}>
                                        <LatestNovel novel={novel} />
                                     </NavLink>
                                  </SplideSlide>

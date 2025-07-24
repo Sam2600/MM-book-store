@@ -134,7 +134,7 @@ export const NavigationBar = () => {
                      <ul className="max-h-60 overflow-y-auto">
                         {filteredNovels?.map((fn, index) => (
                            <div key={fn?.id}>
-                              <NavLink onClick={(e) => handleNavClick(e)} to={`/novels/${fn?.id}`}>
+                              <NavLink onClick={(e) => handleNavClick(e)} to={ROUTES.NOVEL_BY_ID.replace(":id", fn?.id)}>
                                  <li className="cursor-pointer py-2 px-3 hover:bg-slate-100 hover:rounded-md">
                                     {fn?.title}
                                  </li>
