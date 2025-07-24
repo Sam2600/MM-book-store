@@ -5,10 +5,7 @@ import { RouterProvider } from "react-router-dom";
 import { Routes } from "./routes/Routes";
 import { store } from './states/store';
 import { Provider } from 'react-redux';
-import { getNovels } from './states/features/novel/novelSlice';
 import './lang/config';
-
-store.dispatch(getNovels());
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>

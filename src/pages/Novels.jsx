@@ -1,16 +1,23 @@
-import React from 'react'
+import { useEffect } from 'react'
 import { Header } from '../components/Header'
 import { Categories } from '../components/Categories'
 import { Loader } from '../components/Loader';
 import { Populars } from '../components/Populars';
-import { useSelector } from 'react-redux'
-import { getFetchNovels, getAllNovelsStatus } from "../states/features/novel/novelSlice.js";
+import { useDispatch, useSelector } from 'react-redux'
+import { getFetchNovels, getAllNovelsStatus, getNovels } from "../states/features/novel/novelSlice.js";
 
 export const Novels = () => {
 
    const novels = useSelector(getFetchNovels);
+
+   const dispatch = useDispatch();
    
    const status = useSelector(getAllNovelsStatus);
+
+   useEffect(() => {
+      dispatch(getNovels());
+   }, [])
+   
 
    const content =  status == "pending" ?
       <Loader /> :
