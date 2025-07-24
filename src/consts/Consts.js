@@ -61,7 +61,9 @@ export const ROUTES = {
    ABOUT_US: "/about-us",
    CONTACT_US: "/contact-us",
    NOVEL_BY_ID: "/novels/:id",
-   CHAPTER_BY_ID: "/novels/:novel/volumes/:volume/chapters/:chapter"
+   CHAPTER_BY_ID: "/novels/:novel/chapters/:chapter",
+   NOVELS: "/novels",
+   NOVEL_BY_AUTHORS: "/novelsByAuthors",
 }
 
 export const LINKS = [

@@ -1,5 +1,6 @@
 import {api} from "../../../axios/axios";
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import { ROUTES } from "../../../consts/Consts";
 
 const initialState = {
    novels: {},
@@ -20,25 +21,24 @@ const initialState = {
 
 export const getNovels = createAsyncThunk("novels", async () => {
 
-   const response = await api.get("/novels");
+   const response = await api.get(ROUTES.NOVELS);
    return response.data;
 });
 
 export const getNovelById = createAsyncThunk("novels/:id", async (id) => {
 
-   const response = await api.get(`/novels/${id}`);
+   const response = await api.get(ROUTES.NOVEL_BY_ID.replace(":id", id));
    return response.data;
 });
 
-export const getChapterByNovel = createAsyncThunk("novels/novelId/volumes/volumeId/chapters/chapterId", async ({ novel, volume, chapter }) => {
-   
-   const response = await api.get(`/novels/${novel}/volumes/${volume}/chapters/${chapter}`);
+export const getChapterByNovel = createAsyncThunk("novels/novelId/chapters/chapterId", async ({ novel, chapter }) => {
+   const response = await api.get(ROUTES.CHAPTER_BY_ID.replace(":novel", novel).replace(":chapter", chapter));
    return response.data;
 });
 
 export const getNovelsByAuthors = createAsyncThunk("novelsByAuthors", async () => {
 
-   const response = await api.get(`/novelsByAuthors`);
+   const response = await api.get(ROUTES.NOVEL_BY_AUTHORS);
    return response.data;
 });
 
