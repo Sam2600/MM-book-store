@@ -8,6 +8,7 @@ import { Register } from "../pages/Register";
 import { Upload } from "../pages/Upload";
 import { ROUTES } from "../consts/Consts";
 import { MyBooks } from "../pages/MyBooks";
+import { MyProfile } from "../pages/MyProfile";
 
 export const Routes = createBrowserRouter([
    {
@@ -27,7 +28,7 @@ export const Routes = createBrowserRouter([
             element: <Chapter />,
          },
          {
-            path: ROUTES.ACCOUNT,
+            path: ROUTES.SIGN_IN,
             element: <Register />,
          },
          {
@@ -37,6 +38,10 @@ export const Routes = createBrowserRouter([
          {
             path: ROUTES.MY_BOOKS,
             element: <MyBooks />,
+         },
+         {
+            path: ROUTES.MY_PROFILE,
+            element: <MyProfile />
          }
       ],
    },

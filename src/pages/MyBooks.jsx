@@ -27,7 +27,7 @@ export const MyBooks = () => {
                return (
                   <BookmarkNovel key={bm?.id} bookmark={bm} />
                )
-            }) : <div className="mx-auto my-auto text-center font-monip text-pretty font-medium text-lg shadow-lg border p-5 w-8/12">{ t(LOCALIZE_CONST.NO_BOOKMARK) }</div>
+            }) : <div className="mx-auto bg-white my-auto text-center font-monip text-pretty font-medium text-lg shadow-lg border p-5 w-8/12">{ t(LOCALIZE_CONST.NO_BOOKMARK) }</div>
             }
          </div>
       )

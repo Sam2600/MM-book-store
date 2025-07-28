@@ -1,71 +1,61 @@
 import {
    Card,
    Typography,
-   Rating,
+   Chip,
+   Avatar,
 } from "@material-tailwind/react";
 
 export const Profile = ({ novel }) => {
 
    return (
-      <Card className="group relative w-full aspect-[3/4] overflow-hidden cursor-pointer">
-         <div className="absolute inset-0">
-            <img
-            src={novel?.cover_image}
-            alt="profile-picture"
-            className="w-full h-full object-cover transition-transform group-hover:scale-110"
-            />
-            
-            {/* Gradient overlay for better text visibility */}
-            <div className={`absolute inset-0 m-0 h-full w-full rounded-none bg-[url(${novel?.cover_image})] bg-cover bg-center`}>
-            <div className="absolute inset-0 h-full w-full bg-gradient-to-t 
-                           from-black/80 via-black/50 to-black/10 dark:from-black/90 dark:via-black/60 dark:to-black/20" />
+      <Card className="w-full h-full lg:w-[180px] shadow-lg">
+         <Card.Header className="m-0 w-full relative">
+            <div>
+               <Avatar
+                  size="xl"
+                  className="w-full h-72 lg:w-60 lg:h-56 lg:object-fill"
+                  shape="square"
+                  alt={novel?.title}
+                  src={novel?.cover_image}
+               />
+               {/* Gradient Overlay */}
+               <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent pointer-events-none rounded-md" />
             </div>
-         </div>
-   
-         <div className="absolute inset-0 flex flex-col items-center justify-end p-6 text-center">
-            {/* Status badge with original styling */}
-            <div className={`absolute top-4 left-4 z-10 px-2 py-0.5 text-xs font-bold rounded-md
-                        ${novel?.status === "completed" ? "bg-green-600 text-white shadow-sm" : "bg-yellow-400 text-black shadow-sm"}
-                        border border-gray-900/30`}>
+
+            <div
+               className={`absolute top-2 left-2 z-10 px-2 py-0.5 text-xs font-bold rounded-md
+                  ${
+                     novel?.status === 'completed'
+                        ? 'bg-green-600 text-white shadow-sm'
+                        : 'bg-yellow-400 text-black shadow-sm'
+                  }
+                  border border-gray-900/30`}
+            >
                {novel?.status}
             </div>
-   
-            {/* Typography with enhanced styling */}
-            <Typography
-               variant="h6"
-               className="mb-2 text-white font-bold drop-shadow-lg"
-               style={{ 
-                  textShadow: '0 2px 4px rgba(0, 0, 0, 0.7)',
-                  textStroke: '2px white'
-               }}
-            >
-               {novel?.title}
+         </Card.Header>
+
+         <Card.Footer className="flex flex-col gap-1">
+            <Typography variant="h4" className="font-medium tracking-tight font-poppins items-center flex gap-2">
+               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-5">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 6.042A8.967 8.967 0 0 0 6 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 0 1 6 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 0 1 6-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0 0 18 18a8.967 8.967 0 0 0-6 2.292m0-14.25v14.25" />
+               </svg>
+               {novel?.title.slice(0, 10)}
             </Typography>
-            
-            <div className="flex gap-x-2">
-               {novel?.categories?.length > 0 && novel?.categories?.map((category) => (
-                  <Typography
-                     key={category?.id}
-                     variant="h6"
-                     className="mb-2 text-white font-bold drop-shadow-lg"
-                     style={{ 
-                        textShadow: '0 2px 4px rgba(0, 0, 0, 0.7)',
-                        textStroke: '2px white'
-                     }}
-                  >
-                     {category?.name}
-                  </Typography>
-               ))}
-            </div>   
-   
-            {/* Rating with enhanced styling */}
-            <Rating
-               color="warning"
-               value={Math.floor(Math.random() * 5) + 1}
-               readonly
-               className="font-bold text-xl"
-            />
-         </div>
+            <div className="flex flex-shrink justify-start gap-1 mt-auto">
+               {
+                  novel?.categories.length > 0 && (
+                     novel?.categories.map(cate => (
+                        // <Chip isPill={false} key={cate?.id} color="primary" className="w-auto sm:w-auto">
+                        //    <Chip.Label>{cate?.name}</Chip.Label>
+                        // </Chip>
+                        <span key={cate?.id}>{ cate?.name }</span>
+                     ))
+                  )
+               }
+            </div>
+         </Card.Footer>
+
       </Card>
    );
 };
