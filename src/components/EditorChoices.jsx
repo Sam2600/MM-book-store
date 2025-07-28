@@ -7,19 +7,21 @@ export const EditorChoices = ({novel}) => {
    const { t } = useTranslation();
    
    return (
-      <Card className="flex flex-col sm:flex-row w-full border border-slate-400 shadow-lg rounded-md overflow-hidden h-full bg-[#F7F7F7]">
+      <Card className="flex flex-col sm:flex-row w-full bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden h-full">
       {/* Image Section */}
-      {/* <div className="w-full sm:w-1/3 h-60 sm:h-auto sm:flex-shrink-0"> */}
+         {/* <div className="w-full sm:w-1/3 h-60 sm:h-auto sm:flex-shrink-0"> */}
+         <div>
             <Avatar
-            className="w-auto h-56"
+            className="w-full h-72 lg:w-60 lg:h-56 lg:object-fill"
             shape="square"
             alt={novel?.title}
             src={novel?.cover_image}
             />
+         </div>
       {/* </div> */}
 
       {/* Content Section */}
-      <div className="flex flex-col justify-center gap-y-2 p-4 w-full sm:w-2/3">
+      <div className="flex flex-col justify-center gap-y-2 p-4 w-full">
          <Typography variant="small" className="font-semibold tracking-tight font-poppins">
             {novel?.title}
          </Typography>
@@ -27,7 +29,8 @@ export const EditorChoices = ({novel}) => {
             {t(LOCALIZE_CONST.DESCRIPTION)}
          </Typography>
          <Typography className="text-gray-700 text-sm sm:text-base flex-1">
-            {novel?.description?.length > 100 ? novel?.description?.slice(0, 100) + " ..." : novel?.description}
+               {/* {novel?.description?.length > 200 ? novel?.description?.slice(0, 200) + " ..." : novel?.description} */}
+               {novel?.description}
             </Typography>
          <div className="flex gap-2 flex-wrap mt-auto">
             {

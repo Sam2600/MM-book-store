@@ -17,12 +17,13 @@ import { useDebounce } from "../hooks/useDebounce.jsx";
 import { useEffect, useState } from "react";
 import { getFetchNavMenuList, removeExtraMenuItems } from "../states/features/nav/navMenuListSlice.js";
 import { iconMap } from "../functions/helpers.js";
-import { LogOut } from "iconoir-react/regular";
 import { api } from "../axios/axios.js";
 import { useTranslation } from "react-i18next";
-import { LOCALIZE_CODE, LOCALIZE_CONST } from "../consts/Consts.js";
+import { LOCALIZE_CODE, LOCALIZE_CONST, ROUTES } from "../consts/Consts.js";
 import { Switch } from "@material-tailwind/react";
 import i18n from "../lang/config.js";
+import { ProfileMenu } from "./ProfileMenu.jsx";
+import { SignInButton } from "./SignInButton.jsx";
 
 export const NavigationBar = () => {
 
@@ -61,11 +62,12 @@ export const NavigationBar = () => {
       );
    }, []);
 
-   const [isEnglish, setIsEnglish] = useState(false);
+   const [isEnglish, setIsEnglish] = useState(localStorage.getItem("isEn") || false);
 
    const handleLangChange = () => {
       const nextLang = !isEnglish;
       setIsEnglish(nextLang);
+      localStorage.setItem("isEn", nextLang);
       i18n.changeLanguage(nextLang ? LOCALIZE_CODE.ENGLISH : LOCALIZE_CODE.MYANMAR);
    }
 
@@ -157,23 +159,11 @@ export const NavigationBar = () => {
                      {isEnglish ? LOCALIZE_CODE.ENGLISH : LOCALIZE_CODE.MYANMAR}
                   </Typography>
                </div>
-
-               {localStorage.getItem("token") && (
-                  <div className="bg-[#1E293B] text-white rounded-md">
-                     <Typography
-                        as="button"
-                        type="small"
-                        className="flex items-center gap-x-2 p-3 transition-all duration-200 ease-in-out 
-                                 hover:-translate-y-1 hover:text-white active:text-gray-900
-                                 [&>svg]:transition-transform [&>svg]:duration-200 [&>svg]:ease-in-out
-                                 [&>svg]:hover:scale-110 [&>svg]:active:scale-105"
-                        onClick={handleLogOut}
-                     >
-                        <LogOut className="h-4 w-4" />
-                        {t(LOCALIZE_CONST.LOGOUT)}
-                     </Typography>
-                  </div>
-               )}
+               {
+                  localStorage.getItem("token")
+                     ? <ProfileMenu t={t} handleLogOut={handleLogOut} />
+                     : <SignInButton t={t} />
+               }
             </div>
             <IconButton
                size="sm"
@@ -191,22 +181,11 @@ export const NavigationBar = () => {
          <Collapse open={openNav}>
             <NavList />
             <div className="flex flex-row gap-x-4 my-4">
-               {localStorage.getItem("token") && (
-                  <div className="bg-black text-white rounded-md">
-                     <Typography
-                        as="button"
-                        type="small"
-                        className="flex items-center gap-x-2 p-3 transition-all duration-200 ease-in-out 
-                              hover:-translate-y-1 hover:text-white active:text-gray-900
-                              [&>svg]:transition-transform [&>svg]:duration-200 [&>svg]:ease-in-out
-                              [&>svg]:hover:scale-110 [&>svg]:active:scale-105"
-                        onClick={handleLogOut}
-                     >
-                        <LogOut className="h-4 w-4" />
-                        {t(LOCALIZE_CONST.LOGOUT)}
-                     </Typography>
-                  </div>
-               )}
+               {
+                  localStorage.getItem("token")
+                     ? <ProfileMenu t={t} handleLogOut={handleLogOut} />
+                     : <SignInButton t={t} />
+               }
                <div className="flex items-center gap-2 mr-3">
                   <Switch id="switch" color="primary" onClick={handleLangChange} />
                   <Typography as="label"

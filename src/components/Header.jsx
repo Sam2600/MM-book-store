@@ -20,7 +20,7 @@ export const Header = ({ popular_all_time, latest_novel}) => {
       <header className="w-full h-auto lg:-mb-7">
          {/* <div className="mx-auto px-4 py-6"> */}
             <div className="flex flex-col lg:flex-row gap-6 p-5">
-               <section className="flex flex-col gap-5 w-full lg:w-1/2 rounded-md ">
+               <section className="flex flex-col gap-5 w-full lg:w-7/12 rounded-md ">
                   <h2 className="text-xl font-bold tracking-tight font-poppins">{ t(LOCALIZE_CONST.EDITOR_CHOICES) }</h2>
                      <Splide
                         className="h-full w-full"
@@ -61,7 +61,7 @@ export const Header = ({ popular_all_time, latest_novel}) => {
                </section>
 
                {/* Latest Novels Section - Right Side */}
-               <section className="flex flex-col gap-5 w-full lg:w-1/2 rounded-md ">
+               <section className="flex flex-col gap-5 w-full lg:w-5/12 rounded-md ">
                   <h2 className="text-xl font-bold tracking-tight font-poppins">{ t(LOCALIZE_CONST.LATEST_NOVELS) }</h2>
                   {/* <div className="flex flex-col gap-4"> */}
                      <Splide
