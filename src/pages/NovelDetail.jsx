@@ -70,7 +70,7 @@ export const NovelDetail = () => {
          setIsLoading(false);
 
       } else {
-         navigate("/account");
+         navigate(ROUTES.SIGN_IN);
       }
    }
 
