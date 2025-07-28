@@ -5,9 +5,13 @@ import {
    Page,
 } from "iconoir-react";
 import { NavLink } from "react-router-dom";
-import { ROUTES } from "../consts/Consts";
+import { LOCALIZE_CONST, ROUTES } from "../consts/Consts";
+import { useTranslation } from "react-i18next";
 
-export const Breadcrumber = ({novel_id}) => {
+export const Breadcrumber = ({ novel_id }) => {
+   
+   const { t } = useTranslation();
+
    return (
       <Breadcrumb className="gap-2">
 
@@ -17,7 +21,7 @@ export const Breadcrumber = ({novel_id}) => {
             className="rounded bg-primary px-2 py-1 text-primary-foreground border border-transparent hover:bg-white hover:text-primary hover:shadow-lg hover:border hover:border-slate-400"
          >
             <Home className="h-4 w-4" />
-            Home
+            {t(LOCALIZE_CONST.HOME)}
          </Breadcrumb.Link>
 
          <Breadcrumb.Separator />
@@ -28,7 +32,7 @@ export const Breadcrumber = ({novel_id}) => {
             className="rounded px-2 py-1 bg-primary text-primary-foreground border border-transparent hover:bg-white hover:text-primary hover:shadow-lg hover:border hover:border-slate-400"
          >
             <Book className="h-4 w-4" />
-            Novel
+            {t(LOCALIZE_CONST.NOVEL)}
          </Breadcrumb.Link>
 
          <Breadcrumb.Separator />
@@ -37,7 +41,7 @@ export const Breadcrumber = ({novel_id}) => {
             className="rounded bg-white px-2 py-1 text-primary border border-slate-400 shadow-lg"
          >
             <Page className="h-4 w-4 stroke-2"/>
-            Chapter
+            {t(LOCALIZE_CONST.CHAPTER)}
          </Breadcrumb.Link>
 
       </Breadcrumb>

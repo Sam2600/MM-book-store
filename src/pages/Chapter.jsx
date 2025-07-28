@@ -7,10 +7,13 @@ import { useDispatch, useSelector } from 'react-redux'
 import { getChapterByID, getChapterByIdStatus, getChapterByNovel } from '../states/features/novel/novelSlice'
 import { Loader } from '../components/Loader'
 import { scrollToTop } from '../functions/helpers'
-import { ROUTES } from "../consts/Consts";
+import { LOCALIZE_CONST, ROUTES } from "../consts/Consts";
 import { Breadcrumb } from "@material-tailwind/react";
+import { useTranslation } from 'react-i18next'
 
 export const Chapter = () => {
+
+   const { t } = useTranslation();
 
    const {novel, chapter} = useParams();
 
@@ -53,7 +56,7 @@ export const Chapter = () => {
                   }
                >
                   <SkipPrev className="h-4 w-4" />
-                  Back
+                  {t(LOCALIZE_CONST.BACK)}
                </Breadcrumb.Link>
 
                <Breadcrumb.Link
@@ -73,7 +76,7 @@ export const Chapter = () => {
                         : "bg-muted text-muted-foreground border border-muted pointer-events-none opacity-60"}`
                   }
                >
-                  Next
+                  {t(LOCALIZE_CONST.NEXT)}
                   <SkipNext className="h-4 w-4" />
                </Breadcrumb.Link>
 
