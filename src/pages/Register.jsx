@@ -8,6 +8,7 @@ import { useDispatch } from "react-redux";
 import { addExtraMenuItems } from "../states/features/nav/navMenuListSlice";
 import { useTranslation } from "react-i18next";
 import { LOCALIZE_CONST } from "../consts/Consts";
+import { setUser } from "../states/features/user/userSlice";
 
 export const Register = () => {
 
@@ -40,7 +41,7 @@ export const Register = () => {
 
          if(!isForRegister) {
             localStorage.setItem("token", response?.data?.data?.token);
-            localStorage.setItem("user", JSON.stringify(response?.data?.data?.user));
+            dispatch(setUser(response?.data?.data?.user));
          }
          setSuccess(true);
          setserverError("");
