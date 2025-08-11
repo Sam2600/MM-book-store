@@ -44,9 +44,9 @@ export const MyProfile = () => {
                         />
                         <h1 className="text-xl font-bold text-gray-800">{me?.name}</h1>
                         <p className="text-sm text-gray-500 mb-4">{me?.email}</p>
-                        <button className="primary-btn w-full bg-gray-800 hover:bg-gray-700 text-white font-semibold py-2 px-4 rounded-md">
+                        {/* <button className="primary-btn w-full bg-gray-800 hover:bg-gray-700 text-white font-semibold py-2 px-4 rounded-md">
                            Edit Profile
-                        </button>
+                        </button> */}
                      </div>
 
                      {/* Stats Card */}
@@ -85,10 +85,10 @@ export const MyProfile = () => {
                      <div className="card mb-6 bg-white rounded-lg shadow-sm border border-gray-200">
                         <nav className="flex border-b border-gray-200">
                            <TabButton tab={activeTab} handler={() => setActiveTab('works')} tabType={'works'}>
-                              My Works
+                              Published
                            </TabButton>
                            <TabButton tab={activeTab} handler={() => setActiveTab('about')} tabType={'about'}>
-                              About Me
+                              About Author
                            </TabButton>
                         </nav>
                      </div>

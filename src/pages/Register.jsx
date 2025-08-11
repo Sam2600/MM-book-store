@@ -76,10 +76,6 @@ export const Register = () => {
          <div className="flex flex-col w-full lg:w-1/2">
             <div className="flex flex-wrap justify-center">
                <div className="flex flex-col sm:flex-row text-center items-baseline md:max-w-xl lg:max-w-3xl">
-               <h1 className="inline-block mr-5 md:ml-3 lg:ml-6 mb-3 text-center w-50 lg:w-50 md:w-auto border border-gray-800 shadow-lg text-lg sm:text-xl md:text-xl font-semibold text-gray-900 capitalize p-3 rounded-md">
-                  {isForRegister ? t(LOCALIZE_CONST.REGISTER) : t(LOCALIZE_CONST.LOGIN)}
-               </h1>
-
                {success && (
                   <p className="text-white bg-green-500 p-3 rounded-md">
                      {isForRegister ? "Registration" : "Login"} successful!
