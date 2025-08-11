@@ -10,7 +10,7 @@ import {
    Search,
    Xmark
 } from "iconoir-react";
-import { Link, NavLink } from "react-router-dom";
+import { Link, NavLink, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from 'react-redux'
 import { filterNovel, getFilteredNovels } from "../states/features/novel/novelSlice.js";
 import { useDebounce } from "../hooks/useDebounce.jsx";
@@ -30,6 +30,8 @@ export const NavigationBar = () => {
    const { t } = useTranslation();
    
    const dispatch = useDispatch();
+
+   const navigate = useNavigate();
 
    const filteredNovels = useSelector(getFilteredNovels);
 
@@ -102,6 +104,8 @@ export const NavigationBar = () => {
       } catch (error) {
          console.error("Logout failed:", error);
       }
+
+      navigate(ROUTES.HOME);
    }
 
    return (
