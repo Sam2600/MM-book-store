@@ -9,6 +9,8 @@ import { Upload } from "../pages/Upload";
 import { ROUTES } from "../consts/Consts";
 import { MyBooks } from "../pages/MyBooks";
 import { MyProfile } from "../pages/MyProfile";
+import { AuthorProfile } from "../pages/AuthorProfile";
+import { AdTestPage } from "../pages/AdTestPage";
 
 export const Routes = createBrowserRouter([
    {
@@ -42,6 +44,18 @@ export const Routes = createBrowserRouter([
          {
             path: ROUTES.MY_PROFILE,
             element: <MyProfile />
+         },
+         {
+            path: "/demo",
+            element: <AdTestPage />
+         },
+         {
+            path: ROUTES.TO_AUTHOR,
+            element: <AuthorProfile />
+         },
+         {
+            path: ROUTES.UPDATE_CHAPTER,
+            element: <Upload />
          }
       ],
    },
