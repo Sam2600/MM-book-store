@@ -1,10 +1,11 @@
 import { useEffect } from 'react'
+import { motion } from "framer-motion";
 import { Header } from '../components/Header'
 import { Categories } from '../components/Categories'
 import { Loader } from '../components/Loader';
 import { Populars } from '../components/Populars';
 import { useDispatch, useSelector } from 'react-redux'
-import { getFetchNovels, getAllNovelsStatus, getNovels } from "../states/features/novel/novelSlice.js";
+import { getFetchNovels, getAllNovelsStatus, getNovels, cleanNovels } from "../states/features/novel/novelSlice.js";
 
 export const Novels = () => {
 
@@ -16,16 +17,27 @@ export const Novels = () => {
 
    useEffect(() => {
       dispatch(getNovels());
+
+      return () => {
+         dispatch(cleanNovels());
+      }
    }, [])
    
 
    const content =  status == "pending" ?
       <Loader /> :
-      <div className="flex flex-col gap-2">
+      <motion.div
+         layout
+         className="flex flex-col gap-2"
+         initial={{ opacity: 0 }}
+         whileInView={{ opacity: 1, transition: { duration: 0.25 } }}
+         exit={{ opacity: 0 }}
+         viewport={{ once: true }}
+      >
          <Header popular_all_time={novels?.popular_all_time} latest_novel={novels?.latest_novel} />
          <Populars popular_week={novels?.popular_week} popular_month={novels?.popular_month} />
          <Categories categories={novels?.categories} />
-      </div>;
+      </motion.div>;
 
    return content;
 }
