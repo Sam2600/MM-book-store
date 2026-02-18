@@ -3,9 +3,9 @@ import { motion } from "framer-motion";
 import "@splidejs/react-splide/css";
 import { NavLink, useNavigate, useParams } from 'react-router-dom';
 import { useSelector, useDispatch } from "react-redux";
-import { attachNovelByIdBookmark, emptyNovelByIdBookmark, getNovelById, getNovelByID, getNovelByIdStatus } from '../states/features/novel/novelSlice';
-import { Accordion, Chip, Typography, Rating, Avatar } from '@material-tailwind/react';
-import { NavArrowDown } from 'iconoir-react';
+import { attachNovelByIdBookmark, cleanNovels, emptyNovelByIdBookmark, getNovelById, getNovelByID, getNovelByIdStatus } from '../states/features/novel/novelSlice';
+import { Accordion, Chip, Typography, Rating, Avatar, Button } from '@material-tailwind/react';
+import { NavArrowDown, Star, ThreeStarsSolid, ThumbsUp } from 'iconoir-react';
 import { Loader } from '../components/Loader';
 import { scrollToTop } from '../functions/helpers';
 import { api } from '../axios/axios';
@@ -26,11 +26,29 @@ export const NovelDetail = () => {
 
    const [bookMarkText, setBookMarkText] = useState("Add to library");
 
+   // New state for rating
+   const [userRating, setUserRating] = useState(0);
+   const [novelRating, setNovelRating] = useState(0);
+   const [novelRatingCount, setNovelRatingCount] = useState(0);
+   const [isRatingModalOpen, setIsRatingModalOpen] = useState(false);
+
    useEffect(() => {
 
       scrollToTop();
       dispatch(getNovelById(id));
-   }, [])
+
+      return () => {
+         dispatch(cleanNovels());
+      }
+   }, [id, dispatch]);
+
+   // Sync local state when Redux novelById changes
+   useEffect(() => {
+      if (novelById) {
+         setNovelRating(Math.floor(parseFloat(novelById?.average_rating)) || 0);
+         setNovelRatingCount(novelById?.user_rating_count || 0);
+      }
+   }, [novelById]);
 
    const handleBookmark = async () => {
 
@@ -49,7 +67,7 @@ export const NovelDetail = () => {
                if (response.data.status == "OK") {
                   console.log("Bookmark removed successfully");
                   dispatch(emptyNovelByIdBookmark());
-                  setBookMarkText(prev  => "Add to library");
+                  setBookMarkText(prev => "Add to library");
                }
 
             } else {
@@ -74,8 +92,43 @@ export const NovelDetail = () => {
       }
    }
 
+   const handleRatingSubmit = async () => {
+      
+      if (userRating === 0) return;
+
+      setIsLoading(true);
+
+      try {
+
+         let response;
+         
+         response = await api.post(`/novels/${id}/rate`, { rating: userRating });
+
+         if (response.data.status == "OK") {
+            console.log("Novel is rated successfully");
+         }
+
+         // Simulating a successful API response
+         const newRatingCount = novelRatingCount + 1;
+         const newAverageRating = (novelRating * novelRatingCount + userRating) / newRatingCount;
+
+         setNovelRatingCount(newRatingCount);
+         setNovelRating(newAverageRating);
+
+         // Reset the form and close modal
+         setUserRating(0);
+         setIsRatingModalOpen(false);
+
+         console.log("Rating submitted successfully.");
+      } catch (error) {
+         // Use a custom modal instead of alert
+         console.error("Error submitting rating:", error);
+      }
+      setIsLoading(false);
+   };
+
    const content = status == "pending" ? (
-      <Loader/>
+      <Loader />
    ) : (
       <div className="flex flex-col w-11/12 mx-auto h-fit gap-7 my-5">
          <div className="w-full flex flex-row items-start">
@@ -86,7 +139,7 @@ export const NovelDetail = () => {
                exit={{ opacity: 0 }}
             >
                <Avatar
-                  className="w-80 h-72 object-contain"
+                  className="w-80 h-96 object-contain"
                   shape="square"
                   src={novelById?.cover_image}
                   alt={novelById?.title}
@@ -105,7 +158,7 @@ export const NovelDetail = () => {
                <div>
                   <p className="font-serif text-md leading-6 text-justify">{novelById?.description}</p>
                </div>
-               {novelById?.categories?.length > 0 && 
+               {novelById?.categories?.length > 0 &&
                   <div className="flex flex-row items-center gap-2">
                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="size-5">
                         <path fillRule="evenodd" d="M4.5 2A2.5 2.5 0 0 0 2 4.5v3.879a2.5 2.5 0 0 0 .732 1.767l7.5 7.5a2.5 2.5 0 0 0 3.536 0l3.878-3.878a2.5 2.5 0 0 0 0-3.536l-7.5-7.5A2.5 2.5 0 0 0 8.38 2H4.5ZM5 6a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z" clipRule="evenodd" />
@@ -131,7 +184,9 @@ export const NovelDetail = () => {
                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="size-5">
                         <path fillRule="evenodd" d="M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0Zm-5.5-2.5a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0ZM10 12a5.99 5.99 0 0 0-4.793 2.39A6.483 6.483 0 0 0 10 16.5a6.483 6.483 0 0 0 4.793-2.11A5.99 5.99 0 0 0 10 12Z" clipRule="evenodd" />
                      </svg>
-                     <p className="font-serif text-slate-800 text-md">{novelById?.translator?.name}</p>
+                     <NavLink to={ROUTES.TO_AUTHOR.replace(":id", novelById?.translator?.id)}>
+                        <p className="font-serif hover:underline text-slate-800 text-md">{novelById?.translator?.name}</p>
+                     </NavLink>
                   </div>
                   <div className="flex flex-row items-center gap-2">
                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="size-5">
@@ -140,8 +195,26 @@ export const NovelDetail = () => {
                      <button className="font-serif text-slate-800 text-md hover:underline cursor-pointer"
                         disabled={isLoading} onClick={handleBookmark}
                      >
-                        { localStorage.getItem("token") ? novelById?.isAlreadyBooked ? "Remove from library" : bookMarkText : "Login to bookmark ✔" }
+                        {localStorage.getItem("token") ? novelById?.isAlreadyBooked ? "Remove from library" : bookMarkText : "Login to bookmark ✔"}
                      </button>
+                  </div>
+
+                  <div className="flex flex-wrap gap-x-7 items-baseline">
+                     <div className="flex flex-row items-center gap-2">
+                        <Rating color="warning" value={novelRating} readonly />
+                        <p className="font-serif text-slate-800 text-md">{novelRating} / 5 ({novelRatingCount} ratings)</p>
+                        </div>
+                        {
+                           localStorage.getItem("token") &&
+                              <Button
+                                 onClick={() => setIsRatingModalOpen(true)}
+                                 className="w-40 items-center"
+                                 disabled={isLoading}
+                                 >
+                                    <ThumbsUp className="mr-1" />
+                                    Rate this Novel
+                              </Button>
+                        }
                   </div>
                </div>
             </motion.div>
@@ -166,7 +239,7 @@ export const NovelDetail = () => {
                                  vol?.chapters?.length > 0 && (
                                     vol?.chapters?.map((chapt, j) => {
                                        return (
-                                          <NavLink to={ROUTES.CHAPTER_BY_ID.replace(":novel", id).replace(":chapter", chapt?.chapter_number)} className="w-auto mx-2 shadow-lg rounded-md p-4 bg-[#FFFFFF]" key={j}>Chapter({chapt?.chapter_number}) {chapt?.title}</NavLink>
+                                          <NavLink state={{ volume_number: vol?.volume_number, chapter_number: chapt?.id }} to={ROUTES.CHAPTER_BY_ID.replace(":novel", id).replace(":chapter", chapt?.id)} className="w-auto mx-2 shadow-lg rounded-md p-4 bg-[#FFFFFF]" key={j}>Chapter({chapt?.chapter_number}) {chapt?.title}</NavLink>
                                        )
                                     })
                                  )
@@ -179,11 +252,38 @@ export const NovelDetail = () => {
             )}
          </div>
 
-         <div className="flex-col bg-red-50 mx-auto w-10/12 sm:w-10/12 md:w-11/12 lg:w-10/12 ">
-            {/* ...other code... */}
-         </div>
+         {/* Rating Modal */}
+         {isRatingModalOpen && (
+            <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
+               <div className="bg-white p-6 rounded-lg shadow-xl max-w-sm w-full mx-4">
+                  <Typography variant="h5" className="font-semibold font-serif mb-4">
+                     Rate this Novel
+                  </Typography>
+                  <div className="flex justify-center mb-6">
+                     <Rating
+                        value={userRating}
+                        onValueChange={(number) => setUserRating(Number(number))}
+                     />
+                  </div>
+                  <div className="flex justify-end gap-2">
+                     <Button
+                        onClick={() => setIsRatingModalOpen(false)}
+                        disabled={isLoading}
+                     >
+                        Cancel
+                     </Button>
+                     <Button
+                        onClick={handleRatingSubmit}
+                        disabled={isLoading}
+                     >
+                        Submit
+                     </Button>
+                  </div>
+               </div>
+            </div>
+         )}
       </div>
    )
-   
+
    return content;
 }
