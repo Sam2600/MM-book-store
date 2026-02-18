@@ -31,6 +31,7 @@ export const LOCALIZE_CONST = {
    NOVEL: "NOVEL",
    NOVEL_REGISTER: "NOVEL_REGISTER",
    NOVELS: "NOVELS",
+   NO_BOOKS_FOUND: "NO_BOOKS_FOUND",
    ONGOING: "ONGOING",
    ORIGINAL_AUTHOR_NAME: "ORIGINAL_AUTHOR_NAME",
    ORIGINAL_NOVEL_NAME: "ORIGINAL_NOVEL_NAME",
@@ -61,8 +62,9 @@ export const ROUTES = {
    ABOUT_US: "/about-us",
    CHAPTER_BY_ID: "/novels/:novel/chapters/:chapter",
    CONTACT_US: "/contact-us",
-   GET_AUTHOR_INFO_NOVELS: "/getAuthorInfoAndNovels",
+   GET_AUTHOR_INFO_NOVELS: "/author/:id",
    GET_BOOKMARK_COLLECTION: "/getBookMarkedCollection",
+   GET_USER_INFO: "/me",
    HOME: "/",
    LOGOUT: "/logout",
    MY_BOOKS: "/my-books",
@@ -70,10 +72,13 @@ export const ROUTES = {
    NOVEL_BY_AUTHORS: "/novelsByAuthors",
    NOVEL_BY_ID: "/novels/:id",
    NOVELS: "/novels",
+   RATE_NOVEL: "/novels/:id/rate",
    READER_GUIDE: "/guides",
    SEARCH: "/search",
    SIGN_IN: "/sign-in",
+   TO_AUTHOR: "/author/:id",
    UPLOAD_CHAPTER: "/upload-chapters",
+   UPDATE_CHAPTER: "/update-chapters/:novelId/:chapterId",
 }
 
 export const LINKS = [
