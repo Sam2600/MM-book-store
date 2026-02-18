@@ -17,7 +17,7 @@ export const Popular = ({ isWeek, popular }) => {
             <Splide
                options={{
                   type: 'loop',
-                  perPage: itemsPerPage,
+                  perPage: popular?.length >= itemsPerPage ? itemsPerPage : popular?.length,
                   perMove: 1,
                   gap: '10px',
                   arrows: false,
@@ -26,21 +26,22 @@ export const Popular = ({ isWeek, popular }) => {
                   keyboard: true,
                   breakpoints: {
                      640: { perPage: 1 },
-                     768: { perPage: 2 },
-                     1024: { perPage: 3 },
-                     1280: { perPage: itemsPerPage },
+                     768: { perPage: popular?.length >= 2 ? 2 : popular?.length },
+                     1024: { perPage: popular?.length >= 3 ? 3 : popular?.length },
+                     1280: { perPage: popular?.length >= itemsPerPage ? itemsPerPage : popular?.length },
                   },
                }}
             >
-               {popular?.length > 0 && popular?.map((novel) => (
+               {popular?.length > 0 ? popular?.map((novel) => (
                   <SplideSlide key={novel?.id} className="px-1">
                      <NavLink to={ROUTES.NOVEL_BY_ID.replace(":id", novel?.id)}>
                         <Profile novel={novel} />
                      </NavLink>
                   </SplideSlide>
-               ))}
+               )): (
+                  <div className="px-2 text-gray-500">{ t(LOCALIZE_CONST.NO_BOOKS_FOUND)}</div>
+               )}
             </Splide>
-         
       </div>
    )
 }

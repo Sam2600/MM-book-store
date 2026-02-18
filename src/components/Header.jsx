@@ -53,9 +53,7 @@ export const Header = ({ popular_all_time, latest_novel}) => {
                               </SplideSlide>
                            ))
                         ) : (
-                           <SplideSlide>
-                              <div className="px-2 text-gray-500">{ t(LOCALIZE_CONST.LOADING_POPULAR_NOVELS)}</div>
-                           </SplideSlide>
+                           <div className="px-2 text-gray-500">{ t(LOCALIZE_CONST.NO_BOOKS_FOUND)}</div>
                         )}
                      </Splide>
                </section>
@@ -69,7 +67,7 @@ export const Header = ({ popular_all_time, latest_novel}) => {
                         options={{
                            direction: 'ttb',
                            height: '255px',
-                           perPage: 2,   
+                           perPage: latest_novel && latest_novel.length > 1 ? 2 : 1,   
                            wheel: true,
                            autoplay: true,
                            interval: 2500,
@@ -78,7 +76,7 @@ export const Header = ({ popular_all_time, latest_novel}) => {
                            pagination: false,
                            breakpoints: {
                               640: {
-                                 perPage: 2,
+                                 perPage: latest_novel && latest_novel.length > 1 ? 2 : 1,
                                  height: '255px'
                               },
                            },
@@ -93,9 +91,7 @@ export const Header = ({ popular_all_time, latest_novel}) => {
                                  </SplideSlide>
                               ))
                            ) : (
-                              <SplideSlide>
-                                 <div className="px-2 text-gray-500">{ t(LOCALIZE_CONST.LOADING_POPULAR_NOVELS)}</div>
-                              </SplideSlide>
+                              <div className="px-2 text-gray-500">{ t(LOCALIZE_CONST.NO_BOOKS_FOUND)}</div>
                            )
                         }
                      </Splide>
