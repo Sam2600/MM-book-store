@@ -7,14 +7,17 @@ import { scrollToTop } from "../functions/helpers";
 import { useDispatch } from "react-redux";
 import { addExtraMenuItems } from "../states/features/nav/navMenuListSlice";
 import { useTranslation } from "react-i18next";
-import { LOCALIZE_CONST } from "../consts/Consts";
+import { LOCALIZE_CONST, ROUTES } from "../consts/Consts";
 import { setUser } from "../states/features/user/userSlice";
+import { useNavigate } from "react-router-dom";
 
 export const Register = () => {
 
    const { t } = useTranslation();
 
    const dispatch = useDispatch();
+
+   const navigate = useNavigate();
 
    // UseForm hook
    const { register, formState, handleSubmit, reset, getValues } = useForm();
@@ -47,6 +50,7 @@ export const Register = () => {
          setserverError("");
          setLoading(false);
          reset();
+         navigate(ROUTES.HOME)
 
       } catch (error) {
 

@@ -2,7 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 import { LINKS, UPLOAD_MENU, BOOKMARK_MENU } from "../../../consts/Consts";
          
 const initialState = {
-   navMenus: localStorage.getItem("token") ? [...LINKS, BOOKMARK_MENU, UPLOAD_MENU] : LINKS,
+   navMenus: localStorage.getItem("token") ? [...LINKS, BOOKMARK_MENU] : LINKS,
 }
 
 export const navMenuListSlice = createSlice({

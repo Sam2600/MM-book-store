@@ -35,3 +35,16 @@ export const iconMap = {
    SelectFace3d,
    CloudUpload,
 };
+
+export const getLoginUserId = () => {
+   return localStorage.getItem("user") ? JSON.parse(localStorage.getItem("user"))?.id : null;
+};
+
+export const isEmpty = (obj) => Object.keys(obj).length === 0;
+
+export const capitalizeFirstLetter = (string) => {
+   if (!string || string.length === 0) {
+      return ""; // Handles empty strings safely
+   }
+   return string.charAt(0).toUpperCase() + string.slice(1);
+}

@@ -60,7 +60,7 @@ export const LOCALIZE_CODE = {
 
 export const ROUTES = {
    ABOUT_US: "/about-us",
-   CHAPTER_BY_ID: "/novels/:novel/chapters/:chapter",
+   CHAPTER_BY_ID: "/novels/:novel/volumes/:volume/chapters/:chapter",
    CONTACT_US: "/contact-us",
    GET_AUTHOR_INFO_NOVELS: "/author/:id",
    GET_BOOKMARK_COLLECTION: "/getBookMarkedCollection",
@@ -71,6 +71,7 @@ export const ROUTES = {
    MY_PROFILE: "/my-profile",
    NOVEL_BY_AUTHORS: "/novelsByAuthors",
    NOVEL_BY_ID: "/novels/:id",
+   NOVELS_BY_CATEGORY: "/categories/:category/novels",
    NOVELS: "/novels",
    RATE_NOVEL: "/novels/:id/rate",
    READER_GUIDE: "/guides",

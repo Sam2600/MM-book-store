@@ -10,6 +10,7 @@ import { Loader } from '../components/Loader';
 import { scrollToTop } from '../functions/helpers';
 import { api } from '../axios/axios';
 import { ROUTES } from '../consts/Consts';
+import { renderStars } from '../components/commons/Star';
 
 export const NovelDetail = () => {
 
@@ -110,7 +111,7 @@ export const NovelDetail = () => {
 
          // Simulating a successful API response
          const newRatingCount = novelRatingCount + 1;
-         const newAverageRating = (novelRating * novelRatingCount + userRating) / newRatingCount;
+         const newAverageRating = Math.round((novelRating * novelRatingCount + userRating) / newRatingCount);
 
          setNovelRatingCount(newRatingCount);
          setNovelRating(newAverageRating);
@@ -200,8 +201,9 @@ export const NovelDetail = () => {
                   </div>
 
                   <div className="flex flex-wrap gap-x-7 items-baseline">
-                     <div className="flex flex-row items-center gap-2">
-                        <Rating color="warning" value={novelRating} readonly />
+                        <div className="flex flex-row items-center gap-2">
+                           {renderStars(novelRating)}
+                        {/* <Rating color="warning" value={novelRating} readonly /> */}
                         <p className="font-serif text-slate-800 text-md">{novelRating} / 5 ({novelRatingCount} ratings)</p>
                         </div>
                         {
@@ -239,7 +241,7 @@ export const NovelDetail = () => {
                                  vol?.chapters?.length > 0 && (
                                     vol?.chapters?.map((chapt, j) => {
                                        return (
-                                          <NavLink state={{ volume_number: vol?.volume_number, chapter_number: chapt?.id }} to={ROUTES.CHAPTER_BY_ID.replace(":novel", id).replace(":chapter", chapt?.id)} className="w-auto mx-2 shadow-lg rounded-md p-4 bg-[#FFFFFF]" key={j}>Chapter({chapt?.chapter_number}) {chapt?.title}</NavLink>
+                                          <NavLink to={ROUTES.CHAPTER_BY_ID.replace(":novel", id).replace(":volume", vol?.volume_number).replace(":chapter", chapt?.chapter_number)} className="w-auto mx-2 shadow-lg rounded-md p-4 bg-[#FFFFFF]" key={j}>Chapter({chapt?.chapter_number}) {chapt?.title}</NavLink>
                                        )
                                     })
                                  )

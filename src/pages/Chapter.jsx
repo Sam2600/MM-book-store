@@ -5,7 +5,7 @@ import { SkipNext, SkipPrev } from 'iconoir-react'
 import { useDispatch, useSelector } from 'react-redux'
 import { cleanNovels, getChapterByID, getChapterByIdStatus, getChapterByNovel } from '../states/features/novel/novelSlice'
 import { Loader } from '../components/Loader'
-import { scrollToTop } from '../functions/helpers'
+import { getLoginUserId, isEmpty, scrollToTop } from '../functions/helpers'
 import { LOCALIZE_CONST, ROUTES } from "../consts/Consts";
 import { Breadcrumb } from "@material-tailwind/react";
 import { useTranslation } from 'react-i18next'
@@ -14,49 +14,62 @@ import { useState } from 'react'
 import { useEffect } from 'react'
 import { Lock, Xmark } from 'iconoir-react/regular'
 import { api } from '../axios/axios'
+import { user } from '../states/features/user/userSlice'
 
 export const Chapter = () => {
 
    const { t } = useTranslation();
-
-   const {novel, chapter} = useParams();
-
+   
    const dispatch = useDispatch();
 
+   const userState = useSelector(user);
+   
+   const { novel, volume, chapter } = useParams();
+   
    const chapterById = useSelector(getChapterByID);
    const status = useSelector(getChapterByIdStatus);
 
-   const location = useLocation();
-   const volumeNumber = location.state?.volume_number;
-   const chapterNumber = location.state?.chapter_number;
    const [isPurchasing, setIsPurchasing] = useState(false);
+   const [showLoginPrompt, setShowLoginPrompt] = useState(false);
 
    useEffect(() => {
 
       scrollToTop();
-      dispatch(getChapterByNovel({ novel, chapter, volumeNumber }));
+      dispatch(getChapterByNovel({ novel, chapter, volume }));
       
       return () => {
          dispatch(cleanNovels());
       }
-   }, [])
-
-   const user = {
-      coins: 100 // Placeholder for user coins, replace with actual user data from state
-   }
+   }, [novel, volume, chapter])
 
    const handlePurchase = async () => {
-         setIsPurchasing(true);
-         try {
-            await api.post(`/chapters/${chapterById.id}/purchase`);
-            // Re-fetch to get 'content' once unlocked
-            dispatch(getChapterByNovel({ novel, chapter, volumeNumber }));
-         } catch (error) {
-            alert(error.response?.data?.message || "Purchase failed");
-         } finally {
-            setIsPurchasing(false);
+
+      // If user is not logged in
+      if (isEmpty(userState)) {
+         setShowLoginPrompt(true);
+         return;
+      }
+
+      setIsPurchasing(true);
+
+      try {
+
+         await api.post(`novels/${novel}/volumes/${volume}/chapters/${chapter}/purchase`);
+
+         dispatch(getChapterByNovel({ novel, chapter, volume }));
+
+      } catch (error) {
+
+         // If API returns 401 Unauthorized
+         if (error.response?.status === 401) {
+               setShowLoginPrompt(true);
+         } else {
+               alert(error.response?.data?.message || "Purchase failed");
          }
-      };
+      } finally {
+         setIsPurchasing(false);
+      }
+   };
 
    const content = status == "pending" ? (
       <Loader />
@@ -73,7 +86,8 @@ export const Chapter = () => {
                   as={NavLink}
                   to={
                      ROUTES.CHAPTER_BY_ID
-                     .replace(":novel", novel)
+                        .replace(":novel", novel)
+                        .replace(":volume", volume)
                      .replace(":chapter", chapterById?.prev_chapter)
                   }
                   onClick={(e) => {
@@ -94,7 +108,8 @@ export const Chapter = () => {
                   as={NavLink}
                   to={
                      ROUTES.CHAPTER_BY_ID
-                     .replace(":novel", novel)
+                        .replace(":novel", novel)
+                        .replace(":volume", volume)
                      .replace(":chapter", chapterById?.next_chapter)
                   }
                   onClick={(e) => {
@@ -145,35 +160,61 @@ export const Chapter = () => {
                      <Dialog.Overlay>
                         <Dialog.Content className="p-6">
                            <div className="flex items-center justify-between mb-4">
-                              <Typography type="h5">ဝယ်ယူမှုကို အတည်ပြုပါ</Typography>
-                              <Dialog.DismissTrigger as={IconButton} size="sm" variant="ghost" isCircular>
+                              <Typography type="h5">
+                                 {showLoginPrompt ? "အကောင့်ဝင်ရန် လိုအပ်သည်" : "ဝယ်ယူမှုကို အတည်ပြုပါ"}
+                              </Typography>
+                              <Dialog.DismissTrigger as={IconButton} size="sm" variant="ghost" isCircular onClick={() => setShowLoginPrompt(false)}>
                                  <Xmark className="h-5 w-5" />
                               </Dialog.DismissTrigger>
                            </div>
 
-                           <Typography className="mb-8 text-slate-600">
-                              "<b>{chapterById?.title}</b>" ကို {chapterById?.price} coins ဖြင့် ဝယ်ယူရန် သေချာပါသလား?
+                           {showLoginPrompt ? (
+                              // LOGIN REDIRECT VIEW
+                              <div className="flex flex-col items-center py-4">
+                                 <Typography className="mb-6 text-center text-slate-600">
+                                 ဤအပိုင်းကို ဝယ်ယူရန်အတွက် ဦးစွာ အကောင့်ဝင်ပေးရန် လိုအပ်ပါသည်။
+                                 </Typography>
+                                 <div className="flex gap-3 w-full">
+                                 <Dialog.DismissTrigger as={Button} variant="ghost" className="flex-1" onClick={() => setShowLoginPrompt(false)}>
+                                    နောက်မှ
+                                 </Dialog.DismissTrigger>
+                                 <Button 
+                                    as={NavLink} 
+                                    to={ROUTES.SIGN_IN} // Ensure this route is defined in your Consts
+                                    color="amber" 
+                                    className="flex-1 text-center flex items-center justify-center"
+                                 >
+                                    Login ဝင်မည်
+                                 </Button>
+                                 </div>
+                              </div>
+                           ) : (
+                           // STANDARD PURCHASE VIEW
+                           <>
+                              <Typography className="mb-8 text-slate-600">
+                                 လက်ရှိ အပိုင်းဆက်အား 10 coins ဖြင့် ဝယ်ယူရန် သေချာပါသလား?
                               <br />
                               <span className="text-sm mt-2 block italic text-slate-400">
-                                 Your balance: {user?.coins || 0} Coins
+                                 Your balance: {userState?.coins || 0} Coins
                               </span>
-                           </Typography>
+                              </Typography>
 
-                           <div className="flex justify-end gap-3">
+                              <div className="flex justify-end gap-3">
                               <Dialog.DismissTrigger as={Button} variant="ghost" color="secondary">
                                  မလုပ်တော့ပါ
                               </Dialog.DismissTrigger>
                               
-                              {/* Confirming also dismisses the dialog on success */}
                               <Button 
                                  color="amber" 
                                  loading={isPurchasing}
-                                 disabled={user?.coins < chapterById?.price}
+                                 disabled={userState && userState?.coins < chapterById?.price}
                                  onClick={handlePurchase}
                               >
                                  ဝယ်ယူမည်
                               </Button>
-                           </div>
+                              </div>
+                           </>
+                        )}
                         </Dialog.Content>
                      </Dialog.Overlay>
                   </Dialog>

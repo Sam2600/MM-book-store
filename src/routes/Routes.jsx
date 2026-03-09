@@ -8,9 +8,12 @@ import { Register } from "../pages/Register";
 import { Upload } from "../pages/Upload";
 import { ROUTES } from "../consts/Consts";
 import { MyBooks } from "../pages/MyBooks";
-import { MyProfile } from "../pages/MyProfile";
 import { AuthorProfile } from "../pages/AuthorProfile";
 import { AdTestPage } from "../pages/AdTestPage";
+import { Profile } from "../pages/Profile";
+import { NormalProfile } from "../pages/NormalProfile";
+import { ProfileDetail } from "../pages/ProfileDetail";
+import { CategoryPage } from "../pages/CategoryPage";
 
 export const Routes = createBrowserRouter([
    {
@@ -43,7 +46,7 @@ export const Routes = createBrowserRouter([
          },
          {
             path: ROUTES.MY_PROFILE,
-            element: <MyProfile />
+            element: <Profile />
          },
          {
             path: "/demo",
@@ -51,11 +54,23 @@ export const Routes = createBrowserRouter([
          },
          {
             path: ROUTES.TO_AUTHOR,
-            element: <AuthorProfile />
+            element: <ProfileDetail />
          },
          {
             path: ROUTES.UPDATE_CHAPTER,
             element: <Upload />
+         },
+         {
+            path: "/a",
+            element: <NormalProfile />
+         },
+         {
+            path: "/b",
+            element: <AuthorProfile />
+         },
+         {
+            path: ROUTES.NOVELS_BY_CATEGORY,
+            element: <CategoryPage />
          }
       ],
    },

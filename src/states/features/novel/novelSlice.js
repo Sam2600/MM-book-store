@@ -1,6 +1,7 @@
 import {api} from "../../../axios/axios";
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { ROUTES } from "../../../consts/Consts";
+import { getLoginUserId } from "../../../functions/helpers";
 
 const initialState = {
    novels: {},
@@ -13,10 +14,15 @@ const initialState = {
       getChapterById: "idle",
       postNovels: "idle",
       getNovelsByAuthor: "idle",
+      getNovelsByCategory: "idle",
    },
    novelByAuthor: [],
    novelById: {},
-   chapterById: {}
+   chapterById: {},
+
+   page: 1,
+   hasMore: true,
+   categoryNovels: [],
 }
 
 export const getNovels = createAsyncThunk("novels", async () => {
@@ -27,12 +33,19 @@ export const getNovels = createAsyncThunk("novels", async () => {
 
 export const getNovelById = createAsyncThunk("novels/:id", async (id) => {
 
-   const response = await api.get(ROUTES.NOVEL_BY_ID.replace(":id", id));
+   const user_id = getLoginUserId();
+   const route = ROUTES.NOVEL_BY_ID.replace(":id", id).concat(`?user_id=${user_id}`)
+   const response = await api.get(route);
    return response.data;
 });
 
-export const getChapterByNovel = createAsyncThunk("novels/novelId/chapters/chapterId", async ({ novel, chapter }) => {
-   const response = await api.get(ROUTES.CHAPTER_BY_ID.replace(":novel", novel).replace(":chapter", chapter));
+export const getChapterByNovel = createAsyncThunk("novels/novelId/chapters/chapterId", async ({ novel, chapter, volume }) => {
+   const user_id = getLoginUserId();
+   const response = await api.get(ROUTES.CHAPTER_BY_ID.replace(":novel", novel).replace(":volume", volume).replace(":chapter", chapter), {
+      params: {
+         user_id: user_id || undefined // Using undefined usually prevents the key from being sent
+      }
+   });
    return response.data;
 });
 
@@ -40,6 +53,11 @@ export const getNovelsByAuthors = createAsyncThunk("novelsByAuthors", async () =
 
    const response = await api.get(ROUTES.NOVEL_BY_AUTHORS);
    return response.data;
+});
+
+export const getNovelsByCategory = createAsyncThunk("novels/getNovelsByCategory", async ({ category, page }) => {
+   const response = await api.get(`/categories/${category}/novels?page=${page}`);
+   return response.data; // Expecting { data: [...], current_page: 1, last_page: 10 }
 });
 
 export const novelSlice = createSlice({
@@ -70,6 +88,31 @@ export const novelSlice = createSlice({
 
       attachNovelByIdBookmark: (state) => {
          state.novelById.isAlreadyBooked = true;
+      },
+
+      /**
+       * @description clean up function to clean stored variables, when page is changed
+       * @param {object} state 
+       */
+      cleanNovels: (state) => {
+         state.novels =  {},
+         state.all_novel = [],
+         state.filtered_novels = [],
+         state.status =  {
+            getNovels: "idle",
+            getNovelById: "idle",
+            getChapterById: "idle",
+            postNovels: "idle",
+            getNovelsByAuthor: "idle",
+         },
+         state.novelByAuthor = [],
+         state.novelById = {},
+         state.chapterById = {}
+      },
+      cleanCategoryNovels: (state) => {
+         state.categoryNovels = [];
+         state.page = 1;
+         state.hasMore = true;
       }
    },
    extraReducers: (builer) => {
@@ -142,6 +185,25 @@ export const novelSlice = createSlice({
             console.log(action.error);
             state.status.getNovelsByAuthor = "failed";
          })
+      
+         .addCase(getNovelsByCategory.pending, (state) => {
+            state.status.getNovelsByCategory = "pending";
+         })
+      
+         .addCase(getNovelsByCategory.fulfilled, (state, action) => {
+               state.status.getNovelsByCategory = "success";
+               // Append new novels to the existing list
+               state.page += 1;
+               state.categoryNovels = [...state.categoryNovels, ...action.payload.data];
+               state.hasMore = action.payload.current_page < action.payload.last_page;
+            
+               console.log(state.categoryNovels);
+         })
+   
+         .addCase(getNovelsByCategory.rejected, (state, action) => {
+            console.log(action.error);
+            state.status.getNovelsByCategory = "failed";
+         });
    },
 })
 
@@ -166,6 +228,12 @@ export const getAllMappedCategories = (state) => state.novel.categories?.map(cat
    }
 });
 
+export const page = (state) => state.novel.page;
+
+export const hasMore = (state) => state.novel.hasMore;
+
+export const getNovelsByChapter = (state) => state.novel.categoryNovels;
+
 export const getAllNovelsStatus = (state) => state.novel.status.getNovels;
 
 export const getNovelByIdStatus = (state) => state.novel.status.getNovelById;
@@ -174,6 +242,9 @@ export const getNovelsByAuthorStatus = (state) => state.novel.status.getNovelsBy
 
 export const getChapterByIdStatus = (state) => state.novel.status.getChapterById;
 
+export const getNovelsByChapterStatus = (state) => state.novel.status.getNovelsByCategory;
+
+
 export default novelSlice.reducer;
 
-export const { filterNovel, emptyNovelByIdBookmark, attachNovelByIdBookmark } = novelSlice.actions;
+export const { filterNovel, emptyNovelByIdBookmark, attachNovelByIdBookmark, cleanNovels, cleanCategoryNovels } = novelSlice.actions;

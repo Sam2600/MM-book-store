@@ -38,8 +38,6 @@ import makeAnimated from "react-select/animated";
 import { scrollToTop } from "../functions/helpers";
 import { useTranslation } from "react-i18next";
 import { LOCALIZE_CONST } from "../consts/Consts";
-import { useParams, useNavigate } from "react-router-dom"; // Add this
-import { getEditDataByChapterId, getNovelInfoByChapterId } from "../states/features/user/userSlice";
 
 const modules = {
    toolbar: [
@@ -55,11 +53,23 @@ export const Upload = () => {
 
    const { t } = useTranslation();
 
-   const { novelId, chapterId } = useParams(); // Get the novel ID and chapter ID from URL if it exists
+   // Main Form
+   const {
+      register,
+      formState: { errors, isSubmitting },
+      handleSubmit,
+      reset,
+      control,
+   } = useForm();
 
-   const navigate = useNavigate();
-
-   const isEditMode = Boolean(chapterId);
+   // Modal box form
+   const {
+      register: register2,
+      handleSubmit: handleSubmit2,
+      formState: { errors: errors2 },
+      reset: reset2,
+      control: control2
+   } = useForm();
 
    const [isPopUpOpen, setIsPopUpOpen] = useState(false);
    const [isNovelRegisterSuccess, setIsNovelRegisterSuccess] = useState(false);
@@ -71,69 +81,21 @@ export const Upload = () => {
    const novelByAuthor = useSelector(novelsByAuthor);
    const categories = useSelector(getAllMappedCategories);
    const status = useSelector(getNovelsByAuthorStatus);
-   const editData = useSelector(getNovelInfoByChapterId);
 
-   // Main Form
-   const {
-      register,
-      formState: { errors, isSubmitting },
-      handleSubmit,
-      reset,
-      control,
-   } = useForm({
-      values: {
-         novel_id: novelId,
-         volume_title: isEditMode ? editData?.volume?.volume_title : "",
-         volume_number: isEditMode ? editData?.volume?.volume_number : 1,
-         chapter_number: isEditMode ? editData?.chapter_number : 1,
-         title: isEditMode ? editData?.title || "" : "",
-         content: isEditMode ? editData?.content || "" : "",
-      }
-   });
-
-   // Modal box form
-   const {
-      register: register2,
-      handleSubmit: handleSubmit2,
-      formState: { errors: errors2 },
-      reset: reset2,
-      control: control2
-   } = useForm();
-   
-   // 1. Fetch data if in Edit Mode
-   useEffect(() => {
-      if (isEditMode) {
-         const fetchChapter = async () => {
-            try {
-               dispatch(getEditDataByChapterId({ chapterId: chapterId }));
-               // Use reset() from react-hook-form to populate the fields
-            } catch (error) {
-               setFeedback({ type: "error", message: "Failed to load chapter data." });
-            }
-         };
-         fetchChapter();
-      }
-   }, [chapterId, isEditMode, reset]);
-
-   // 2. Modified onSubmit to handle both POST and PUT
    const onSubmit = async (data) => {
       try {
+
          const novel_name = novelByAuthor?.find(nba => nba.id == data.novel_id)?.title;
-         
-         if (isEditMode) {
-            // UPDATE PROCESS
-            await api.put(`/chapters/${chapterId}`, { ...data, novel_name });
-            setFeedback({ type: "success", message: "Chapter updated successfully!" });
-         } else {
-            // CREATE PROCESS
-            await api.post("/chapters", { ...data, novel_name });
-            setFeedback({ type: "success", message: "Chapter uploaded successfully!" });
-            reset();
-         }
+
+         await api.post("/chapters", { ...data, novel_name });
+
+         setFeedback({ type: "success", message: "Chapter uploaded successfully!" });
+
+         reset();
       } catch (error) {
          setFeedback({ 
             type: "error", 
-            message: error?.response?.data?.message || "An error occurred." 
+            message: error?.response?.data?.message || "An error occurred during upload." 
          });
       }
       scrollToTop();
@@ -291,7 +253,7 @@ export const Upload = () => {
                            <select
                               className={`w-full bg-white p-2.5 border rounded-lg transition-all focus:ring-2 focus:ring-blue-500/20 ${errors.novel_id ? "border-red-500" : "border-slate-300"}`}
                               {...register("novel_id", {
-                                 required: "Please select a novel",
+                              required: "Please select a novel",
                               })}
                            >
                               <option value="">{t(LOCALIZE_CONST.PICK)}</option>
