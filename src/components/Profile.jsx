@@ -1,19 +1,6 @@
-import {
-   Card,
-   Typography,
-   Chip,
-   Avatar,
-} from "@material-tailwind/react";
-import { useMemo } from "react";
+import { Card, Typography, Avatar } from "@material-tailwind/react";
 
 export const Profile = ({ novel }) => {
-
-   const randomCategories = useMemo(() => {
-      if (!novel?.categories) return [];
-      return [...novel.categories]
-         .sort(() => Math.random() - 0.5)
-         .slice(0, 2);
-   }, [novel?.categories]);
 
    return (
       <div>

@@ -189,22 +189,34 @@ export const novelSlice = createSlice({
          .addCase(getNovelsByCategory.pending, (state) => {
             state.status.getNovelsByCategory = "pending";
          })
-      
+
          .addCase(getNovelsByCategory.fulfilled, (state, action) => {
-               state.status.getNovelsByCategory = "success";
-               // Append new novels to the existing list
-               state.page += 1;
-               state.categoryNovels = [...state.categoryNovels, ...action.payload.data];
-               state.hasMore = action.payload.current_page < action.payload.last_page;
+            state.status.getNovelsByCategory = "success";
             
-               console.log(state.categoryNovels);
+            // Standard Laravel success wrapper: { data: { current_page, data: [], ... } }
+            const paginator = action.payload.data; 
+
+            if (paginator && Array.isArray(paginator.data)) {
+               // PREVENT DUPLICATES: Only add if the IDs aren't already there
+               const newNovels = paginator.data.filter(
+                     (newNovel) => !state.categoryNovels.find((old) => old.id === newNovel.id)
+               );
+
+               state.categoryNovels = [...state.categoryNovels, ...newNovels];
+               
+               // Update to the NEXT page
+               state.page = paginator.current_page + 1;
+               
+               // Update hasMore
+               state.hasMore = paginator.current_page < paginator.last_page;
+            }
          })
-   
+
          .addCase(getNovelsByCategory.rejected, (state, action) => {
-            console.log(action.error);
+            console.error("Fetch Error:", action.error);
             state.status.getNovelsByCategory = "failed";
          });
-   },
+      },
 })
 
 export const getFetchNovels = (state) => state.novel.novels;

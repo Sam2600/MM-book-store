@@ -14,7 +14,7 @@ export const navMenuListSlice = createSlice({
    reducers: {
 
       addExtraMenuItems: (state) => {
-         state.navMenus = [...LINKS, BOOKMARK_MENU, UPLOAD_MENU];
+         state.navMenus = [...LINKS, BOOKMARK_MENU];
       },
 
       removeExtraMenuItems: (state) => {
