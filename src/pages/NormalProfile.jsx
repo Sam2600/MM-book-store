@@ -1,118 +1,95 @@
-import { Typography, Card, CardBody, Avatar, Chip, Button } from "@material-tailwind/react";
-import { Bookmark, Coins, UserCircle } from "iconoir-react";
+import { Typography, Card, CardBody, Avatar, Button } from "@material-tailwind/react";
+import { Bookmark, UserCircle, Calendar, BookStack } from "iconoir-react";
 import { useDispatch, useSelector } from "react-redux";
-import { NavLink } from "react-router-dom";
 import { getBookMarkedCollection, getBookMarks, getBookMarkStatus, user } from "../states/features/user/userSlice";
 import { toHumanReadableDates } from "../functions/helpers";
 import { DEFAULT_IMG_CHAR } from "../consts/Consts";
-import { useTranslation } from "react-i18next";
 import { useEffect } from "react";
 import { cleanNovels } from "../states/features/novel/novelSlice";
 import { BookmarkNovel } from "../components/BookmarkNovel";
 import { Loader } from "../components/Loader";
 
 export const NormalProfile = () => {
-
    const dispatch = useDispatch();
-   
-   const { t } = useTranslation();
-   
    const currentUser = useSelector(user);
-
    const status = useSelector(getBookMarkStatus);
-
    const bookMarks = useSelector(getBookMarks);
 
    useEffect(() => {
-   
       dispatch(getBookMarkedCollection());
-   
-      return () => {
-         dispatch(cleanNovels());
-      }
-   }, []);
+      return () => dispatch(cleanNovels());
+   }, [dispatch]);
 
-   let content = null;
-         
-   if (status == "pending") {
-      content = <Loader />;
-   } else {
-      content = (
-         bookMarks?.length > 0 ? (
-            <div className="w-11/12 mx-auto my-auto flex flex-col gap-5 items-center">
-               {bookMarks.map(bm => <BookmarkNovel key={bm?.id} bookmark={bm} />)}
-            </div>
-         ) : (
-            <div className="text-center py-20 bg-slate-50 rounded-xl border border-dashed border-slate-300">
-               <UserCircle className="h-12 w-12 mx-auto text-slate-300 mb-2" />
-               <Typography color="gray">သိမ်းဆည်းထားသော စာအုပ်မရှိသေးပါ။</Typography>
-            </div>
-         )
-      )
-   }
+   let content = status === "pending" ? (
+      <div className="flex justify-center py-20"><Loader /></div>
+   ) : bookMarks?.length > 0 ? (
+      <div className="grid grid-cols-1 gap-6">
+         {bookMarks.map(bm => <BookmarkNovel key={bm?.id} bookmark={bm} />)}
+      </div>
+   ) : (
+      <div className="text-center py-20 bg-white rounded-2xl border border-dashed border-slate-300 shadow-sm">
+         <UserCircle className="h-16 w-16 mx-auto text-slate-200 mb-4" />
+         <Typography className="text-slate-500 font-medium font-poppins">သိမ်းဆည်းထားသော စာအုပ်မရှိသေးပါ။</Typography>
+      </div>
+   );
 
    return (
-      <div className="w-11/12 mx-auto py-10 flex flex-col lg:flex-row gap-8">
-         
-         {/* LEFT SIDEBAR: User Info */}
-         <div className="w-full lg:w-1/3 flex flex-col gap-6">
-         <Card className="border border-slate-200 shadow-sm">
-            <CardBody className="flex flex-col items-center text-center">
-               {/* <Avatar
-                     size="xl"
-                     variant="circular"
-                     src={currentUser?.avatar || "https://docs.material-tailwind.com/img/face-2.jpg"}
-                     alt="user-avatar"
-                     className="mb-4 border-2 border-primary p-0.5"
-                  /> */}
-               <img
-                  src={DEFAULT_IMG_CHAR.replace(":char", currentUser?.name?.charAt(0) || 'U')}
-                  className="w-24 h-24 rounded-full mx-auto mb-4 border-4 border-white shadow-md"
-                  alt="profile"
-               />
-               <Typography variant="h5" color="blue-gray">
-               {currentUser?.name || "User Name"}
-               </Typography>
-               <Typography variant="small" className="text-slate-500 font-normal">
-               {currentUser?.email}
-               </Typography>
+      <div className="min-h-screen bg-gray-50/50 pb-20">
+         <div className="container mx-auto px-4 py-10 flex flex-col lg:flex-row gap-10">
+            
+            {/* LEFT SIDEBAR: User Info */}
+            <div className="w-full lg:w-96 flex-shrink-0">
+               <Card className="border border-slate-200 shadow-sm sticky top-10">
+                  <CardBody className="flex flex-col items-center p-8">
+                     <div className="relative mb-6">
+                        <img
+                           src={DEFAULT_IMG_CHAR.replace(":char", currentUser?.name?.charAt(0) || 'U')}
+                           className="w-28 h-28 rounded-full border-4 border-white shadow-xl ring-1 ring-slate-100"
+                           alt="profile"
+                        />
+                        <div className="absolute bottom-1 right-1 h-5 w-5 bg-green-500 border-2 border-white rounded-full"></div>
+                     </div>
+                     
+                     <Typography type="h5" className="text-slate-800 font-black font-poppins mb-1 text-xl">
+                        {currentUser?.name || "User Name"}
+                     </Typography>
+                     <Typography className="text-slate-400 font-medium text-sm mb-8">
+                        {currentUser?.email}
+                     </Typography>
 
-               <div className="grid grid-cols-2 gap-4 w-full mt-8 border-t pt-6">
-                  {/* <div className="flex flex-col items-center border-r">
-                     <Typography variant="h4" color="blue-gray">{currentUser?.coins || 0}</Typography>
-                     <Typography variant="small" className="text-slate-500 uppercase flex items-center gap-1">
-                        <Coins className="h-3 w-3" /> Coins
-                     </Typography>
-                  </div> */}
-                  <div className="text-sm text-gray-500">{toHumanReadableDates(currentUser?.created_at)}</div>      
-                  <div className="flex flex-col items-center">
-                     <Typography variant="small" className="text-slate-500 flex items-center gap-1">
-                           <Bookmark className="h-3 w-3" /> Saved : 
-                           <Typography variant="h4" color="blue-gray">{bookMarks?.length} Books</Typography>
-                     </Typography>
+                     <div className="w-full space-y-4 border-t pt-8">
+                        <div className="flex items-center justify-between text-slate-600 bg-slate-50 p-3 rounded-xl">
+                           <div className="flex items-center gap-2">
+                              <Calendar className="h-4 w-4 text-blue-500" />
+                              <span className="text-xs font-bold uppercase tracking-wider">Joined</span>
+                           </div>
+                           <span className="text-sm font-black">{toHumanReadableDates(currentUser?.created_at)}</span>
+                        </div>
+                        
+                        <div className="flex items-center justify-between text-slate-600 bg-slate-50 p-3 rounded-xl">
+                           <div className="flex items-center gap-2">
+                              <BookStack className="h-4 w-4 text-purple-500" />
+                              <span className="text-xs font-bold uppercase tracking-wider">Library</span>
+                           </div>
+                           <span className="text-sm font-black">{bookMarks?.length} Books</span>
+                        </div>
+                     </div>
+                  </CardBody>
+               </Card>
+            </div>
+
+            {/* RIGHT CONTENT: Saved Novels */}
+            <div className="flex-1">
+               <div className="flex items-center gap-3 mb-8">
+                  <div className="p-2 bg-blue-600 rounded-lg shadow-lg shadow-blue-100">
+                     <Bookmark className="h-6 w-6 text-white" />
                   </div>
-               </div>
-            </CardBody>
-         </Card>
-
-         {/* HELP CARD (Optional) */}
-            {/* <Card className="bg-slate-50 border border-slate-200">
-               <CardBody>
-                  <Typography variant="h6" className="mb-2">Need more coins?</Typography>
-                  <Typography variant="small" className="text-slate-600 mb-4">
-                     Watch ads or top up to unlock more chapters of your favorite novels.
+                  <Typography type="h3" className="text-2xl font-black text-slate-800 font-poppins">
+                     Reading List
                   </Typography>
-                  <Button size="sm" color="amber" isFullWidth>Get Coins</Button>
-               </CardBody>
-            </Card> */}
-         </div>
-
-         {/* RIGHT CONTENT: Saved Novels */}
-         <div className="w-full lg:w-2/3">
-         <Typography variant="h4" color="blue-gray" className="mb-6 flex items-center gap-2">
-            <Bookmark /> သိမ်းဆည်းထားသော စာအုပ်များ
-         </Typography>
-         {content}
+               </div>
+               {content}
+            </div>
          </div>
       </div>
    );

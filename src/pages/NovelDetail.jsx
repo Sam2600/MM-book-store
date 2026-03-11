@@ -1,11 +1,32 @@
 import { useEffect, useState } from 'react'
-import { motion } from "framer-motion";
-import "@splidejs/react-splide/css";
+import { motion, AnimatePresence } from "framer-motion";
 import { NavLink, useNavigate, useParams } from 'react-router-dom';
 import { useSelector, useDispatch } from "react-redux";
-import { attachNovelByIdBookmark, cleanNovels, emptyNovelByIdBookmark, getNovelById, getNovelByID, getNovelByIdStatus } from '../states/features/novel/novelSlice';
-import { Accordion, Chip, Typography, Rating, Avatar, Button } from '@material-tailwind/react';
-import { NavArrowDown, Star, ThreeStarsSolid, ThumbsUp } from 'iconoir-react';
+import { 
+   attachNovelByIdBookmark, 
+   cleanNovels, 
+   emptyNovelByIdBookmark, 
+   getNovelById, 
+   getNovelByID, 
+   getNovelByIdStatus 
+} from '../states/features/novel/novelSlice';
+import { 
+   Accordion, 
+   Chip, 
+   Typography, 
+   Rating, 
+   Button, 
+   Card,
+   CardBody 
+} from '@material-tailwind/react';
+import { 
+   NavArrowDown, 
+   Bookmark, 
+   Eye, 
+   User, 
+   ThumbsUp, 
+   BookStack 
+} from 'iconoir-react';
 import { Loader } from '../components/Loader';
 import { scrollToTop } from '../functions/helpers';
 import { api } from '../axios/axios';
@@ -131,179 +152,196 @@ export const NovelDetail = () => {
       setIsLoading(false);
    };
 
-   const content = status == "pending" ? (
-      <Loader />
-   ) : (
-      <div className="flex flex-col w-11/12 mx-auto h-fit gap-7 my-5">
-         <div className="w-full flex flex-row items-start">
-            <motion.div
-               className="w-full sm:w-8/12 md:w-6/12 lg:w-4/12"
-               initial={{ opacity: 0, x: "-100vw" }}
-               animate={{ opacity: 1, x: 0, transition: { duration: 1.2 } }}
-               exit={{ opacity: 0 }}
-            >
-               <Avatar
-                  className="w-80 h-96 object-contain"
-                  shape="square"
-                  src={novelById?.cover_image}
-                  alt={novelById?.title}
-               />
-            </motion.div>
+   if (status === "pending") return <Loader />;
 
-            <motion.div
-               className="flex flex-col justify-start sm:w-10/12 md:w-6/12 lg:w-8/12 gap-7"
-               initial={{ opacity: 0, x: "100vw" }}
-               animate={{ opacity: 1, x: 0, transition: { duration: 1.2 } }}
-               exit={{ opacity: 0 }}
-            >
-               <Typography variant="h1" className="font-semibold text-xl font-serif">
-                  {novelById?.title}
-               </Typography>
-               <div>
-                  <p className="font-serif text-md leading-6 text-justify">
-                     {/* If not expanded and longer than limit, truncate. Otherwise, show full. */}
-                     {novelById?.description?.length > descriptionLimit && !isExpanded
-                        ? `${novelById.description.substring(0, descriptionLimit)}...`
-                        : novelById?.description}
+   return (
+      <div className="min-h-screen bg-gray-50/50 pb-20">
+         {/* Hero Section */}
+         <div className="relative w-full bg-white border-b border-gray-200 pt-10 pb-16 mb-10 shadow-sm">
+            <div className="container mx-auto px-4 lg:px-8">
+               <div className="flex flex-col lg:flex-row gap-12 items-center lg:items-start">
+                  
+                  {/* Book Cover */}
+                  <motion.div 
+                     initial={{ opacity: 0, scale: 0.9 }}
+                     animate={{ opacity: 1, scale: 1 }}
+                     className="w-64 h-96 flex-shrink-0 shadow-2xl rounded-xl overflow-hidden border-4 border-white"
+                  >
+                     <img 
+                        src={novelById?.cover_image} 
+                        alt={novelById?.title}
+                        className="w-full h-full object-cover"
+                     />
+                  </motion.div>
 
-                     {/* Only show the button if the description is actually longer than the limit */}
-                     {novelById?.description?.length > descriptionLimit && (
-                        <button
-                           onClick={() => setIsExpanded(!isExpanded)}
-                           className="ml-2 text-blue-600 font-semibold hover:underline cursor-pointer focus:outline-none"
-                        >
-                           {isExpanded ? "See Less" : "See More"}
-                        </button>
-                     )}
-                  </p>
-               </div>
-               {novelById?.categories?.length > 0 &&
-                  <div className="flex flex-row items-center gap-2">
-                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="size-5">
-                        <path fillRule="evenodd" d="M4.5 2A2.5 2.5 0 0 0 2 4.5v3.879a2.5 2.5 0 0 0 .732 1.767l7.5 7.5a2.5 2.5 0 0 0 3.536 0l3.878-3.878a2.5 2.5 0 0 0 0-3.536l-7.5-7.5A2.5 2.5 0 0 0 8.38 2H4.5ZM5 6a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z" clipRule="evenodd" />
-                     </svg>
-                     {
-                        novelById?.categories?.map((cat, i) => (
-                           <Chip isPill={false} key={i} color="primary" className="w-auto text-sm sm:w-auto">
-                              <Chip.Label>{cat?.name}</Chip.Label>
-                           </Chip>
-                        ))
-                     }
-                  </div>
-               }
-               <div className="flex flex-col gap-5">
-                  <div className="flex flex-row items-center gap-2">
-                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="size-5">
-                        <path d="M10 12.5a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5Z" />
-                        <path fillRule="evenodd" d="M.664 10.59a1.651 1.651 0 0 1 0-1.186A10.004 10.004 0 0 1 10 3c4.257 0 7.893 2.66 9.336 6.41.147.381.146.804 0 1.186A10.004 10.004 0 0 1 10 17c-4.257 0-7.893-2.66-9.336-6.41ZM14 10a4 4 0 1 1-8 0 4 4 0 0 1 8 0Z" clipRule="evenodd" />
-                     </svg>
-                     <p className="font-serif text-slate-800 text-md"> {novelById?.view_count} views</p>
-                  </div>
-                  <div className="flex flex-row items-center gap-2">
-                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="size-5">
-                        <path fillRule="evenodd" d="M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0Zm-5.5-2.5a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0ZM10 12a5.99 5.99 0 0 0-4.793 2.39A6.483 6.483 0 0 0 10 16.5a6.483 6.483 0 0 0 4.793-2.11A5.99 5.99 0 0 0 10 12Z" clipRule="evenodd" />
-                     </svg>
-                     <NavLink to={ROUTES.TO_AUTHOR.replace(":id", novelById?.translator?.id)}>
-                        <p className="font-serif hover:underline text-slate-800 text-md">{novelById?.translator?.name}</p>
-                     </NavLink>
-                  </div>
-                  <div className="flex flex-row items-center gap-2">
-                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="size-5">
-                        <path fillRule="evenodd" d="M4.25 2A2.25 2.25 0 0 0 2 4.25v11.5A2.25 2.25 0 0 0 4.25 18h11.5A2.25 2.25 0 0 0 18 15.75V4.25A2.25 2.25 0 0 0 15.75 2H4.25ZM6 13.25V3.5h8v9.75a.75.75 0 0 1-1.064.681L10 12.576l-2.936 1.355A.75.75 0 0 1 6 13.25Z" clipRule="evenodd" />
-                     </svg>
-                     <button className="font-serif text-slate-800 text-md hover:underline cursor-pointer"
-                        disabled={isLoading} onClick={handleBookmark}
-                     >
-                        {localStorage.getItem("token") ? novelById?.isAlreadyBooked ? "Remove from library" : bookMarkText : "Login to bookmark ✔"}
-                     </button>
-                  </div>
+                  {/* Content Info */}
+                  <div className="flex-1 text-center lg:text-left">
+                     <Typography type="h2" className="text-3xl lg:text-4xl font-black text-slate-900 mb-4 font-serif">
+                        {novelById?.title}
+                     </Typography>
 
-                  <div className="flex flex-wrap gap-x-7 items-baseline">
-                        <div className="flex flex-row items-center gap-2">
-                           {renderStars(novelRating)}
-                        {/* <Rating color="warning" value={novelRating} readonly /> */}
-                        <p className="font-serif text-slate-800 text-md">{novelRating} / 5 ({novelRatingCount} ratings)</p>
+                     {/* Stats Row */}
+                     <div className="flex flex-wrap justify-center lg:justify-start gap-6 mb-6">
+                        <div className="flex items-center gap-2 text-slate-600 bg-white px-3 py-1.5 rounded-full border border-slate-100 shadow-sm">
+                           <Eye className="w-4 h-4 text-blue-500" />
+                           <span className="text-sm font-bold">{novelById?.view_count} views</span>
                         </div>
+                        <NavLink to={ROUTES.TO_AUTHOR.replace(":id", novelById?.translator?.id)}>
+                           <div className="flex items-center gap-2 text-slate-600 bg-white px-3 py-1.5 rounded-full border border-slate-100 shadow-sm hover:border-blue-400 transition-colors">
+                              <User className="w-4 h-4 text-purple-500" />
+                              <span className="text-sm font-bold">{novelById?.translator?.name}</span>
+                           </div>
+                        </NavLink>
+                        <div className="flex items-center gap-2">
+                           {renderStars(novelRating)}
+                           <span className="text-sm font-bold text-slate-500">{novelRating} / 5 ({novelRatingCount} ratings)</span>
+                        </div>
+                     </div>
+
+                     {/* Description */}
+                     <Card className="bg-slate-50 shadow-none border border-slate-100 mb-8">
+                        <CardBody className="p-5">
+                           <Typography className="text-slate-700 leading-relaxed text-md font-serif italic text-justify">
+                              {novelById?.description?.length > descriptionLimit && !isExpanded
+                                 ? `${novelById.description.substring(0, descriptionLimit)}...`
+                                 : novelById?.description}
+                              {novelById?.description?.length > descriptionLimit && (
+                                 <button
+                                    onClick={() => setIsExpanded(!isExpanded)}
+                                    className="ml-2 text-blue-600 font-black hover:underline underline-offset-4"
+                                 >
+                                    {isExpanded ? "Show Less" : "Read Full Story"}
+                                 </button>
+                              )}
+                           </Typography>
+                        </CardBody>
+                     </Card>
+
+                     {/* Actions */}
+                     <div className="flex flex-wrap justify-center lg:justify-start gap-4">
+                        <Button
+                           size="lg"
+                           className="flex items-center gap-2 rounded-full px-8 bg-slate-900 shadow-lg shadow-slate-200"
+                           onClick={handleBookmark}
+                           disabled={isLoading}
+                        >
+                           {localStorage.getItem("token") ? (novelById?.isAlreadyBooked ? "Remove from library" : bookMarkText) : "✔ Login to bookmark"}
+                        </Button>
+
                         {
                            localStorage.getItem("token") &&
-                              <Button
-                                 onClick={() => setIsRatingModalOpen(true)}
-                                 className="w-40 items-center"
-                                 disabled={isLoading}
-                                 >
-                                    <ThumbsUp className="mr-1" />
-                                    Rate this Novel
-                              </Button>
+                           <Button
+                              variant="outline"
+                              size="lg"
+                              className="flex items-center gap-2 rounded-full px-8 border-slate-300 text-slate-700"
+                              onClick={() => setIsRatingModalOpen(true)}
+                           >
+                              <ThumbsUp className="w-5 h-5" />
+                              Rate Novel
+                           </Button>
                         }
-                  </div>
-               </div>
-            </motion.div>
-         </div>
-
-         {/* <div className="sm:w-10/12 bg-blue-300 sm:m-auto w-11/12 md:w-10/12 md:m-auto m-auto lg:w-11/12"> */}
-         <div className="flex flex-col gap-5 mx-auto w-full">
-            {novelById?.volumes?.length > 0 && (
-               novelById?.volumes?.map((vol, i) => {
-                  return (
-                     <Accordion key={i} className="w-full">
-                        <Accordion.Item
-                           value="react"
-                           className="p-3 bg-[#F7F7F7] shadow-md"
-                        >
-                           <Accordion.Trigger className="text-black font-semibold p-0 font-serif">
-                              {vol?.volume_title ? vol?.volume_title : `Volume ${vol?.volume_number}`}
-                              <NavArrowDown className="h-4 w-4 group-data-[open=true]:rotate-180" />
-                           </Accordion.Trigger>
-                           <Accordion.Content className="p-4 flex flex-col gap-2">
-                              {
-                                 vol?.chapters?.length > 0 && (
-                                    vol?.chapters?.map((chapt, j) => {
-                                       return (
-                                          <NavLink to={ROUTES.CHAPTER_BY_ID.replace(":novel", id).replace(":volume", vol?.volume_number).replace(":chapter", chapt?.chapter_number)} className="w-auto mx-2 shadow-lg rounded-md p-4 bg-[#FFFFFF]" key={j}>Chapter({chapt?.chapter_number}) {chapt?.title}</NavLink>
-                                       )
-                                    })
-                                 )
-                              }
-                           </Accordion.Content>
-                        </Accordion.Item>
-                     </Accordion>
-                  )
-               })
-            )}
-         </div>
-
-         {/* Rating Modal */}
-         {isRatingModalOpen && (
-            <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
-               <div className="bg-white p-6 rounded-lg shadow-xl max-w-sm w-full mx-4">
-                  <Typography variant="h5" className="font-semibold font-serif mb-4">
-                     Rate this Novel
-                  </Typography>
-                  <div className="flex justify-center mb-6">
-                     <Rating
-                        value={userRating}
-                        onValueChange={(number) => setUserRating(Number(number))}
-                     />
-                  </div>
-                  <div className="flex justify-end gap-2">
-                     <Button
-                        onClick={() => setIsRatingModalOpen(false)}
-                        disabled={isLoading}
-                     >
-                        Cancel
-                     </Button>
-                     <Button
-                        onClick={handleRatingSubmit}
-                        disabled={isLoading}
-                     >
-                        Submit
-                     </Button>
+                     </div>
                   </div>
                </div>
             </div>
-         )}
-      </div>
-   )
+         </div>
 
-   return content;
-}
+         {/* Content Sections */}
+         <div className="container mx-auto px-4 lg:px-8 max-w-5xl">
+            {/* Category Chips */}
+            <div className="flex flex-wrap gap-2 mb-10 justify-center">
+               {novelById?.categories?.map((cat, i) => (
+                  <Chip 
+                     key={i}
+                     className="bg-white border border-slate-200 text-slate-700 font-bold capitalize rounded-lg px-4" 
+                  >
+                     <Chip.Label>{cat?.name}</Chip.Label>
+                  </Chip>
+               ))}
+            </div>
+
+            {/* Volume List */}
+            <div className="space-y-6">
+               <div className="flex items-center gap-3 mb-4">
+                  <BookStack className="w-6 h-6 text-slate-900" />
+                  <Typography type="h4" className="text-xl font-bold text-slate-900 uppercase tracking-widest">
+                     Chapter List
+                  </Typography>
+               </div>
+
+               {novelById?.volumes?.map((vol, i) => (
+                  <Accordion key={i} className="mb-4 border-none rounded-2xl bg-white shadow-sm overflow-hidden">
+                     <Accordion.Item value={vol?.volume_number || i} className="border-none">
+                        <Accordion.Trigger className="px-6 py-5 bg-white hover:bg-slate-50 transition-colors text-slate-800 font-black text-lg">
+                           {vol?.volume_title ? vol?.volume_title : `Volume ${vol?.volume_number}`}
+                           <NavArrowDown className="h-5 w-5 group-data-[open=true]:rotate-180 transition-transform" />
+                        </Accordion.Trigger>
+                        <Accordion.Content className="px-6 pb-6 pt-2 grid grid-cols-1 md:grid-cols-2 gap-3">
+                           {vol?.chapters?.map((chapt, j) => (
+                              <NavLink 
+                                 to={ROUTES.CHAPTER_BY_ID.replace(":novel", id).replace(":volume", vol?.volume_number).replace(":chapter", chapt?.chapter_number)} 
+                                 key={j}
+                                 className="flex items-center gap-3 p-4 bg-slate-50/50 border border-slate-100 rounded-xl hover:bg-blue-50 hover:border-blue-200 group transition-all"
+                              >
+                                 <div className="w-8 h-8 rounded-full bg-white flex items-center justify-center text-xs font-bold text-slate-400 group-hover:text-blue-500 shadow-sm">
+                                    {chapt?.chapter_number}
+                                 </div>
+                                 <Typography className="text-slate-700 font-semibold truncate group-hover:text-blue-700">
+                                    {chapt?.title}
+                                 </Typography>
+                              </NavLink>
+                           ))}
+                        </Accordion.Content>
+                     </Accordion.Item>
+                  </Accordion>
+               ))}
+            </div>
+         </div>
+
+         {/* Rating Modal */}
+         <AnimatePresence>
+            {isRatingModalOpen && (
+               <motion.div 
+                  initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+                  className="fixed inset-0 flex items-center justify-center z-50 bg-slate-900/40 backdrop-blur-sm"
+               >
+                  <motion.div 
+                     initial={{ scale: 0.9, y: 20 }} animate={{ scale: 1, y: 0 }}
+                     className="bg-white p-8 rounded-2xl shadow-2xl max-w-sm w-full mx-4 text-center"
+                  >
+                     <Typography type="h5" className="font-black text-slate-800 mb-2">
+                        Enjoying the story?
+                     </Typography>
+                     <Typography className="text-slate-500 mb-8">
+                        Your rating helps other readers discover this novel.
+                     </Typography>
+                     <div className="flex justify-center mb-8 scale-150">
+                        <Rating
+                           value={userRating}
+                           onValueChange={(val) => setUserRating(Number(val))}
+                        />
+                     </div>
+                     <div className="flex gap-3">
+                        <Button 
+                           type="button" fullWidth 
+                           onClick={() => setIsRatingModalOpen(false)}
+                           className="rounded-full text-slate-500"
+                        >
+                           Cancel
+                        </Button>
+                        <Button 
+                           fullWidth 
+                           onClick={handleRatingSubmit}
+                           className="bg-blue-600 rounded-full shadow-lg shadow-blue-100"
+                           disabled={userRating === 0 || isLoading}
+                        >
+                           Submit
+                        </Button>
+                     </div>
+                  </motion.div>
+               </motion.div>
+            )}
+         </AnimatePresence>
+      </div>
+   );
+};
