@@ -1,10 +1,12 @@
-import { Card, Typography, Button, Avatar } from "@material-tailwind/react";
+import { Dialog, Typography, Button, Card, Avatar, IconButton } from "@material-tailwind/react";
 import { Link } from "react-router-dom";
 import { LOCALIZE_CONST, ROUTES } from "../consts/Consts";
 import { useTranslation } from "react-i18next";
 import { api } from "../axios/axios";
 import { useDispatch } from "react-redux";
 import { removeBookMark } from "../states/features/user/userSlice";
+import { useState } from "react";
+import { Xmark } from "iconoir-react";
 
 
 export const BookmarkNovel = ({ bookmark }) => {
@@ -12,6 +14,10 @@ export const BookmarkNovel = ({ bookmark }) => {
    const { t } = useTranslation();
 
    const dispatch = useDispatch();
+
+   // 2. State to handle Modal visibility
+   const [open, setOpen] = useState(false);
+   const handleOpen = () => setOpen(!open)
 
    const handleRemove = async (id) => {
       
@@ -22,6 +28,7 @@ export const BookmarkNovel = ({ bookmark }) => {
          if (response.data.status == "OK") {
             console.log("Bookmark removed successfully");
             dispatch(removeBookMark(id));
+            setOpen(false); // Close modal on success
          }
 
       } catch (error) {
@@ -71,7 +78,7 @@ export const BookmarkNovel = ({ bookmark }) => {
                   </Button>
                </Link>
 
-               <Button as="button" onClick={() => handleRemove(bookmark?.id)} className="flex bg-inherit text-gray-900 w-fit items-center gap-2 hover:bg-[#EEEEEE]">
+               <Button as="button" onClick={handleOpen} className="flex bg-inherit text-gray-900 w-fit items-center gap-2 hover:bg-[#EEEEEE]">
                   { t(LOCALIZE_CONST.REMOVE) }
                   <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="red" className="size-5">
                      <path strokeLinecap="round" strokeLinejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" />
@@ -79,6 +86,35 @@ export const BookmarkNovel = ({ bookmark }) => {
                </Button>
             </div>
          </Card.Body>
+
+         <Dialog open={open} onOpenChange={setOpen}>
+            <Dialog.Overlay>
+               <Dialog.Content className="p-6">
+                  <div className="flex items-center justify-between mb-4">
+                     <Typography type="h6">
+                        Are you sure you want to delete?
+                     </Typography>
+                     <Dialog.DismissTrigger as={IconButton} size="sm" variant="ghost" isCircular onClick={handleOpen}>
+                        <Xmark className="h-5 w-5" />
+                     </Dialog.DismissTrigger>
+                  </div>
+                  <div className="flex justify-end gap-3">
+                     <Dialog.DismissTrigger as={Button} variant="ghost" color="secondary">
+                        No
+                     </Dialog.DismissTrigger>
+                     <Button 
+                        color="amber" 
+                        onClick={() => {
+                           handleRemove(bookmark?.id);
+                           setOpen(false); // Close after action
+                        }}
+                     >
+                        Yes
+                     </Button>
+                  </div>
+               </Dialog.Content>
+            </Dialog.Overlay>
+         </Dialog>
       </Card>
    );
 };
