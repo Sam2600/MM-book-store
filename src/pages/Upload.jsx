@@ -130,13 +130,13 @@ export const Upload = () => {
             setFeedback({ type: "success", message: "Chapter uploaded successfully!" });
             reset();
          }
+         scrollToTop();
       } catch (error) {
          setFeedback({ 
             type: "error", 
             message: error?.response?.data?.message || "An error occurred." 
          });
       }
-      scrollToTop();
    };
 
    const onError = (error) => {
@@ -163,6 +163,7 @@ export const Upload = () => {
          // Trigger success feedback for the user
          setFeedback({ type: "success", message: "New novel registered successfully!" });
          reset2();
+         scrollToTop();
       } catch (error) {
          setFeedback({ 
             type: "error",

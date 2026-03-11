@@ -25,9 +25,9 @@ export const ProfileMenu = ({t, handleLogOut}) => {
                </Menu.Item>
             </NavLink>
             
-            <Menu.Item>
+            {/* <Menu.Item>
                <Settings className="mr-2 h-[18px] w-[18px]" /> {t(LOCALIZE_CONST.EDIT_PROFILE)}
-            </Menu.Item>
+            </Menu.Item> */}
             {/* <Menu.Item>
                <HeadsetHelp className="mr-2 h-[18px] w-[18px]" /> Support
             </Menu.Item> */}
