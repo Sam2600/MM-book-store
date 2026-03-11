@@ -33,6 +33,9 @@ export const NovelDetail = () => {
    const [novelRatingCount, setNovelRatingCount] = useState(0);
    const [isRatingModalOpen, setIsRatingModalOpen] = useState(false);
 
+   const descriptionLimit = 300;
+   const [isExpanded, setIsExpanded] = useState(false);
+
    useEffect(() => {
 
       scrollToTop();
@@ -46,7 +49,7 @@ export const NovelDetail = () => {
    // Sync local state when Redux novelById changes
    useEffect(() => {
       if (novelById) {
-         setNovelRating(Math.floor(parseFloat(novelById?.average_rating)) || 0);
+         setNovelRating(Math.floor(Number.parseFloat(novelById?.average_rating)) || 0);
          setNovelRatingCount(novelById?.user_rating_count || 0);
       }
    }, [novelById]);
@@ -109,18 +112,18 @@ export const NovelDetail = () => {
             console.log("Novel is rated successfully");
          }
 
-         // Simulating a successful API response
-         const newRatingCount = novelRatingCount + 1;
-         const newAverageRating = Math.round((novelRating * novelRatingCount + userRating) / newRatingCount);
+         // FIX: Ensure we parse the values as Numbers immediately
+         const newAverage = Math.floor(Number(response.data.data.average));
+         const newTotal = Number(response.data.data.total);
 
-         setNovelRatingCount(newRatingCount);
-         setNovelRating(newAverageRating);
+         // Update local states
+         setNovelRating(newAverage);
+         setNovelRatingCount(newTotal);
 
          // Reset the form and close modal
          setUserRating(0);
          setIsRatingModalOpen(false);
 
-         console.log("Rating submitted successfully.");
       } catch (error) {
          // Use a custom modal instead of alert
          console.error("Error submitting rating:", error);
@@ -157,7 +160,22 @@ export const NovelDetail = () => {
                   {novelById?.title}
                </Typography>
                <div>
-                  <p className="font-serif text-md leading-6 text-justify">{novelById?.description}</p>
+                  <p className="font-serif text-md leading-6 text-justify">
+                     {/* If not expanded and longer than limit, truncate. Otherwise, show full. */}
+                     {novelById?.description?.length > descriptionLimit && !isExpanded
+                        ? `${novelById.description.substring(0, descriptionLimit)}...`
+                        : novelById?.description}
+
+                     {/* Only show the button if the description is actually longer than the limit */}
+                     {novelById?.description?.length > descriptionLimit && (
+                        <button
+                           onClick={() => setIsExpanded(!isExpanded)}
+                           className="ml-2 text-blue-600 font-semibold hover:underline cursor-pointer focus:outline-none"
+                        >
+                           {isExpanded ? "See Less" : "See More"}
+                        </button>
+                     )}
+                  </p>
                </div>
                {novelById?.categories?.length > 0 &&
                   <div className="flex flex-row items-center gap-2">

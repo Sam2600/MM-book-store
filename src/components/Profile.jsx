@@ -1,42 +1,52 @@
-import { Card, Typography, Avatar } from "@material-tailwind/react";
+import { Card, Typography } from "@material-tailwind/react";
+import { NavLink } from "react-router-dom"; // Assuming you use this for navigation
 
 export const Profile = ({ novel }) => {
-
    return (
-      <div>
-         <Card className="w-full lg:w-[180px] shadow-lg">
-            <Card.Header className="m-0 w-full relative">
-               <div>
-                  <Avatar
-                     size="xl"
-                     className="w-full h-72 lg:w-60 lg:h-56 lg:object-fill"
-                     shape="square"
-                     alt={novel?.title}
-                     src={novel?.cover_image}
-                  />
-                  {/* Gradient Overlay */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent pointer-events-none rounded-md" />
-               </div>
+      <div className="group cursor-pointer w-full">
+         {/* Book Cover Container */}
+         <Card className="relative overflow-hidden rounded-lg border border-gray-200 bg-white shadow-sm transition-all duration-300 group-hover:-translate-y-1 group-hover:shadow-md">
+            
+            {/* Status Badge - Made smaller/slimmer */}
+            <div
+               className={`absolute top-2 left-2 z-20 px-1.5 py-0.5 text-[9px] font-black uppercase tracking-tighter rounded-md shadow-sm
+                  ${novel?.status === 'completed'
+                     ? 'bg-green-500 text-white'
+                     : 'bg-amber-400 text-black'
+                  }`}
+            >
+               {novel?.status}
+            </div>
 
-               <div
-                  className={`absolute top-2 left-2 z-10 px-2 py-0.5 text-xs font-bold rounded-md
-                     ${novel?.status === 'completed'
-                        ? 'bg-green-600 text-white shadow-sm'
-                        : 'bg-yellow-400 text-black shadow-sm'
-                     }
-                     border border-gray-900/30`}
-               >
-                  {novel?.status}
-               </div>
-            </Card.Header>
+            {/* Image Section - Using 3/4 ratio to prevent "too long" look */}
+            <div className="relative aspect-[3/4] overflow-hidden">
+               <img
+                  src={novel?.cover_image}
+                  alt={novel?.title}
+                  className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
+               />
+               
+               {/* Soft inner shadow for depth */}
+               <div className="absolute inset-0 shadow-[inset_0_0_40px_rgba(0,0,0,0.1)]" />
+            </div>
          </Card>
-         <div className="my-3 flex flex-col gap-y-2">
-            <Typography variant="h4" className="font-medium tracking-tight font-poppins items-center flex gap-2">
-               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-5">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 6.042A8.967 8.967 0 0 0 6 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 0 1 6 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 0 1 6-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0 0 18 18a8.967 8.967 0 0 0-6 2.292m0-14.25v14.25" />
-               </svg>
-               {novel?.title.slice(0, 25)}
+
+         {/* Content Section - Reduced margins */}
+         <div className="mt-2 px-0.5">
+            <Typography 
+               className="text-[13px] font-bold text-gray-900 line-clamp-2 leading-tight group-hover:text-blue-700 transition-colors"
+            >
+               {novel?.title}
             </Typography>
+            
+            {/* Meta info - smaller and cleaner */}
+            <div className="flex items-center gap-1.5 mt-1 opacity-60">
+               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="size-3">
+                  <path d="M10.75 2.75a.75.75 0 0 0-1.5 0v8.614L6.295 8.235a.75.75 0 1 0-1.09 1.03l4.25 4.5a.75.75 0 0 0 1.09 0l4.25-4.5a.75.75 0 0 0-1.09-1.03l-2.955 3.129V2.75Z" />
+                  <path d="M3.5 12.75a.75.75 0 0 0-1.5 0v2.5A2.75 2.75 0 0 0 4.75 18h10.5A2.75 2.75 0 0 0 18 15.25v-2.5a.75.75 0 0 0-1.5 0v2.5c0 .69-.56 1.25-1.25 1.25H4.75c-.69 0-1.25-.56-1.25-1.25v-2.5Z" />
+               </svg>
+               <span className="text-[10px] font-bold uppercase tracking-tight">1.2k Reads</span>
+            </div>
          </div>
       </div>
    );

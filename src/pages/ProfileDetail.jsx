@@ -1,126 +1,118 @@
 import { Twitter, Facebook, Instagram, Globe, Telegram } from 'iconoir-react';
 import { DEFAULT_IMG_CHAR, ROUTES } from '../consts/Consts';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { getAuthorInfoAndBooks, getAuthorInfoAndBooksStatus, getAuthorInfoAndNovels } from '../states/features/user/userSlice';
 import { capitalizeFirstLetter, scrollToTop } from '../functions/helpers';
 import { NavLink, useParams } from 'react-router-dom';
 import { Loader } from '../components/Loader';
-import { Avatar } from '@material-tailwind/react';
 
-// This is the main App component that will be rendered.
 export const ProfileDetail = () => {
-
    const { id } = useParams();
-
    const dispatch = useDispatch();
-
    const author = useSelector(getAuthorInfoAndBooks);
-
    const authorInfoAndBooksStatus = useSelector(getAuthorInfoAndBooksStatus);
 
    useEffect(() => {
       scrollToTop();
       dispatch(getAuthorInfoAndNovels(id));
-      
-      return () => {
-         
-      }
-   }, [])
-   
+   }, [id, dispatch]);
 
-   const content = authorInfoAndBooksStatus == 'pending'
-      ? <Loader />
-      : (
-         <div className="min-h-screen text-gray-200 font-sans">
-            <div className="container mx-auto px-4 py-8 max-w-4xl">
-               {/* Author Details Section */}
-               <div className="bg-white p-5 rounded-xl shadow-lg flex flex-col md:flex-row items-center md:items-start space-y-6 md:space-y-0 md:space-x-8">
-                  {/* Author Photo */}
-                  <div className="w-25 h-25 flex-shrink-0">
-                     <img
-                        src={DEFAULT_IMG_CHAR.replace(":char",  author?.name?.charAt(0))}
-                        alt={author?.name}
-                        className="w-full h-full rounded-full object-cover border-4 border-gray-700"
-                     />
+   if (authorInfoAndBooksStatus === 'pending') return <Loader />;
+
+   return (
+      <div className="min-h-screen pb-20">
+         {/* Top Hero Section / Profile Header */}
+         <div className="relative h-48 bg-gradient-to-r from-slate-800 to-slate-900 w-full mb-20">
+            <div className="container mx-auto px-4 relative top-24">
+               <div className="bg-white/80 backdrop-blur-md border border-white/20 p-6 rounded-2xl shadow-xl flex flex-col md:flex-row items-center md:items-end gap-6">
+                  {/* Author Avatar with Ring */}
+                  <div className="relative -mt-16 md:mt-0">
+                     <div className="w-32 h-32 rounded-2xl bg-slate-700 flex items-center justify-center text-5xl font-bold text-white shadow-2xl border-4 border-white overflow-hidden">
+                        {author?.name ? (
+                           <img 
+                              src={DEFAULT_IMG_CHAR.replace(":char", author.name.charAt(0))} 
+                              alt={author.name}
+                              className="w-full h-full object-cover"
+                           />
+                        ) : "K"}
+                     </div>
                   </div>
 
                   {/* Author Info */}
-                  <div className="text-center md:text-left">
-                     <h1 className="text-4xl font-bold text-gray-600 mb-2">{capitalizeFirstLetter(author?.name)}</h1>
-                     <p className="text-gray-500 mb-4">An author who translate good tasted light novels</p>
-
-                     {/* Social Media Links */}
-                     {/* <div className="flex justify-center md:justify-start space-x-4">
-                        {author_.social.twitter && (
-                           <a href={author_.social.twitter} target="_blank" rel="noopener noreferrer" className="text-gray-700 hover:text-white transition-colors duration-200">
-                              <Twitter size={24} />
-                           </a>
-                        )}
-                        {author_.social.facebook && (
-                           <a href={author_.social.facebook} target="_blank" rel="noopener noreferrer" className="text-gray-700 hover:text-white transition-colors duration-200">
-                              <Facebook size={24} />
-                           </a>
-                        )}
-                        {author_.social.instagram && (
-                           <a href={author_.social.instagram} target="_blank" rel="noopener noreferrer" className="text-gray-700 hover:text-white transition-colors duration-200">
-                              <Instagram size={24} />
-                           </a>
-                        )}
-                        {author_.social.website && (
-                           <a href={author_.social.website} target="_blank" rel="noopener noreferrer" className="text-gray-700 hover:text-white transition-colors duration-200">
-                              <Globe size={24} />
-                           </a>
-                        )}
-                        {author_.social.website && (
-                           <a href={author_.social.website} target="_blank" rel="noopener noreferrer" className="text-gray-700 hover:text-white transition-colors duration-200">
-                              <Telegram size={24} />
-                           </a>
-                        )}
-                     </div> */}
+                  <div className="flex-1 text-center md:text-left pb-2">
+                     <h1 className="text-3xl font-black text-slate-800 tracking-tight">
+                        {capitalizeFirstLetter(author?.name || "Author Name")}
+                     </h1>
+                     <p className="text-slate-500 font-medium italic mt-1">
+                        "An author who translates high-quality light novels"
+                     </p>
                   </div>
-               </div>
 
-               {/* List of Novels Section */}
-               <div className="mt-12">
-                  <h2 className="text-3xl font-bold text-black mb-6 border-b-2 border-gray-700 pb-2">
-                     Published Novels
-                  </h2>
-                  <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-6">
-                     {author?.novels?.length > 0 && author?.novels?.map((novel) => (
-                        <NavLink
-                           to={ROUTES.NOVEL_BY_ID.replace(":id", novel?.id)}
-                           key={novel?.id}
-                           href={novel?.link}
-                           className="block bg-gray-800 rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-200 overflow-hidden"
-                        >
-
-                           <Avatar
-                              className="w-80 h-72"
-                              shape="square"
-                              src={novel?.cover_image}
-                              alt={novel?.title}
-                           />
-                           <div className="p-4">
-                              <h3 className="text-lg font-semibold text-white mb-1">{novel?.title}</h3>
-                              <div className="flex flex-wrap gap-1">
-                                 {novel?.categories?.map((cate) => (
-                                    <span
-                                       key={cate?.id}
-                                       className="bg-gray-700 text-gray-300 text-xs px-2 py-1 rounded-full"
-                                    >
-                                       {cate?.name}
-                                    </span>
-                                 ))}
-                              </div>
-                           </div>
-                        </NavLink>
-                     ))}
+                  {/* Optional: Social Badges */}
+                  <div className="flex gap-3 pb-2">
+                     <button className="p-2 bg-slate-100 rounded-full text-slate-600 hover:bg-blue-50 hover:text-blue-600 transition-all">
+                        <Twitter size={20} />
+                     </button>
+                     <button className="p-2 bg-slate-100 rounded-full text-slate-600 hover:bg-sky-50 hover:text-sky-600 transition-all">
+                        <Telegram size={20} />
+                     </button>
                   </div>
                </div>
             </div>
          </div>
-      )
-   
-   return content;
+
+         {/* Grid Section */}
+         <div className="container mx-auto px-4 mt-32 max-w-6xl">
+            <div className="flex items-center justify-between mb-8 border-b border-slate-200 pb-4">
+               <h2 className="text-2xl font-bold text-slate-800">
+                  Published Novels
+                  <span className="ml-3 text-sm font-normal text-slate-400 bg-slate-100 px-3 py-1 rounded-full">
+                     {author?.novels?.length || 0} Books
+                  </span>
+               </h2>
+            </div>
+
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-8">
+               {author?.novels?.map((novel) => (
+                  <NavLink
+                     to={ROUTES.NOVEL_BY_ID.replace(":id", novel?.id)}
+                     key={novel?.id}
+                     className="group flex flex-col transition-all duration-300 transform hover:-translate-y-2"
+                  >
+                     {/* Book Cover Container */}
+                     <div className="relative aspect-[2/3] rounded-xl overflow-hidden shadow-md group-hover:shadow-2xl transition-all duration-300">
+                        <img
+                           src={novel?.cover_image}
+                           alt={novel?.title}
+                           className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-500"
+                        />
+                        {/* Gradient Overlay */}
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-4">
+                           <span className="text-white text-xs font-medium uppercase tracking-wider">Read Now →</span>
+                        </div>
+                     </div>
+
+                     {/* Book Details */}
+                     <div className="mt-4">
+                        <h3 className="text-md font-bold text-slate-800 line-clamp-1 group-hover:text-blue-600 transition-colors">
+                           {novel?.title}
+                        </h3>
+                        <div className="flex flex-wrap gap-1 mt-2">
+                           {novel?.categories?.slice(0, 2).map((cate) => (
+                              <span
+                                 key={cate?.id}
+                                 className="bg-slate-200 text-slate-600 text-[10px] font-bold px-2 py-0.5 rounded uppercase tracking-tighter"
+                              >
+                                 {cate?.name}
+                              </span>
+                           ))}
+                        </div>
+                     </div>
+                  </NavLink>
+               ))}
+            </div>
+         </div>
+      </div>
+   );
 };

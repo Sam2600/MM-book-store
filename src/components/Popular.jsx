@@ -5,43 +5,61 @@ import { NavLink } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { LOCALIZE_CONST, ROUTES } from '../consts/Consts';
 
-const itemsPerPage = 6;
-
 export const Popular = ({ isWeek, popular }) => {
-   
    const { t } = useTranslation();
 
    return (
-      <div className="flex flex-col gap-5 mx-auto w-full px-4 py-6 relative"> {/* Added relative here */}
-         <h2 className="text-xl font-bold font-poppins">{ t( isWeek ? LOCALIZE_CONST.POPULAR_IN_THIS_WEEK: LOCALIZE_CONST.POPULAR_IN_THIS_MONTH) }</h2>
+      <div className="mx-auto w-full max-w-7xl p-5">
+         {/* Header Section */}
+         <div className="flex items-center justify-between mb-8 px-2 border-l-4 border-blue-600">
+            <h2 className="text-2xl font-black text-slate-800 tracking-tight pl-3">
+               {t(isWeek ? LOCALIZE_CONST.POPULAR_IN_THIS_WEEK : LOCALIZE_CONST.POPULAR_IN_THIS_MONTH)}
+            </h2>
+            {/* <NavLink 
+               to={ROUTES.BROWSE} // Replace with your actual browse route
+               className="text-sm font-bold text-blue-600 hover:text-blue-800 transition-colors uppercase tracking-widest"
+            >
+               View All
+            </NavLink> */}
+         </div>
+
+         {popular?.length > 0 ? (
             <Splide
                options={{
                   type: 'loop',
-                  perPage: popular?.length >= itemsPerPage ? itemsPerPage : popular?.length,
-                  perMove: 1,
-                  gap: '10px',
+                  // Increased gap to 32px to stop them being "too close"
+                  gap: '2rem', 
                   arrows: false,
                   pagination: false,
-                  drag: true,
-                  keyboard: true,
+                  drag: 'free',
+                  snap: true,
+                  perMove: 1,
+                  // Reduced perPage values slightly so each card is wider/shorter
+                  perPage: 6,
                   breakpoints: {
-                     640: { perPage: 1 },
-                     768: { perPage: popular?.length >= 2 ? 2 : popular?.length },
-                     1024: { perPage: popular?.length >= 3 ? 3 : popular?.length },
-                     1280: { perPage: popular?.length >= itemsPerPage ? itemsPerPage : popular?.length },
+                     1536: { perPage: 7 },
+                     1280: { perPage: 6, gap: '1.5rem' },
+                     1024: { perPage: 3, gap: '1rem' },
+                     768: { perPage: 2, gap: '1rem' },
+                     640: { perPage: 2, gap: '0.75rem' },
+                     480: { perPage: 1, gap: '0.5rem' },
                   },
                }}
+               className="popular-carousel"
             >
-               {popular?.length > 0 ? popular?.map((novel) => (
-                  <SplideSlide key={novel?.id} className="px-1">
+               {popular.map((novel) => (
+                  <SplideSlide key={novel?.id} className="pb-4">
                      <NavLink to={ROUTES.NOVEL_BY_ID.replace(":id", novel?.id)}>
                         <Profile novel={novel} />
                      </NavLink>
                   </SplideSlide>
-               )): (
-                  <div className="px-2 text-gray-500">{ t(LOCALIZE_CONST.NO_BOOKS_FOUND)}</div>
-               )}
+               ))}
             </Splide>
+         ) : (
+            <div className="py-10 text-center bg-slate-50 rounded-xl border-2 border-dashed border-slate-200">
+               <p className="text-slate-400 font-medium">{t(LOCALIZE_CONST.NO_BOOKS_FOUND)}</p>
+            </div>
+         )}
       </div>
-   )
-}
+   );
+};
