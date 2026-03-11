@@ -39,7 +39,7 @@ export const Chapter = () => {
    const content = status == "pending" ? (
       <Loader />
    ) : (
-      <div className="w-10/12 mx-auto flex flex-col gap-y-7">
+      <div className="w-10/12 mt-10 mx-auto flex flex-col gap-y-7">
 
          <div className='flex flex-row justify-between items-center'>
 
