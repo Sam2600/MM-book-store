@@ -63,7 +63,7 @@ export const NormalProfile = () => {
                               <Calendar className="h-4 w-4 text-blue-500" />
                               <span className="text-xs font-bold uppercase tracking-wider">Joined</span>
                            </div>
-                           <span className="text-sm font-black">{toHumanReadableDates(currentUser?.created_at)}</span>
+                           <span className="text-sm font-black">{toHumanReadableDates(currentUser?.created_at).split(', ').slice(1).join(', ')}</span>
                         </div>
                         
                         <div className="flex items-center justify-between text-slate-600 bg-slate-50 p-3 rounded-xl">
