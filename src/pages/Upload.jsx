@@ -333,7 +333,7 @@ export const Upload = () => {
                            size="lg"
                            placeholder="e.g. The Beginning of the End"
                            className="!border-t-blue-gray-200 focus:!border-t-gray-900"
-                           labelProps={{
+                           labelprops={{
                               className: "before:content-none after:content-none",
                            }}
                            {...register("volume_title")}
@@ -348,7 +348,7 @@ export const Upload = () => {
                            size="lg"
                            defaultValue={1}
                            className="!border-t-blue-gray-200 focus:!border-t-gray-900"
-                           labelProps={{
+                           labelprops={{
                               className: "before:content-none after:content-none",
                            }}
                            {...register("volume_number", { required: true })}
@@ -366,7 +366,7 @@ export const Upload = () => {
                            type="number"
                            size="lg"
                            className="!border-t-blue-gray-200 focus:!border-t-gray-900"
-                           labelProps={{
+                           labelprops={{
                               className: "before:content-none after:content-none",
                            }}
                            {...register("chapter_number", { required: true })}
@@ -380,7 +380,7 @@ export const Upload = () => {
                            size="lg"
                            placeholder="Chapter Title"
                            className="!border-t-blue-gray-200 focus:!border-t-gray-900"
-                           labelProps={{
+                           labelprops={{
                               className: "before:content-none after:content-none",
                            }}
                            {...register("title", {
@@ -421,7 +421,7 @@ export const Upload = () => {
                      <Button
                         type="submit"
                         size="lg"
-                        fullWidth
+                        isFullWidth={false}
                         disabled={isSubmitting}
                         className="flex items-center justify-center gap-2"
                      >
