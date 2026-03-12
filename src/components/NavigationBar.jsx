@@ -7,6 +7,7 @@ import {
 } from "@material-tailwind/react";
 import {
    Menu,
+   NavArrowRight,
    Search,
    Xmark
 } from "iconoir-react";
@@ -110,94 +111,118 @@ export const NavigationBar = () => {
 
    return (
       <Navbar className="w-full top-0 sticky border bg-white border-b-slate-500 shadow-md rounded-none z-20 overflow-visible">
-         <div className="flex items-center">
-            <Link
-               to="/"
-               className="ml-2 mr-2 block py-1 font-semibold"
-            >
-               {t(LOCALIZE_CONST.APP_NAME)}
-            </Link>
-            <hr className="ml-1 mr-1.5 hidden h-5 w-px border-l border-t-0 border-secondary-dark lg:block" />
-            <div className="hidden lg:block">
-               <NavList />
+         <div className="container mx-auto flex items-center justify-between">
+            {/* Left: Brand and Links */}
+            <div className="flex items-center gap-12">
+               <Link to="/" className="text-xl font-bold tracking-tight text-slate-900 font-poppins whitespace-nowrap">
+                  {t(LOCALIZE_CONST.APP_NAME)}
+               </Link>
+               <div className="hidden lg:block">
+                  <NavList />
+               </div>
             </div>
-            <div className="ml-auto mr-5 w-56 rounded-md relative">
-               <Input
-                  onChange={(e) => setSearch(e.target.value)}
-                  size="md"
-                  value={search}
-                  type="search"
-                  placeholder={t(LOCALIZE_CONST.SEARCH_PLACEHOLDER)}
-                  className="w-full border-slate-900 rounded-md"
-               >
-                  <Input.Icon>
-                     <Search className="h-4 w-4 text-slate-500" />
-                  </Input.Icon>
-               </Input>
 
-               {filteredNovels?.length > 0 && (
-                  <div className="absolute top-full left-0 w-full z-[9999] rounded-md mt-1 bg-white shadow-lg border border-slate-900">
-                     <ul className="max-h-60 overflow-y-auto">
-                        {filteredNovels?.map((fn, index) => (
-                           <div key={fn?.id}>
-                              <NavLink onClick={(e) => handleNavClick(e)} to={ROUTES.NOVEL_BY_ID.replace(":id", fn?.id)}>
-                                 <li className="cursor-pointer py-2 px-3 hover:bg-slate-100 hover:rounded-md">
-                                    {fn?.title}
+            {/* Right: Search and Controls */}
+            <div className="flex items-center gap-6">
+               {/* Search Bar */}
+               <div className="relative hidden md:block w-80 group">
+                  <div className="relative">
+                     <Input
+                        type="text"
+                        placeholder={t(LOCALIZE_CONST.SEARCH_PLACEHOLDER)}
+                        value={search}
+                        onChange={(e) => setSearch(e.target.value)}
+                        className="!border-slate-200 focus:!border-blue-500 rounded-lg pl-10 bg-slate-50 transition-all placeholder:text-slate-400"
+                        labelProps={{ className: "hidden" }}
+                     />
+                     <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                        <Search className="h-4 w-4 text-slate-400" />
+                     </div>
+                  </div>
+
+                  {/* Dropdown Results - Fixed messy UI */}
+                  {filteredNovels?.length > 0 && search && (
+                     <div className="absolute top-[110%] left-0 w-full bg-white rounded-xl shadow-xl border border-slate-100 overflow-hidden z-[100] animate-in fade-in slide-in-from-top-1 duration-200">
+                        <div className="p-3 bg-slate-50/50 border-b border-slate-100">
+                           <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Suggested Novels</span>
+                        </div>
+                        <ul className="max-h-64 overflow-y-auto">
+                           {filteredNovels.map((fn) => (
+                              <NavLink 
+                                 key={fn?.id} 
+                                 onClick={handleNavClick} 
+                                 to={ROUTES.NOVEL_BY_ID.replace(":id", fn?.id)}
+                                 className="block px-4 py-3 hover:bg-blue-50 transition-colors"
+                              >
+                                 <li className="flex items-center justify-between group">
+                                    <span className="text-sm font-medium text-slate-700 group-hover:text-blue-600 transition-colors">
+                                       {fn?.title}
+                                    </span>
+                                    <NavArrowRight className="h-4 w-4 text-slate-300 group-hover:text-blue-400 group-hover:translate-x-1 transition-all" />
                                  </li>
                               </NavLink>
-                              {index != filteredNovels.length -1 &&  <hr className="border-slate-500" />}
-                           </div>
-                        ))}
-                     </ul>
-                  </div>
-               )}
-            </div>
-
-            <div className="hidden lg:flex flex-row gap-3">
-               <div className="flex flex-row items-center gap-2 mr-3">
-                  <Switch id="switch" color="primary" onClick={handleLangChange} />
-                  <Typography as="label"
-                     htmlFor="switch"
-                     className="cursor-pointer text-sm font-serif font-semibold"
-                  >
-                     {isEnglish ? LOCALIZE_CODE.ENGLISH : LOCALIZE_CODE.MYANMAR}
-                  </Typography>
+                           ))}
+                        </ul>
+                     </div>
+                  )}
                </div>
-               {
-                  localStorage.getItem("token")
-                     ? <ProfileMenu t={t} handleLogOut={handleLogOut} />
+
+               {/* Controls */}
+               <div className="hidden lg:flex items-center gap-6 border-l border-slate-200 pl-6">
+                  <div className="flex items-center gap-3">
+                     <span className={`text-[11px] font-bold ${!isEnglish ? 'text-blue-600' : 'text-slate-400'}`}>MM</span>
+                     <Switch 
+                        checked={isEnglish}
+                        onChange={handleLangChange}
+                        ripple={false}
+                        className="checked:bg-blue-500"
+                        containerProps={{ className: "w-10 h-5" }}
+                        circleProps={{ className: "before:hidden left-0.5 border-none" }}
+                     />
+                     <span className={`text-[11px] font-bold ${isEnglish ? 'text-blue-600' : 'text-slate-400'}`}>EN</span>
+                  </div>
+                  
+                  {localStorage.getItem("token") 
+                     ? <ProfileMenu t={t} handleLogOut={handleLogOut} /> 
                      : <SignInButton t={t} />
-               }
+                  }
+               </div>
+
+               {/* Mobile Toggle */}
+               <IconButton
+                  type="button"
+                  className="lg:hidden text-slate-700 hover:bg-slate-100"
+                  onClick={() => setOpenNav(!openNav)}
+               >
+                  {openNav ? <Xmark className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+               </IconButton>
             </div>
-            <IconButton
-               size="sm"
-               variant="ghost"
-               onClick={() => setOpenNav(!openNav)}
-               className="ml-1 grid lg:hidden"
-            >
-               {openNav ? (
-                  <Xmark className="h-4 w-4" />
-               ) : (
-                  <Menu className="h-4 w-4" />
-               )}
-            </IconButton>
          </div>
+
+         {/* Mobile Menu */}
          <Collapse open={openNav}>
-            <NavList />
-            <div className="flex flex-row gap-x-4 my-4">
-               {
-                  localStorage.getItem("token")
-                     ? <ProfileMenu t={t} handleLogOut={handleLogOut} />
-                     : <SignInButton t={t} />
-               }
-               <div className="flex items-center gap-2 mr-3">
-                  <Switch id="switch" color="primary" onClick={handleLangChange} />
-                  <Typography as="label"
-                     htmlFor="switch"
-                     className="cursor-pointer text-sm font-serif font-semibold"
-                  >
-                     {isEnglish ? LOCALIZE_CODE.ENGLISH : LOCALIZE_CODE.MYANMAR}
-                  </Typography>
+            <div className="container mx-auto py-6 space-y-6 border-t border-slate-100 mt-4">
+               <div className="md:hidden">
+                  <Input
+                     icon={<Search className="h-4 w-4" />}
+                     placeholder={t(LOCALIZE_CONST.SEARCH_PLACEHOLDER)}
+                     value={search}
+                     onChange={(e) => setSearch(e.target.value)}
+                     className="rounded-lg bg-slate-50"
+                  />
+               </div>
+               <NavList />
+               <div className="flex flex-col gap-5 pt-4 border-t border-slate-100">
+                  <div className="flex items-center justify-between">
+                     <Typography className="text-sm font-semibold text-slate-600">Language</Typography>
+                     <Switch checked={isEnglish} onChange={handleLangChange} />
+                  </div>
+                  <div className="w-full">
+                     {localStorage.getItem("token") 
+                        ? <ProfileMenu t={t} handleLogOut={handleLogOut} /> 
+                        : <SignInButton t={t} />
+                     }
+                  </div>
                </div>
             </div>
          </Collapse>
