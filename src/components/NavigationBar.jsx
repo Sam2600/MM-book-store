@@ -65,8 +65,9 @@ export const NavigationBar = () => {
       );
    }, []);
 
-   const [isEnglish, setIsEnglish] = useState(localStorage.getItem("isEn") || false);
-
+   const [isEnglish, setIsEnglish] = useState(() => {
+      return localStorage.getItem("isEn") === "true";
+   });
    const handleLangChange = () => {
       const nextLang = !isEnglish;
       setIsEnglish(nextLang);
@@ -133,7 +134,7 @@ export const NavigationBar = () => {
                         value={search}
                         onChange={(e) => setSearch(e.target.value)}
                         className="!border-slate-200 focus:!border-blue-500 rounded-lg pl-10 bg-slate-50 transition-all placeholder:text-slate-400"
-                        labelProps={{ className: "hidden" }}
+                        labelprops={{ className: "hidden" }}
                      />
                      <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
                         <Search className="h-4 w-4 text-slate-400" />
@@ -174,10 +175,9 @@ export const NavigationBar = () => {
                      <Switch 
                         checked={isEnglish}
                         onChange={handleLangChange}
-                        ripple={false}
                         className="checked:bg-blue-500"
-                        containerProps={{ className: "w-10 h-5" }}
-                        circleProps={{ className: "before:hidden left-0.5 border-none" }}
+                        containerprops={{ className: "w-10 h-5" }}
+                        circleprops={{ className: "before:hidden left-0.5 border-none" }}
                      />
                      <span className={`text-[11px] font-bold ${isEnglish ? 'text-blue-600' : 'text-slate-400'}`}>EN</span>
                   </div>
