@@ -21,9 +21,17 @@ export const Header = ({ popular_all_time, latest_novel }) => {
                
                {/* Left Section: Editor's Choices */}
                <section className="flex flex-col gap-5 w-full lg:w-7/12">
-                  <h2 className="text-xl font-bold tracking-tight font-poppins text-slate-800">
-                     {t(LOCALIZE_CONST.EDITOR_CHOICES)}
-                  </h2>
+                  <div className="flex items-center justify-between mb-3 px-2 border-l-4 border-blue-600">
+                     <h2 className="text-2xl font-black text-slate-800 tracking-tight pl-3">
+                        {t(LOCALIZE_CONST.EDITOR_CHOICES)}
+                     </h2>
+                     {/* <NavLink 
+                        to={ROUTES.BROWSE} // Replace with your actual browse route
+                        className="text-sm font-bold text-blue-600 hover:text-blue-800 transition-colors uppercase tracking-widest"
+                     >
+                        View All
+                     </NavLink> */}
+                  </div>
                   <Splide
                      options={{
                         perPage: 1,
@@ -46,9 +54,17 @@ export const Header = ({ popular_all_time, latest_novel }) => {
 
                {/* Right Section: Latest Novels (Vertical Splide) */}
                <section className="flex flex-col gap-5 w-full lg:w-5/12 ">
-                  <h2 className="text-xl font-bold tracking-tight font-poppins text-slate-800">
-                     {t(LOCALIZE_CONST.LATEST_NOVELS)}
-                  </h2>
+                  <div className="flex items-center justify-between mb-3">
+                     <h2 className="text-2xl font-black text-slate-800 tracking-tight pl-1">
+                        {t(LOCALIZE_CONST.LATEST_NOVELS)}
+                     </h2>
+                     {/* <NavLink 
+                        to={ROUTES.BROWSE} // Replace with your actual browse route
+                        className="text-sm font-bold text-blue-600 hover:text-blue-800 transition-colors uppercase tracking-widest"
+                     >
+                        View All
+                     </NavLink> */}
+                  </div>
                   <Splide
                      options={{
                         direction: 'ttb',

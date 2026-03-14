@@ -12,19 +12,24 @@ export const SignInButton = ({ t }) => {
    }
 
    return (
-      <div className="bg-black text-white rounded-md">
+      <button
+         onClick={handleOnClick}
+         className="group relative flex items-center gap-x-2 px-5 py-2.5 
+                  bg-slate-900 hover:bg-blue-600 
+                  text-white rounded-xl shadow-md shadow-slate-200 
+                  transition-all duration-300 ease-out
+                  active:scale-95 active:bg-blue-700"
+      >
+         <LogIn className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5" />
+         
          <Typography
-            as="button"
-            type="small"
-            className="flex items-center gap-x-2 p-2 transition-all duration-200 ease-in-out 
-               hover:-translate-y-1 hover:text-white active:text-gray-900
-               [&>svg]:transition-transform [&>svg]:duration-200 [&>svg]:ease-in-out
-               [&>svg]:hover:scale-110 [&>svg]:active:scale-105"
-            onClick={handleOnClick}
+            className="font-poppins text-xs font-bold uppercase tracking-wide transition-colors"
          >
-            <LogIn className="h-4 w-4" />
             {t(LOCALIZE_CONST.SIGN_IN)}
-            </Typography>
-      </div>
+         </Typography>
+
+         {/* Subtle glow effect on hover */}
+         <div className="absolute inset-0 rounded-xl bg-blue-400 opacity-0 group-hover:opacity-20 blur-lg transition-opacity duration-300 -z-10" />
+      </button>
    );
 };
