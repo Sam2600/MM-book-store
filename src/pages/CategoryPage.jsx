@@ -64,10 +64,10 @@ export const CategoryPage = () => {
                   </Typography>
                </div>
                <Typography variant="h1" className="text-4xl md:text-5xl font-black text-slate-900 capitalize">
-                  {categoryNovels[0]?.categories?.[0]?.name}
+                  {localStorage.getItem("CATEGORY_NAME")}
                </Typography>
                <Typography className="mt-4 text-slate-500 max-w-2xl font-medium">
-                  Discover the best {categoryNovels[0]?.categories?.[0]?.name.toLowerCase()} stories, from rising stars to completed masterpieces.
+                  Discover the best {localStorage.getItem("CATEGORY_NAME")?.toLowerCase()} stories, from rising stars to completed masterpieces.
                </Typography>
             </div>
          </div>

@@ -12,7 +12,7 @@ export const Categories = ({ categories }) => {
          <h2 className="text-xl font-bold tracking-tight font-poppins">{ t(LOCALIZE_CONST.CATEGORIES) }</h2>
          <div className="flex flex-row flex-wrap gap-5">
             {categories?.length > 0 && categories?.map((category) => (
-               <NavLink key={category?.id} to={ROUTES.NOVELS_BY_CATEGORY.replace(":category", category?.id)}>
+               <NavLink onClick={() => localStorage.setItem("CATEGORY_NAME", category?.name)} key={category?.id} to={ROUTES.NOVELS_BY_CATEGORY.replace(":category", category?.id)}>
                   <Chip
                      isPill={false}
                      key={category?.id}
