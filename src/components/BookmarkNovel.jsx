@@ -1,4 +1,12 @@
-import { Dialog, Typography, Button, Card, Avatar, IconButton } from "@material-tailwind/react";
+import { 
+   Dialog, 
+   Typography, 
+   Button, 
+   Card, 
+   CardHeader, 
+   CardBody, 
+   IconButton, 
+} from "@material-tailwind/react";
 import { Link } from "react-router-dom";
 import { LOCALIZE_CONST, ROUTES } from "../consts/Consts";
 import { useTranslation } from "react-i18next";
@@ -6,8 +14,7 @@ import { api } from "../axios/axios";
 import { useDispatch } from "react-redux";
 import { removeBookMark } from "../states/features/user/userSlice";
 import { useState } from "react";
-import { Xmark } from "iconoir-react";
-
+import { Eye, BookStack, Trash } from "iconoir-react";
 
 export const BookmarkNovel = ({ bookmark }) => {
 
@@ -38,83 +45,83 @@ export const BookmarkNovel = ({ bookmark }) => {
    }
 
    return (
-      <Card className="flex h-full w-full max-w-[48rem] flex-row shadow-lg">
-         <Card.Header className="m-0 h-auto w-auto shrink-0 rounded-r-none">
-            <Avatar
-               className="w-32 h-36 object-fill"
-               shape="rounded"
-               src={bookmark?.cover_image}
-               alt={bookmark?.title}
-            />
-         </Card.Header>
+      <>
+         <Card className="flex h-44 w-full flex-row overflow-hidden rounded-3xl border border-slate-100 bg-white shadow-sm transition-all duration-300 hover:shadow-xl group">
+            <CardHeader shadow={false} floated={false} className="m-0 w-32 shrink-0 rounded-none overflow-hidden">
+               <img alt="" src={bookmark?.cover_image} className="h-full w-full object-cover transition-transform group-hover:scale-110" />
+            </CardHeader>
 
-         <Card.Body className="flex flex-col h-auto justify-between">
-            <Typography
-               type="small"
-               className="font-bold uppercase font-poppins"
-            >
-               {bookmark?.title}
-            </Typography>
+            <CardBody className="flex flex-col flex-1 p-5 gap-5 justify-between">
+               <div className="flex flex-col gap-5">
+                  <Typography type="h6" color="blue-gray" className="font-black uppercase font-poppins">
+                     {bookmark?.title}
+                  </Typography>
 
-            <Typography type="p" className="flex flex-row gap-2 items-center font-poppins">
-               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="size-5">
-                  <path d="M10 12.5a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5Z" />
-                  <path fillRule="evenodd" d="M.664 10.59a1.651 1.651 0 0 1 0-1.186A10.004 10.004 0 0 1 10 3c4.257 0 7.893 2.66 9.336 6.41.147.381.146.804 0 1.186A10.004 10.004 0 0 1 10 17c-4.257 0-7.893-2.66-9.336-6.41ZM14 10a4 4 0 1 1-8 0 4 4 0 0 1 8 0Z" clipRule="evenodd" />
-               </svg>
-               {bookmark?.view_count}
-            </Typography>
+                  <div className="flex items-center gap-3">
+                     <div className="flex items-center gap-1.5 text-slate-400">
+                        <Eye className="h-4 w-4" />
+                        <Typography className="text-xs font-bold">{bookmark?.view_count}</Typography>
+                     </div>
+                     <div className="h-1 w-1 rounded-full bg-slate-200" />
+                     <Typography className="text-[10px] font-bold text-blue-500 uppercase tracking-widest">
+                        ID: #{bookmark?.id}
+                     </Typography>
+                  </div>
+               </div>
 
-            {/* <Typography className="font-poppins text-foreground">
-               {bookmark?.description}
-            </Typography> */}
+               <div className="flex gap-3">
+                  <Link to={ROUTES.NOVEL_BY_ID.replace(":id", bookmark?.id)} className="">
+                     <Button 
+                        size="sm"
+                        className="flex w-full items-center justify-center gap-2 rounded-xl bg-slate-900 py-2.5 font-bold text-[10px] uppercase tracking-widest shadow-none hover:bg-blue-600 active:scale-95"
+                     >
+                        <BookStack className="h-3.5 w-3.5" />
+                        {t(LOCALIZE_CONST.READ)}
+                     </Button>
+                  </Link>
 
-            <div className="flex gap-3">
-               <Link to={ ROUTES.NOVEL_BY_ID.replace(":id", bookmark?.id)}>
-                  <Button as="button" className="flex w-fit items-center gap-2">
-                     { t(LOCALIZE_CONST.READ) }
-                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-6">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M12 6.042A8.967 8.967 0 0 0 6 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 0 1 6 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 0 1 6-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0 0 18 18a8.967 8.967 0 0 0-6 2.292m0-14.25v14.25" />
-                     </svg>
-                  </Button>
-               </Link>
-
-               <Button as="button" onClick={handleOpen} className="flex bg-inherit text-gray-900 w-fit items-center gap-2 hover:bg-[#EEEEEE]">
-                  { t(LOCALIZE_CONST.REMOVE) }
-                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="red" className="size-5">
-                     <path strokeLinecap="round" strokeLinejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" />
-                  </svg>
-               </Button>
-            </div>
-         </Card.Body>
+                  <IconButton
+                     type="button" 
+                     color="red" 
+                     onClick={handleOpen}
+                     className="rounded-xl bg-red-50 text-red-500 hover:bg-red-100"
+                  >
+                     <Trash className="h-4 w-4" />
+                  </IconButton>
+               </div>
+            </CardBody>
+         </Card>
 
          <Dialog open={open} onOpenChange={setOpen}>
-            <Dialog.Overlay>
-               <Dialog.Content className="p-6">
-                  <div className="flex items-center justify-between mb-4">
-                     <Typography type="h6">
-                        Are you sure you want to delete?
+            <Dialog.Overlay className="fixed inset-0 z-[9999] grid place-items-center bg-black/40 backdrop-blur-sm">
+               <Dialog.Content className="w-full max-w-xs rounded-3xl bg-white p-8 shadow-2xl">
+                  <div className="flex flex-col items-center text-center">
+                     <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-red-50">
+                        <Trash className="h-8 w-8 text-red-500" />
+                     </div>
+                        
+                     <Typography className="mb-1 text-xl font-black text-slate-900 font-poppins">
+                        Remove?
                      </Typography>
-                     <Dialog.DismissTrigger as={IconButton} size="sm" variant="ghost" isCircular onClick={handleOpen}>
-                        <Xmark className="h-5 w-5" />
-                     </Dialog.DismissTrigger>
-                  </div>
-                  <div className="flex justify-end gap-3">
-                     <Dialog.DismissTrigger as={Button} variant="ghost" color="secondary">
-                        No
-                     </Dialog.DismissTrigger>
-                     <Button 
-                        color="amber" 
-                        onClick={() => {
-                           handleRemove(bookmark?.id);
-                           setOpen(false); // Close after action
-                        }}
-                     >
-                        Yes
-                     </Button>
+                     <Typography className="mb-8 text-sm font-medium text-slate-500">
+                        Delete <span className="font-bold text-slate-800">"{bookmark?.title}"</span>?
+                     </Typography>
+
+                     <div className="flex w-full gap-3">
+                        <Dialog.DismissTrigger as={Button} className="flex-1 rounded-xl bg-slate-100 py-3 font-bold text-slate-500 shadow-none hover:bg-slate-200">
+                           Cancel
+                        </Dialog.DismissTrigger>
+                        <Button
+                           className="flex-1 rounded-xl bg-red-500 py-3 font-bold text-white shadow-lg shadow-red-500/20 hover:bg-red-600"
+                           onClick={() => handleRemove(bookmark?.id)}
+                        >
+                           Remove
+                        </Button>
+                     </div>
                   </div>
                </Dialog.Content>
             </Dialog.Overlay>
          </Dialog>
-      </Card>
+      </>
    );
 };
