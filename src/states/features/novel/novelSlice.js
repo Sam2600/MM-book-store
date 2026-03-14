@@ -95,20 +95,20 @@ export const novelSlice = createSlice({
        * @param {object} state 
        */
       cleanNovels: (state) => {
-         state.novels =  {},
-         state.all_novel = [],
-         state.filtered_novels = [],
+         state.novels = {}
+         state.filtered_novels = []
          state.status =  {
             getNovels: "idle",
             getNovelById: "idle",
             getChapterById: "idle",
             postNovels: "idle",
             getNovelsByAuthor: "idle",
-         },
-         state.novelByAuthor = [],
-         state.novelById = {},
+         }
+         state.novelByAuthor = []
+         state.novelById = {}
          state.chapterById = {}
       },
+      
       cleanCategoryNovels: (state) => {
          state.categoryNovels = [];
          state.page = 1;
