@@ -58,6 +58,11 @@ export const userSlice = createSlice({
       setUser: (state, action) => {
          localStorage.setItem("user", JSON.stringify(action.payload));
          state.user = JSON.parse(localStorage.getItem("user"));
+      },
+
+      cleanUserInfo: (state) => {
+         state.userInfo = []
+         state.status.getUserInfoStatus = "idle"
       }
    },
 
@@ -144,4 +149,4 @@ export const getNovelInfoByChapterId = (state) => state.user.novelInfoByChapterI
 
 export default userSlice.reducer;
 
-export const { removeBookMark, setUser } = userSlice.actions;
+export const { removeBookMark, setUser, cleanUserInfo } = userSlice.actions;
