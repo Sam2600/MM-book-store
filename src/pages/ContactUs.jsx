@@ -69,7 +69,7 @@ export const ContactUs = () => {
                            size="lg"
                            placeholder="John Doe"
                            className="!border-t-blue-gray-200 focus:!border-blue-500 rounded-2xl bg-slate-50/50"
-                           labelProps={{ className: "before:content-none after:content-none" }}
+                           labelprops={{ className: "before:content-none after:content-none" }}
                         />
                      </div>
                      <div className="space-y-2 col-span-1">
@@ -80,7 +80,7 @@ export const ContactUs = () => {
                            size="lg"
                            placeholder="name@email.com"
                            className="!border-t-blue-gray-200 focus:!border-blue-500 rounded-2xl bg-slate-50/50"
-                           labelProps={{ className: "before:content-none after:content-none" }}
+                           labelprops={{ className: "before:content-none after:content-none" }}
                         />
                      </div>
                      <div className="space-y-2 col-span-full">
@@ -91,7 +91,7 @@ export const ContactUs = () => {
                            size="lg"
                            placeholder="Translation Error / Novel Request / Feedback"
                            className="!border-t-blue-gray-200 focus:!border-blue-500 rounded-2xl bg-slate-50/50"
-                           labelProps={{ className: "before:content-none after:content-none" }}
+                           labelprops={{ className: "before:content-none after:content-none" }}
                         />
                      </div>
                      <div className="space-y-2 col-span-full">
@@ -102,7 +102,7 @@ export const ContactUs = () => {
                            rows={6}
                            placeholder="Tell us what's on your mind..."
                            className="!border-t-blue-gray-200 focus:!border-blue-500 rounded-2xl bg-slate-50/50"
-                           labelProps={{ className: "before:content-none after:content-none" }}
+                           labelprops={{ className: "before:content-none after:content-none" }}
                         />
                      </div>
                      <div className="col-span-full pt-4">

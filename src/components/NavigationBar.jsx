@@ -207,7 +207,7 @@ export const NavigationBar = () => {
                      value={search}
                      onChange={(e) => setSearch(e.target.value)}
                      className="rounded-xl bg-slate-50 !border-none"
-                     labelProps={{ className: "hidden" }}
+                     labelprops={{ className: "hidden" }}
                   />
                </div>
                <div className="px-2">
