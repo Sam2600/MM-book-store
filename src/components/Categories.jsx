@@ -9,7 +9,7 @@ export const Categories = ({ categories }) => {
    const { t } = useTranslation();
 
    return (
-      <div className="w-[98%] mx-auto mt-12 mb-20">
+      <div className="w-[98%] container mx-auto mt-12 mb-20">
          {/* Section Header */}
          <div className="flex items-center justify-between px-2">
             <div className="flex items-center justify-between mb-8 px-2 border-l-4 border-blue-600">

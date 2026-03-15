@@ -9,7 +9,7 @@ export const Popular = ({ isWeek, popular }) => {
    const { t } = useTranslation();
 
    return (
-      <div className="mx-auto w-full max-w-7xl p-5">
+      <div className="mx-auto container w-full p-5">
          {/* Header Section */}
          <div className="flex items-center justify-between mb-8 px-2 border-l-4 border-blue-600">
             <h2 className="text-2xl font-black text-slate-800 tracking-tight pl-3">

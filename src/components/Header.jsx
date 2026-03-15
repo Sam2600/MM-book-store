@@ -35,6 +35,7 @@ export const Header = ({ popular_all_time, latest_novel }) => {
                   <Splide
                      options={{
                         perPage: 1,
+                        height: '335px',
                         type: "loop",
                         arrows: false,
                         pagination: false,
@@ -43,7 +44,7 @@ export const Header = ({ popular_all_time, latest_novel }) => {
                      }}
                   >
                      {popular_all_time?.map((novel) => (
-                        <SplideSlide key={novel.id} className="pb-8">
+                        <SplideSlide key={novel.id}>
                            <NavLink to={ROUTES.NOVEL_BY_ID.replace(":id", novel?.id)}>
                               <EditorChoices novel={novel} />
                            </NavLink>
@@ -68,7 +69,7 @@ export const Header = ({ popular_all_time, latest_novel }) => {
                   <Splide
                      options={{
                         direction: 'ttb',
-                        height: '300px', // Exactly matches the EditorChoices height
+                        height: '335px', // Exactly matches the EditorChoices height
                         perPage: 3,      // Shows 3 items to fill the height perfectly
                         gap: '1rem',
                         type: 'loop',
@@ -78,7 +79,7 @@ export const Header = ({ popular_all_time, latest_novel }) => {
                         interval: 3000,
                         wheel: true,
                         breakpoints: {
-                           1024: { height: '350px', perPage: 2 },
+                           1024: { height: '350px', perPage: 3 },
                         }
                      }}
                   >

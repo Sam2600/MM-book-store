@@ -62,7 +62,7 @@ export const ROUTES = {
    AUTHOR_PROFILE: "/author-profile",
    ABOUT_US: "/about-us",
    CHAPTER_BY_ID: "/novels/:novel/volumes/:volume/chapters/:chapter",
-   CONTACT_US: "#",
+   CONTACT_US: "/contact-us",
    GET_AUTHOR_INFO_NOVELS: "/author/:id",
    GET_BOOKMARK_COLLECTION: "/getBookMarkedCollection",
    GET_USER_INFO: "/me",
@@ -95,10 +95,12 @@ export const LINKS = [
 export const FOOTER_LINKS = [
    {
       title: LOCALIZE_CONST.ABOUT_US,
+      isLink: true,
       href: ROUTES.ABOUT_US,
    },
    {
       title: LOCALIZE_CONST.CONTACT_US,
+      isLink: false,
       href: ROUTES.CONTACT_US,
    },
 ]

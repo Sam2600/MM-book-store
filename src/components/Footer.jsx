@@ -11,7 +11,7 @@ export const Footer = () => {
 
    return (
       <footer className="w-full bg-slate-50/50 dark:bg-[#0f172a] border-t border-slate-200 dark:border-slate-800 transition-colors duration-300">
-         <div className="mx-auto max-w-7xl px-8 py-12">
+         <div className="mx-auto container px-8 py-12">
             <div className="flex flex-col md:flex-row items-center justify-between gap-8">
                
                {/* Brand Section */}
@@ -30,19 +30,22 @@ export const Footer = () => {
                {/* Navigation Links */}
                <div className="flex flex-col items-center md:items-end gap-6">
                   <ul className="flex flex-wrap items-center justify-center gap-x-8 gap-y-2">
-                     {FOOTER_LINKS.map(({ title, href }, key) => (
-                        <li key={key}>
+                     {FOOTER_LINKS.map(({ title, isLink, href }, key) => {
+
+                        let content = (<Typography 
+                           type="p" className="text-sm font-bold text-slate-600 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 transition-all duration-300 relative group"
+                           >
+                              {t(title)}
+                              <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-blue-600 transition-all duration-300 group-hover:w-full" />
+                        </Typography>)
+                        return (<li key={key}>
+                           {isLink ? (
                            <NavLink to={href}>
-                              <Typography 
-                                 type="p"
-                                 className="text-sm font-bold text-slate-600 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 transition-all duration-300 relative group"
-                              >
-                                 {t(title)}
-                                 <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-blue-600 transition-all duration-300 group-hover:w-full" />
-                              </Typography>
+                              {content}
                            </NavLink>
-                        </li>
-                     ))}
+                           ) : (content)}
+                        </li>)
+                     })}
                   </ul>
 
                   {/* Social Icons - Adds a premium touch */}

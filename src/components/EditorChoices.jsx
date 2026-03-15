@@ -7,7 +7,7 @@ export const EditorChoices = ({ novel }) => {
 
    return (
       /* h-[400px] locks the overall height of the card */
-      <Card className="flex flex-col md:flex-row w-full bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden h-[300px] group transition-all duration-300">
+      <Card className="flex flex-col md:flex-row w-full bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden h-full group transition-all duration-300">
          
          {/* Image Section - Locked Width and Height */}
          <div className="relative w-full md:w-64 flex-shrink-0 h-full overflow-hidden">
