@@ -3,6 +3,7 @@ import { useSelector } from "react-redux";
 import { user } from "../states/features/user/userSlice";
 import { isEmpty } from "../functions/helpers";
 import { useNavigate } from "react-router-dom";
+import { ROUTES } from "../consts/Consts";
 
 export const Profile = () => { 
 
@@ -12,9 +13,9 @@ export const Profile = () => {
 
    useEffect(() => { 
       if(!isEmpty(me) && me?.role_id == 4) {
-         navigate("/a");
+         navigate(ROUTES.USER_PROFILE);
       } else if (!isEmpty(me) && me?.role_id != 4) {
-         navigate("/b");
+         navigate(ROUTES.AUTHOR_PROFILE);
       }
    }, [])
 }

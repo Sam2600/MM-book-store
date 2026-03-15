@@ -25,7 +25,10 @@ import {
    Eye, 
    User, 
    ThumbsUp, 
-   BookStack 
+   BookStack, 
+   Star,
+   Trash,
+   LogIn
 } from 'iconoir-react';
 import { Loader } from '../components/Loader';
 import { scrollToTop } from '../functions/helpers';
@@ -218,28 +221,50 @@ export const NovelDetail = () => {
                      </Card>
 
                      {/* Actions */}
-                     <div className="flex flex-wrap justify-center lg:justify-start gap-4">
+                     <div className="flex flex-wrap justify-center lg:justify-start gap-4 mt-6">
                         <Button
                            size="lg"
-                           className="flex items-center gap-2 rounded-full px-8 bg-slate-900 shadow-lg shadow-slate-200"
-                           onClick={handleBookmark}
                            disabled={isLoading}
+                           onClick={handleBookmark}
+                           className={`flex items-center gap-3 rounded-2xl px-8 py-3.5 font-poppins text-[11px] font-black uppercase tracking-widest transition-all duration-300 shadow-none active:scale-95
+                              ${!localStorage.getItem("token") 
+                              ? "bg-amber-400 text-black hover:bg-amber-500" // Warning/Login state
+                              : novelById?.isAlreadyBooked 
+                                 ? "bg-red-50 text-red-500 hover:bg-red-100"   // "Remove" state
+                                 : "bg-slate-900 text-white hover:bg-blue-600 hover:shadow-xl hover:shadow-blue-500/20" // Primary "Add" state
+                              }`}
                         >
-                           {localStorage.getItem("token") ? (novelById?.isAlreadyBooked ? "Remove from library" : bookMarkText) : "✔ Login to bookmark"}
+                           {localStorage.getItem("token") ? (
+                              novelById?.isAlreadyBooked ? (
+                              <>
+                                 <Trash className="w-4 h-4 stroke-[2.5]" />
+                                 Remove from library
+                              </>
+                              ) : (
+                              <>
+                                 <Bookmark className="w-4 h-4 stroke-[2.5]" />
+                                 {bookMarkText}
+                              </>
+                              )
+                           ) : (
+                              <>
+                              <LogIn className="w-4 h-4 stroke-[2.5]" />
+                              Login to bookmark
+                              </>
+                           )}
                         </Button>
 
-                        {
-                           localStorage.getItem("token") &&
+                        {localStorage.getItem("token") && (
                            <Button
-                              variant="outline"
+                              type="button"
                               size="lg"
-                              className="flex items-center gap-2 rounded-full px-8 border-slate-300 text-slate-700"
                               onClick={() => setIsRatingModalOpen(true)}
+                              className="flex items-center gap-3 rounded-2xl px-8 py-3.5 border border-slate-200 bg-white text-slate-700 font-poppins text-[11px] font-black uppercase tracking-widest transition-all hover:bg-slate-50 hover:border-slate-300 active:scale-95"
                            >
-                              <ThumbsUp className="w-5 h-5" />
+                              <Star className="w-4 h-4 text-amber-500 stroke-[2.5]" />
                               Rate Novel
                            </Button>
-                        }
+                        )}
                      </div>
                   </div>
                </div>

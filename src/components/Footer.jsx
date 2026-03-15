@@ -1,7 +1,8 @@
 import { Typography } from "@material-tailwind/react";
-import { FOOTER_LINKS, LOCALIZE_CONST } from "../consts/Consts.js";
+import { CONTACT_US, FOOTER_LINKS, LOCALIZE_CONST } from "../consts/Consts.js";
 import { useTranslation } from "react-i18next";
-import { Facebook, Instagram, Twitter, Bbq } from "iconoir-react"; // Or your preferred icon library
+import { Facebook, Telegram, Mail } from "iconoir-react"; // Or your preferred icon library
+import { NavLink } from "react-router-dom";
 
 const YEAR = new Date().getFullYear();
 
@@ -31,23 +32,24 @@ export const Footer = () => {
                   <ul className="flex flex-wrap items-center justify-center gap-x-8 gap-y-2">
                      {FOOTER_LINKS.map(({ title, href }, key) => (
                         <li key={key}>
-                           <Typography 
-                              as="a" 
-                              href={href} 
-                              className="text-sm font-bold text-slate-600 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 transition-all duration-300 relative group"
-                           >
-                              {t(title)}
-                              <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-blue-600 transition-all duration-300 group-hover:w-full" />
-                           </Typography>
+                           <NavLink to={href}>
+                              <Typography 
+                                 type="p"
+                                 className="text-sm font-bold text-slate-600 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 transition-all duration-300 relative group"
+                              >
+                                 {t(title)}
+                                 <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-blue-600 transition-all duration-300 group-hover:w-full" />
+                              </Typography>
+                           </NavLink>
                         </li>
                      ))}
                   </ul>
 
                   {/* Social Icons - Adds a premium touch */}
                   <div className="flex items-center gap-4 text-slate-400">
-                     <Facebook className="h-5 w-5 hover:text-blue-600 cursor-pointer transition-colors" />
-                     <Twitter className="h-5 w-5 hover:text-blue-400 cursor-pointer transition-colors" />
-                     <Instagram className="h-5 w-5 hover:text-pink-500 cursor-pointer transition-colors" />
+                     <a target="_blank" href={CONTACT_US.FACEBOOK}><Facebook className="h-5 w-5 hover:text-blue-600 cursor-pointer transition-colors"/></a>
+                     <a target="_blank" href={CONTACT_US.TELEGRAM}><Telegram className="h-5 w-5 hover:text-blue-400 cursor-pointer transition-colors"/></a>
+                     <a href={`mailto:${CONTACT_US.MAIL}`}><Mail className="h-5 w-5 hover:text-pink-500 cursor-pointer transition-colors"/></a>
                   </div>
                </div>
             </div>

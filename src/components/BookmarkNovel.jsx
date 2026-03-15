@@ -47,8 +47,8 @@ export const BookmarkNovel = ({ bookmark }) => {
    return (
       <>
          <Card className="flex h-44 w-full flex-row overflow-hidden rounded-3xl border border-slate-100 bg-white shadow-sm transition-all duration-300 hover:shadow-xl group">
-            <CardHeader shadow={false} floated={false} className="m-0 w-32 shrink-0 rounded-none overflow-hidden">
-               <img alt="" src={bookmark?.cover_image} className="h-full w-full object-cover transition-transform group-hover:scale-110" />
+            <CardHeader className="m-0 w-32 shrink-0 rounded-none overflow-hidden">
+               <img alt={bookmark?.title} src={bookmark?.cover_image} className="h-full w-full object-cover transition-transform group-hover:scale-110" />
             </CardHeader>
 
             <CardBody className="flex flex-col flex-1 p-5 gap-5 justify-between">
