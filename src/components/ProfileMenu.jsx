@@ -18,7 +18,7 @@ export const ProfileMenu = ({t, handleLogOut}) => {
             size="md"
             className="border border-primary p-0.5 lg:ml-auto"
             />
-         <Menu.Content className="mt-2">
+         <Menu.Content className="mt-6 md:mt-2">
             <NavLink to={ROUTES.MY_PROFILE}>
                <Menu.Item>
                   <UserCircle className="mr-2 h-[18px] w-[18px]" /> {t(LOCALIZE_CONST.MY_PROFILE)}

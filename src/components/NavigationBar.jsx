@@ -210,6 +210,30 @@ export const NavigationBar = () => {
                      labelprops={{ className: "hidden" }}
                   />
                </div>
+               {filteredNovels?.length > 0 && search && (
+                  <div className="absolute left-0 w-full bg-white/95 backdrop-blur-xl rounded-2xl shadow-2xl border border-slate-100 overflow-hidden z-[100] animate-in fade-in zoom-in-95 duration-200">
+                     <div className="px-4 py-3 bg-slate-50/50 border-b border-slate-100">
+                        <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Suggested Results</span>
+                     </div>
+                     <ul className="max-h-64 overflow-y-auto p-1.5">
+                        {filteredNovels.map((fn) => (
+                           <NavLink 
+                              key={fn?.id} 
+                              onClick={handleNavClick} 
+                              to={ROUTES.NOVEL_BY_ID.replace(":id", fn?.id)}
+                              className="block rounded-xl px-3 py-2.5 hover:bg-blue-50 transition-colors group"
+                           >
+                              <li className="flex items-center justify-between">
+                                 <span className="text-sm font-bold text-slate-700 group-hover:text-blue-600 transition-colors">
+                                    {fn?.title}
+                                 </span>
+                                 <NavArrowRight className="h-4 w-4 text-slate-300 group-hover:translate-x-1 transition-all" />
+                              </li>
+                           </NavLink>
+                        ))}
+                     </ul>
+                  </div>
+               )}
                <div className="px-2">
                   <NavList />
                </div>
