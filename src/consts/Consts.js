@@ -59,9 +59,10 @@ export const LOCALIZE_CODE = {
 }
 
 export const ROUTES = {
+   AUTHOR_PROFILE: "/author-profile",
    ABOUT_US: "/about-us",
    CHAPTER_BY_ID: "/novels/:novel/volumes/:volume/chapters/:chapter",
-   CONTACT_US: "/contact-us",
+   CONTACT_US: "#",
    GET_AUTHOR_INFO_NOVELS: "/author/:id",
    GET_BOOKMARK_COLLECTION: "/getBookMarkedCollection",
    GET_USER_INFO: "/me",
@@ -78,6 +79,7 @@ export const ROUTES = {
    SEARCH: "/search",
    SIGN_IN: "/sign-in",
    TO_AUTHOR: "/author/:id",
+   USER_PROFILE: "/user-profile",
    UPLOAD_CHAPTER: "/upload-chapters",
    UPDATE_CHAPTER: "/update-chapters/:novelId/:chapterId",
 }
@@ -114,3 +116,9 @@ export const BOOKMARK_MENU = {
 }
 
 export const DEFAULT_IMG_CHAR = "https://placehold.co/128x128/374151/FFFFFF?text=:char";
+
+export const CONTACT_US = {
+   FACEBOOK: "https://facebook.com/",
+   TELEGRAM: "https://web.telegram.org/k/",
+   MAIL: "mailto:someone@example.com"
+}

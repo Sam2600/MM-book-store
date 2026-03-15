@@ -14,6 +14,8 @@ import { Profile } from "../pages/Profile";
 import { NormalProfile } from "../pages/NormalProfile";
 import { ProfileDetail } from "../pages/ProfileDetail";
 import { CategoryPage } from "../pages/CategoryPage";
+import { AboutUs } from "../pages/AboutUs";
+import { UserManual } from "../pages/UserManual";
 
 export const Routes = createBrowserRouter([
    {
@@ -61,16 +63,24 @@ export const Routes = createBrowserRouter([
             element: <Upload />
          },
          {
-            path: "/a",
+            path: ROUTES.USER_PROFILE,
             element: <NormalProfile />
          },
          {
-            path: "/b",
+            path: ROUTES.AUTHOR_PROFILE,
             element: <AuthorProfile />
          },
          {
             path: ROUTES.NOVELS_BY_CATEGORY,
             element: <CategoryPage />
+         },
+         {
+            path: ROUTES.ABOUT_US,
+            element: <AboutUs />
+         },
+         {
+            path: ROUTES.READER_GUIDE,
+            element: <UserManual />
          }
       ],
    },
