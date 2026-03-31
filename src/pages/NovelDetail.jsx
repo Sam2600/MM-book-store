@@ -228,7 +228,7 @@ export const NovelDetail = () => {
                            onClick={handleBookmark}
                            className={`flex items-center gap-3 rounded-2xl px-8 py-3.5 font-poppins text-[11px] font-black uppercase tracking-widest transition-all duration-300 shadow-none active:scale-95
                               ${!localStorage.getItem("token") 
-                              ? "bg-amber-400 text-black hover:bg-amber-500" // Warning/Login state
+                              ? "bg-amber-200 text-black hover:bg-amber-300" // Warning/Login state
                               : novelById?.isAlreadyBooked 
                                  ? "bg-red-50 text-red-500 hover:bg-red-100"   // "Remove" state
                                  : "bg-slate-900 text-white hover:bg-blue-600 hover:shadow-xl hover:shadow-blue-500/20" // Primary "Add" state

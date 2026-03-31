@@ -16,6 +16,9 @@ import { ProfileDetail } from "../pages/ProfileDetail";
 import { CategoryPage } from "../pages/CategoryPage";
 import { AboutUs } from "../pages/AboutUs";
 import { UserManual } from "../pages/UserManual";
+import { CheckEmail } from "../pages/CheckEmail";
+import { EmailVerified } from "../pages/EmailVerified";
+import { RegisterAuthor } from "../pages/RegisterAuthor";
 
 export const Routes = createBrowserRouter([
    {
@@ -37,6 +40,10 @@ export const Routes = createBrowserRouter([
          {
             path: ROUTES.SIGN_IN,
             element: <Register />,
+         },
+         {
+            path: ROUTES.REGISTER_AUTHOR,
+            element: <RegisterAuthor />,
          },
          {
             path: ROUTES.UPLOAD_CHAPTER,
@@ -81,7 +88,15 @@ export const Routes = createBrowserRouter([
          {
             path: ROUTES.READER_GUIDE,
             element: <UserManual />
-         }
+         },
+         {
+            path: ROUTES.CHECK_EMAIL,
+            element: <CheckEmail />
+         },
+         {
+            path: ROUTES.EMAIL_VERIFIED,
+            element: <EmailVerified />
+         },
       ],
    },
    {

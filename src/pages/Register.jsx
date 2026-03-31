@@ -41,10 +41,15 @@ export const Register = () => {
       try {
          const response = await api.post(url, form_data);
 
-         if (!isForRegister) {
+         if (isForRegister) {
+            setLoading(false);
+            reset();
+            navigate(ROUTES.CHECK_EMAIL, { state: { email: form_data.email } });
+            return;
+         }
+
          localStorage.setItem("token", response?.data?.data?.token);
          dispatch(setUser(response?.data?.data?.user));
-         }
          setSuccess(true);
          setserverError("");
          setLoading(false);
@@ -52,7 +57,14 @@ export const Register = () => {
          navigate(ROUTES.HOME);
       } catch (error) {
          console.error("Error:", error);
-         setserverError(error.response?.data?.message || "An error occurred");
+         const msg = error.response?.data?.message;
+         if (typeof msg === "string") {
+            setserverError(msg);
+         } else if (msg && typeof msg === "object") {
+            setserverError(Object.values(msg).flat().join("\n"));
+         } else {
+            setserverError("An error occurred");
+         }
          setSuccess(false);
          setLoading(false);
       }
@@ -87,7 +99,7 @@ export const Register = () => {
 
                {serverError && (
                <div className="flex items-center justify-center animate-in fade-in slide-in-from-top-2 duration-300">
-                  <p className="text-sm font-bold text-red-600 bg-red-50 border border-red-200 w-full p-4 rounded-xl text-center shadow-sm">
+                  <p className="text-sm font-bold text-red-600 bg-red-50 border border-red-200 w-full p-4 rounded-xl text-center shadow-sm whitespace-pre-line">
                      {serverError}
                   </p>
                </div>
