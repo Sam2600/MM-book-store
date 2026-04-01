@@ -1,16 +1,10 @@
 import {
-   Input,
-   Button,
-   Typography,
    Dialog,
-   Card,
-   CardBody,
    IconButton,
    Alert,
    DialogOverlay,
    DialogContent,
    DialogDismissTrigger,
-   CardFooter,
 } from "@material-tailwind/react";
 import React, { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -20,7 +14,8 @@ import {
    Plus,
    CheckCircle,
    WarningTriangle,
-   NavArrowLeft,
+   BookSolid,
+   Page,
 } from "iconoir-react";
 import { api } from "../axios/axios";
 import ReactQuill from "react-quill";
@@ -38,7 +33,7 @@ import makeAnimated from "react-select/animated";
 import { scrollToTop } from "../functions/helpers";
 import { useTranslation } from "react-i18next";
 import { LOCALIZE_CONST } from "../consts/Consts";
-import { useParams, useNavigate } from "react-router-dom"; // Add this
+import { useParams, useNavigate } from "react-router-dom";
 import { getEditDataByChapterId, getNovelInfoByChapterId } from "../states/features/user/userSlice";
 
 const modules = {
@@ -50,6 +45,43 @@ const modules = {
       ["clean"],
    ],
 };
+
+// Section divider with label
+const SectionDivider = ({ label }) => (
+   <div className="flex items-center gap-3 my-2">
+      <div className="h-px flex-1 bg-slate-100" />
+      <span className="text-[10px] font-black uppercase tracking-[0.18em] text-slate-400 px-1">
+         {label}
+      </span>
+      <div className="h-px flex-1 bg-slate-100" />
+   </div>
+);
+
+// Field label row with inline error
+const FieldLabel = ({ label, error, required, htmlFor }) => (
+   <div className="flex items-center justify-between mb-1.5">
+      <label
+         htmlFor={htmlFor}
+         className="text-xs font-bold uppercase tracking-wider text-slate-700 ml-0.5"
+      >
+         {label}{" "}
+         {required && <span className="text-red-500">*</span>}
+      </label>
+      {error && (
+         <span className="text-[10px] font-bold text-red-500 animate-pulse">
+            {error}
+         </span>
+      )}
+   </div>
+);
+
+// Reusable styled input class
+const inputCls = (hasError) =>
+   `w-full px-4 py-3 rounded-xl border text-sm outline-none transition-all ${
+      hasError
+         ? "border-red-300 bg-red-50/40 focus:border-red-500 focus:ring-4 focus:ring-red-500/10"
+         : "border-slate-200 bg-slate-50/60 focus:bg-white focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10"
+   }`;
 
 export const Upload = () => {
 
@@ -63,6 +95,7 @@ export const Upload = () => {
 
    const [isPopUpOpen, setIsPopUpOpen] = useState(false);
    const [isNovelRegisterSuccess, setIsNovelRegisterSuccess] = useState(false);
+   const [coverPreview, setCoverPreview] = useState(null);
 
    const [feedback, setFeedback] = useState({ type: "", message: "" });
 
@@ -163,9 +196,10 @@ export const Upload = () => {
          // Trigger success feedback for the user
          setFeedback({ type: "success", message: "New novel registered successfully!" });
          reset2();
+         setCoverPreview(null);
          scrollToTop();
       } catch (error) {
-         setFeedback({ 
+         setFeedback({
             type: "error",
             message: error?.response?.data?.message || "Failed to register novel."
          });
@@ -188,438 +222,456 @@ export const Upload = () => {
    const customSelectStyles = {
       control: (provided, state) => ({
          ...provided,
-         backgroundColor: "white",
-         borderColor: state.isFocused ? "#64748b" : "#94a3b8", // slate-500 for focus, slate-400 for normal
-         borderRadius: "0.375rem", // Corresponds to rounded-md
-         padding: "0.1rem", // Adjust as needed, react-select has internal padding
+         backgroundColor: state.isFocused ? "white" : "#f8fafc",
+         borderColor: state.isFocused ? "#3b82f6" : "#e2e8f0",
+         borderRadius: "0.75rem",
+         padding: "0.15rem",
          boxShadow: state.isFocused
-         ? "0 0 0 1px #64748b"
-         : "0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px -1px rgba(0, 0, 0, 0.1)", // shadow-md, focus ring
+            ? "0 0 0 4px rgba(59,130,246,0.1)"
+            : "none",
          "&:hover": {
-         borderColor: "#64748b", // slate-500 for hover
+            borderColor: "#3b82f6",
          },
+         transition: "all 0.2s",
       }),
       input: (provided) => ({
          ...provided,
-         // If you need to style the input text itself
       }),
       menu: (provided) => ({
          ...provided,
-         borderRadius: "0.375rem",
+         borderRadius: "0.75rem",
          boxShadow:
-         "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1)", // Corresponds to shadow-lg for dropdown
+            "0 10px 25px -5px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05)",
       }),
       option: (provided, state) => ({
          ...provided,
          backgroundColor: state.isSelected
-         ? "#3b82f6"
-         : state.isFocused
+            ? "#3b82f6"
+            : state.isFocused
             ? "#eff6ff"
-            : "white", // Example: blue-500 for selected, blue-50 for focused
-         color: state.isSelected ? "white" : "black",
-         "&:hover": {
-         backgroundColor: "black", // Example: blue-100 for hover
-         color: "white",
-         },
+            : "white",
+         color: state.isSelected ? "white" : "#1e293b",
+         borderRadius: "0.375rem",
+         margin: "2px 4px",
+         width: "calc(100% - 8px)",
       }),
       multiValue: (provided) => ({
          ...provided,
-         backgroundColor: "#e0e7ff", // indigo-100 or similar for selected items
+         backgroundColor: "#e0e7ff",
+         borderRadius: "0.375rem",
       }),
       multiValueLabel: (provided) => ({
          ...provided,
-         color: "#3730a3", // indigo-800 or similar
+         color: "#3730a3",
       }),
       multiValueRemove: (provided) => ({
          ...provided,
-         color: "#4338ca", // indigo-700 or similar
+         color: "#4338ca",
          "&:hover": {
-         backgroundColor: "#black", // indigo-200 or similar
-         color: "#white", // indigo-900 or similar
+            backgroundColor: "#c7d2fe",
+            color: "#1e1b4b",
          },
       }),
-      // You can add more custom styles for other parts like placeholder, singleValue, etc.
    };
 
-   const content = status == "pending"
-      ? (
-         <Loader />
-      ) : (
-         <div className="min-h-screen bg-gray-50/50 py-10 px-4">
-            <div className="max-w-4xl mx-auto">
-               {/* Header Section */}
-               <div className="mb-8 flex flex-col gap-2">
-                  <Typography variant="h3" color="blue-gray" className="font-bold">
-                  {t(LOCALIZE_CONST.CHAPTER_REGISTER)}
-                  </Typography>
-                  <Typography color="gray" className="font-normal">
-                  Create and publish a new chapter for your readers.
-                  </Typography>
+   if (status === "pending") return <Loader />;
+
+   return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/20 to-slate-50 py-12 px-4">
+         <div className="max-w-4xl mx-auto">
+
+            {/* ── Page Header ── */}
+            <motion.div
+               initial={{ opacity: 0, y: -16 }}
+               animate={{ opacity: 1, y: 0 }}
+               transition={{ duration: 0.4 }}
+               className="mb-8 text-center"
+            >
+               <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-slate-900 text-white mb-4 shadow-lg shadow-slate-900/25">
+                  <BookSolid className="w-7 h-7" />
                </div>
 
-               {/* Feedback Alerts */}
-               <AnimatePresence>
-                  {feedback.message && (
-                     <motion.div 
-                        initial={{ opacity: 0, scale: 0.95 }} 
-                        animate={{ opacity: 1, scale: 1 }} 
-                        exit={{ opacity: 0, scale: 0.95 }} 
-                        className="mb-6"
-                     >
-                        <Alert
-                        variant="gradient"
-                        color={feedback.type === "success" ? "success" : "red"}
-                        icon={feedback.type === "success" ? <CheckCircle className="h-5 w-5" /> : <WarningTriangle className="h-5 w-5" />}
-                        onClose={() => setFeedback({ type: "", message: "" })}
-                        >
-                        {feedback.message}
-                        </Alert>
-                     </motion.div>
-                  )}
-               </AnimatePresence>
+               <h1 className="text-3xl font-black text-slate-900 tracking-tight">
+                  {isEditMode ? "Edit Chapter" : t(LOCALIZE_CONST.CHAPTER_REGISTER)}
+               </h1>
+               <p className="text-sm text-slate-500 font-medium mt-1">
+                  {isEditMode
+                     ? "Update your chapter content and details below."
+                     : "Create and publish a new chapter for your readers."}
+               </p>
 
-               <Card className="shadow-sm border border-slate-200">
-                  <CardBody>
-                  <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-                     {/* Novel Selection Group */}
-                     <div className="grid grid-cols-1 gap-4">
-                        <div>
-                        <label className="block text-sm font-bold text-gray-700 mb-2">
-                           {t(LOCALIZE_CONST.NOVELS)}{" "}
-                           <span className="text-red-500">*</span>
-                        </label>
-                        <div className="flex gap-2">
-                           <select
-                              className={`w-full bg-white p-2.5 border rounded-lg transition-all focus:ring-2 focus:ring-blue-500/20 ${errors.novel_id ? "border-red-500" : "border-slate-300"}`}
-                              {...register("novel_id", {
-                                 required: "Please select a novel",
-                              })}
-                           >
-                              <option value="">{t(LOCALIZE_CONST.PICK)}</option>
-                              {novelByAuthor?.map((nba) => (
+               {isEditMode && (
+                  <span className="inline-block mt-3 px-3 py-1 rounded-full bg-blue-100 text-blue-700 text-xs font-bold uppercase tracking-wider">
+                     Edit Mode
+                  </span>
+               )}
+            </motion.div>
+
+            {/* ── Feedback Alerts ── */}
+            <AnimatePresence>
+               {feedback.message && (
+                  <motion.div
+                     initial={{ opacity: 0, y: -10, scale: 0.97 }}
+                     animate={{ opacity: 1, y: 0, scale: 1 }}
+                     exit={{ opacity: 0, scale: 0.97 }}
+                     className="mb-6"
+                  >
+                     <Alert
+                        open={!!feedback.message}
+                        onOpenChange={(open) => {
+                           if (!open) setFeedback({ type: "", message: "" });
+                        }}
+                        variant="gradient"
+                        color={feedback.type === "success" ? "success" : "error"}
+                     >
+                        <Alert.Icon>
+                           {feedback.type === "success" ? (
+                              <CheckCircle className="h-5 w-5" />
+                           ) : (
+                              <WarningTriangle className="h-5 w-5" />
+                           )}
+                        </Alert.Icon>
+                        <Alert.Content>{feedback.message}</Alert.Content>
+                        <Alert.DismissTrigger />
+                     </Alert>
+                  </motion.div>
+               )}
+            </AnimatePresence>
+
+            {/* ── Main Form Card ── */}
+            <motion.div
+               initial={{ opacity: 0, y: 20 }}
+               animate={{ opacity: 1, y: 0 }}
+               transition={{ duration: 0.4, delay: 0.08 }}
+               className="bg-white/80 backdrop-blur-md rounded-3xl shadow-xl border border-slate-100 p-8"
+            >
+               <form onSubmit={handleSubmit(onSubmit, onError)} className="space-y-6">
+
+                  {/* ── Novel Selection ── */}
+                  <SectionDivider label="Novel" />
+
+                  <div>
+                     <FieldLabel
+                        label={t(LOCALIZE_CONST.NOVELS)}
+                        error={errors.novel_id?.message}
+                        required
+                     />
+                     <div className="flex gap-2">
+                        <select
+                           className={inputCls(errors.novel_id) + " flex-1 appearance-none cursor-pointer"}
+                           {...register("novel_id", {
+                              required: "Please select a novel",
+                           })}
+                        >
+                           <option value="">{t(LOCALIZE_CONST.PICK)}</option>
+                           {novelByAuthor?.map((nba) => (
                               <option key={nba.id} value={nba.id}>
                                  {nba.title}
                               </option>
-                              ))}
-                           </select>
-                           {/* <IconButton
-                              variant="gradient"
-                              color="blue-gray"
-                              onClick={() => setIsPopUpOpen(true)}
-                              className="shrink-0"
-                              title="Add New Novel"
-                           >
-                              <Plus strokeWidth={2.5} className="h-5 w-5" />
-                           </IconButton> */}
-                           <Button onClick={() => setIsPopUpOpen(true)} type="button">
-                              +
-                           </Button>
-                        </div>
-                        {errors.novel_id && (
-                           <p className="text-red-500 text-xs mt-1">
-                              {errors.novel_id.message}
-                           </p>
-                        )}
-                        </div>
+                           ))}
+                        </select>
+                        <button
+                           type="button"
+                           onClick={() => setIsPopUpOpen(true)}
+                           title="Register New Novel"
+                           className="shrink-0 w-12 h-12 flex items-center justify-center rounded-xl bg-slate-900 hover:bg-blue-600 text-white shadow-lg shadow-slate-900/20 transition-all duration-200 active:scale-95"
+                        >
+                           <Plus strokeWidth={2.5} className="w-5 h-5" />
+                        </button>
                      </div>
+                  </div>
 
-                     {/* Volume & Chapter Side-by-Side */}
-                     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                        <div className="md:col-span-2">
-                        <label className="block text-sm font-bold text-gray-700 mb-2">
-                           {t(LOCALIZE_CONST.VOLUME_TITLE)}
-                        </label>
-                        <Input
-                           size="lg"
+                  {/* ── Volume & Chapter ── */}
+                  <SectionDivider label="Volume & Chapter" />
+
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                     <div className="md:col-span-2">
+                        <FieldLabel label={t(LOCALIZE_CONST.VOLUME_TITLE)} />
+                        <input
+                           className={inputCls(false)}
                            placeholder="e.g. The Beginning of the End"
-                           className="!border-t-blue-gray-200 focus:!border-t-gray-900"
-                           labelprops={{
-                              className: "before:content-none after:content-none",
-                           }}
                            {...register("volume_title")}
                         />
-                        </div>
-                        <div>
-                        <label className="block text-sm font-bold text-gray-700 mb-2">
-                           {t(LOCALIZE_CONST.VOLUME)} *
-                        </label>
-                        <Input
+                     </div>
+                     <div>
+                        <FieldLabel label={t(LOCALIZE_CONST.VOLUME)} required />
+                        <input
                            type="number"
-                           size="lg"
+                           className={inputCls(errors.volume_number)}
                            defaultValue={1}
-                           className="!border-t-blue-gray-200 focus:!border-t-gray-900"
-                           labelprops={{
-                              className: "before:content-none after:content-none",
-                           }}
                            {...register("volume_number", { required: true })}
                         />
-                        </div>
                      </div>
+                  </div>
 
-                     {/* Chapter Number & Title */}
-                     <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-                        <div>
-                        <label className="block text-sm font-bold text-gray-700 mb-2">
-                           {t(LOCALIZE_CONST.CHAPTER)} *
-                        </label>
-                        <Input
+                  <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                     <div>
+                        <FieldLabel label={t(LOCALIZE_CONST.CHAPTER)} required />
+                        <input
                            type="number"
-                           size="lg"
-                           className="!border-t-blue-gray-200 focus:!border-t-gray-900"
-                           labelprops={{
-                              className: "before:content-none after:content-none",
-                           }}
+                           className={inputCls(errors.chapter_number)}
                            {...register("chapter_number", { required: true })}
                         />
-                        </div>
-                        <div className="md:col-span-3">
-                        <label className="block text-sm font-bold text-gray-700 mb-2">
-                           {t(LOCALIZE_CONST.TITLE)} *
-                        </label>
-                        <Input
-                           size="lg"
+                     </div>
+                     <div className="md:col-span-3">
+                        <FieldLabel
+                           label={t(LOCALIZE_CONST.TITLE)}
+                           error={errors.title?.message}
+                           required
+                        />
+                        <input
+                           className={inputCls(errors.title)}
                            placeholder="Chapter Title"
-                           className="!border-t-blue-gray-200 focus:!border-t-gray-900"
-                           labelprops={{
-                              className: "before:content-none after:content-none",
-                           }}
                            {...register("title", {
                               required: "Title is required",
                            })}
                         />
-                        </div>
                      </div>
+                  </div>
 
-                     {/* Content Editor */}
-                     <div>
-                        <label className="block text-sm font-bold text-gray-700 mb-2">
-                        {t(LOCALIZE_CONST.CONTENT)} *
-                        </label>
-                        <div className="rounded-lg overflow-hidden border border-slate-300">
+                  {/* ── Content Editor ── */}
+                  <SectionDivider label="Content" />
+
+                  <div>
+                     <FieldLabel
+                        label={t(LOCALIZE_CONST.CONTENT)}
+                        error={errors.content?.message}
+                        required
+                     />
+                     <div className="rounded-2xl overflow-hidden border border-slate-200 shadow-sm">
                         <Controller
                            control={control}
                            name="content"
                            rules={{ required: "Content cannot be empty" }}
                            render={({ field }) => (
                               <ReactQuill
-                              {...field}
-                              theme="snow"
-                              placeholder="Once upon a time..."
-                              modules={modules}
-                              className="bg-white"
+                                 {...field}
+                                 theme="snow"
+                                 placeholder="Once upon a time..."
+                                 modules={modules}
+                                 className="bg-white"
                               />
                            )}
                         />
-                        </div>
-                        {errors.content && (
-                        <p className="text-red-500 text-xs mt-1">
-                           {errors.content.message}
-                        </p>
-                        )}
                      </div>
+                  </div>
 
-                     <Button
-                        type="submit"
-                        size="lg"
-                        isFullWidth={false}
-                        disabled={isSubmitting}
-                        className="flex items-center justify-center gap-2"
-                     >
-                        {isSubmitting && (
+                  {/* ── Submit Button ── */}
+                  <button
+                     type="submit"
+                     disabled={isSubmitting}
+                     className="w-full py-4 rounded-xl bg-slate-900 hover:bg-blue-600 text-white font-bold text-sm uppercase tracking-widest shadow-lg shadow-blue-500/20 transition-all duration-300 active:scale-[0.98] disabled:bg-slate-300 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                  >
+                     {isSubmitting && (
                         <span className="h-4 w-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                        )}
-                        {t(LOCALIZE_CONST.UPLOAD)}
-                     </Button>
-                  </form>
-                  </CardBody>
-               </Card>
-            </div>
-            {/* ✅ MODAL MOVED OUTSIDE */}
-            <Dialog
-               open={isPopUpOpen}
-               handler={() => setIsPopUpOpen(false)}
-               size="md"
-               className="p-4 overflow-y-auto max-h-[90vh]"
-            >
-               <DialogOverlay>
-                  <DialogContent className="max-w-2xl">
+                     )}
+                     {t(LOCALIZE_CONST.UPLOAD)}
+                  </button>
+
+               </form>
+            </motion.div>
+         </div>
+
+         {/* ── Novel Register Modal ── */}
+         <Dialog
+            open={isPopUpOpen}
+            handler={() => setIsPopUpOpen(false)}
+            size="md"
+         >
+            <DialogOverlay>
+               <DialogContent className="max-w-2xl rounded-3xl overflow-y-auto max-h-[90vh]">
                   <DialogDismissTrigger
                      onClick={() => {
                         setIsPopUpOpen(false);
                         reset2();
+                        setCoverPreview(null);
                      }}
                      as={IconButton}
                      size="sm"
                      variant="ghost"
-                     className="absolute right-2 top-2"
+                     className="absolute right-3 top-3 z-10"
                   >
                      <Xmark className="h-5 w-5" />
                   </DialogDismissTrigger>
 
-                  <form
-                     onSubmit={handleSubmit2(onSubmit2, onError2)}
-                     className="w-full mx-auto"
-                  >
-                     <CardBody className="flex flex-col gap-6">
-                        <h1 className="text-xl font-semibold text-center">
-                        {t(LOCALIZE_CONST.NOVEL_REGISTER)}
-                        </h1>
+                  <form onSubmit={handleSubmit2(onSubmit2, onError2)}>
+                     <div className="px-8 pt-8 pb-3">
 
-                        <div>
-                        <div className="flex flex-row justify-between">
-                           <label className="block font-semibold mb-1">
-                              {t(LOCALIZE_CONST.TITLE)} *
-                           </label>
-                           {errors2.title && (
-                              <p className="text-red-500 text-sm">
-                              {errors2.title.message}
-                              </p>
-                           )}
-                        </div>
-                        <Input
-                           className="w-full bg-white p-2 border border-slate-400 rounded-md shadow-md"
-                           placeholder="Novel title"
-                           {...register2("title", {
-                              required: "Novel title is required",
-                           })}
-                        />
+                        {/* Modal Header */}
+                        <div className="text-center mb-6">
+                           <div className="inline-flex items-center justify-center w-12 h-12 rounded-2xl bg-slate-900 text-white mb-3 shadow-lg shadow-slate-900/25">
+                              <Plus strokeWidth={2.5} className="w-6 h-6" />
+                           </div>
+                           <h2 className="text-xl font-black text-slate-900 tracking-tight">
+                              {t(LOCALIZE_CONST.NOVEL_REGISTER)}
+                           </h2>
+                           <p className="text-sm text-slate-500 font-medium mt-1">
+                              Fill in the details to register your novel.
+                           </p>
                         </div>
 
-                        <div>
-                        <div className="flex flex-row justify-between">
-                           <label className="block font-semibold mb-1">
-                              {t(LOCALIZE_CONST.ORIGINAL_AUTHOR_NAME)} *
-                           </label>
-                           {errors2.original_author_name && (
-                              <p className="text-red-500 text-sm">
-                              {errors2.original_author_name.message}
-                              </p>
-                           )}
-                        </div>
-                        <Input
-                           className="w-full bg-white p-2 border border-slate-400 rounded-md shadow-md"
-                           placeholder="Novel title"
-                           {...register2("original_author_name", {
-                              required: "Author name is required",
-                           })}
-                        />
-                        </div>
+                        <div className="space-y-4">
 
-                        <div>
-                        <div className="flex flex-row justify-between">
-                           <label className="block font-semibold mb-1">
-                              {t(LOCALIZE_CONST.ORIGINAL_NOVEL_NAME)} *
-                           </label>
-                           {errors2.original_book_name && (
-                              <p className="text-red-500 text-sm">
-                              {errors2.original_book_name.message}
-                              </p>
-                           )}
-                        </div>
-                        <Input
-                           className="w-full bg-white p-2 border border-slate-400 rounded-md shadow-md"
-                           placeholder="Original book name"
-                           {...register2("original_book_name", {
-                              required: "Original name is required",
-                           })}
-                        />
-                        </div>
-
-                        <div>
-                        <div>
-                           <label className="block font-semibold mb-1">
-                              {t(LOCALIZE_CONST.DESCRIPTION)}
-                           </label>
-                        </div>
-                        <Input
-                           className="w-full bg-white p-2 border border-slate-400 rounded-md shadow-md"
-                           placeholder="Description"
-                           {...register2("description")}
-                        />
-                        </div>
-
-                        <div>
-                        <div className="flex flex-row justify-between">
-                           <label className="block font-semibold mb-1">
-                              {t(LOCALIZE_CONST.CATEGORIES)} *
-                           </label>
-                           {errors2.categories && (
-                              <p className="text-red-500 text-sm">
-                              {errors2.categories.message}
-                              </p>
-                           )}
-                        </div>
-                        <Controller
-                           control={control2}
-                           name="categories"
-                           rules={{ required: "At least one category is required" }}
-                           render={({ field }) => (
-                              <Select
-                              {...field}
-                              closeMenuOnSelect={false}
-                              components={animatedComponents}
-                              isMulti
-                              options={categories}
-                              styles={customSelectStyles}
+                           <div>
+                              <FieldLabel
+                                 label={t(LOCALIZE_CONST.TITLE)}
+                                 error={errors2.title?.message}
+                                 required
                               />
-                           )}
-                        />
-                        </div>
+                              <input
+                                 className={inputCls(errors2.title)}
+                                 placeholder="Novel title"
+                                 {...register2("title", {
+                                    required: "Novel title is required",
+                                 })}
+                              />
+                           </div>
 
-                        <div>
-                        <div className="flex flex-row justify-between">
-                           <label className="block font-semibold mb-1">
-                              {t(LOCALIZE_CONST.COVER_IMAGE)} *
-                           </label>
-                           {errors2.cover_image && (
-                              <p className="text-red-500 text-sm">
-                              {errors2.cover_image.message}
-                              </p>
-                           )}
+                           <div>
+                              <FieldLabel
+                                 label={t(LOCALIZE_CONST.ORIGINAL_AUTHOR_NAME)}
+                                 error={errors2.original_author_name?.message}
+                                 required
+                              />
+                              <input
+                                 className={inputCls(errors2.original_author_name)}
+                                 placeholder="Original author name"
+                                 {...register2("original_author_name", {
+                                    required: "Author name is required",
+                                 })}
+                              />
+                           </div>
+
+                           <div>
+                              <FieldLabel
+                                 label={t(LOCALIZE_CONST.ORIGINAL_NOVEL_NAME)}
+                                 error={errors2.original_book_name?.message}
+                                 required
+                              />
+                              <input
+                                 className={inputCls(errors2.original_book_name)}
+                                 placeholder="Original book name"
+                                 {...register2("original_book_name", {
+                                    required: "Original name is required",
+                                 })}
+                              />
+                           </div>
+
+                           <div>
+                              <FieldLabel label={t(LOCALIZE_CONST.DESCRIPTION)} />
+                              <input
+                                 className={inputCls(false)}
+                                 placeholder="Short description (optional)"
+                                 {...register2("description")}
+                              />
+                           </div>
+
+                           <div>
+                              <FieldLabel
+                                 label={t(LOCALIZE_CONST.CATEGORIES)}
+                                 error={errors2.categories?.message}
+                                 required
+                              />
+                              <Controller
+                                 control={control2}
+                                 name="categories"
+                                 rules={{ required: "At least one category is required" }}
+                                 render={({ field }) => (
+                                    <Select
+                                       {...field}
+                                       closeMenuOnSelect={false}
+                                       components={animatedComponents}
+                                       isMulti
+                                       options={categories}
+                                       styles={customSelectStyles}
+                                    />
+                                 )}
+                              />
+                           </div>
+
+                           <div>
+                              <FieldLabel
+                                 label={t(LOCALIZE_CONST.COVER_IMAGE)}
+                                 error={errors2.cover_image?.message}
+                                 required
+                              />
+                              <label className={`relative flex items-center justify-center w-full rounded-xl cursor-pointer transition-all duration-200 group overflow-hidden border-2 border-dashed ${coverPreview ? "h-48 border-green-400 bg-green-50/30" : "h-28 border-slate-200 bg-slate-50/60 hover:bg-blue-50 hover:border-blue-400"}`}>
+                                 {coverPreview ? (
+                                    <div className="relative w-full h-full pointer-events-none">
+                                       <img
+                                          src={coverPreview}
+                                          alt="Cover preview"
+                                          className="w-full h-full object-contain"
+                                       />
+                                       <div className="absolute inset-0 bg-black/40 flex flex-col items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                                          <Page className="w-6 h-6 text-white mb-1" />
+                                          <span className="text-white text-xs font-semibold">Click to change</span>
+                                       </div>
+                                    </div>
+                                 ) : (
+                                    <div className="flex flex-col items-center gap-1 pointer-events-none text-slate-400 group-hover:text-blue-500 transition-colors">
+                                       <Page className="w-7 h-7" />
+                                       <span className="text-xs font-semibold">Click to upload cover image</span>
+                                       <span className="text-[10px] font-medium">PNG, JPG — max 2 MB</span>
+                                    </div>
+                                 )}
+                                 <input
+                                    type="file"
+                                    accept="image/*"
+                                    className="absolute inset-0 opacity-0 cursor-pointer"
+                                    {...register2("cover_image", {
+                                       required: "Image is required",
+                                       validate: {
+                                          size: (files) =>
+                                             files?.[0]?.size < 2097152 || "Max 2MB",
+                                          type: (files) =>
+                                             files?.[0]?.type.startsWith("image/") ||
+                                             "Must be an image",
+                                       },
+                                       onChange: (e) => {
+                                          const file = e.target.files?.[0];
+                                          if (file && file.type.startsWith("image/")) {
+                                             const url = URL.createObjectURL(file);
+                                             setCoverPreview(url);
+                                          }
+                                       },
+                                    })}
+                                 />
+                              </label>
+                           </div>
+
+                           <div className="flex items-center gap-3 py-1">
+                              <input
+                                 type="checkbox"
+                                 id="status_checkbox"
+                                 className="w-4 h-4 rounded border-slate-300 text-blue-600 cursor-pointer accent-slate-900"
+                                 {...register2("status")}
+                              />
+                              <label
+                                 htmlFor="status_checkbox"
+                                 className="text-sm font-semibold text-slate-700 cursor-pointer"
+                              >
+                                 {t(LOCALIZE_CONST.ONGOING)}?
+                              </label>
+                           </div>
+
                         </div>
-                        <input
-                           type="file"
-                           accept="image/*"
-                           className="w-full bg-white p-2 border border-slate-400 rounded-md shadow-md"
-                           {...register2("cover_image", {
-                              required: "Image is required",
-                              validate: {
-                              size: (files) =>
-                                 files?.[0]?.size < 2097152 || "Max 2MB",
-                              type: (files) =>
-                                 files?.[0]?.type.startsWith("image/") ||
-                                 "Must be an image",
-                              },
-                           })}
-                        />
-                        </div>
-                        <div className="flex flex-row gap-x-3 items-center">
-                        <input
-                           type="checkbox"
-                           className="border border-slate-400"
-                           {...register2("status")}
-                        />
-                        <Typography
-                           as="label"
-                           htmlFor="checkbox"
-                           className="cursor-pointer font-semibold"
+                     </div>
+
+                     <div className="px-8 pb-8 pt-3">
+                        <button
+                           type="submit"
+                           className="w-full py-4 rounded-xl bg-slate-900 hover:bg-blue-600 text-white font-bold text-sm uppercase tracking-widest shadow-lg shadow-blue-500/20 transition-all duration-300 active:scale-[0.98]"
                         >
-                           {t(LOCALIZE_CONST.ONGOING)}?
-                        </Typography>
-                        </div>
-                     </CardBody>
-
-                     <CardFooter className="pt-0 mt-5">
-                        <Button type="submit" isFullWidth={true}>
-                        {t(LOCALIZE_CONST.REGISTER)}
-                        </Button>
-                     </CardFooter>
+                           {t(LOCALIZE_CONST.REGISTER)}
+                        </button>
+                     </div>
                   </form>
-                  </DialogContent>
-               </DialogOverlay>
-            </Dialog>
-         </div>
-   );
 
-   return content;
+               </DialogContent>
+            </DialogOverlay>
+         </Dialog>
+
+      </div>
+   );
 };
