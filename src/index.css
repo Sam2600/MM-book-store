@@ -17,3 +17,38 @@
 .ql-editor.ql-blank::before {
    @apply text-gray-400;
 }
+
+/* Remove default Quill borders so they don't clash with your Tailwind div */
+.ql-custom-editor .ql-toolbar.ql-snow,
+.ql-custom-editor .ql-container.ql-snow {
+   border: none !important;
+}
+
+/* Optional: Make the toolbar background match your premium dashboard style */
+.ql-custom-editor .ql-toolbar.ql-snow {
+  background-color: #F8FAFC; /* slate-50 */
+  border-bottom: 1px solid #F1F5F9 !important; /* slate-100 */
+   padding: 12px 16px;
+}
+
+/* Adjust height and font to match your theme */
+.ql-custom-editor .ql-editor {
+   min-height: 200px;
+   font-family: 'Inter', sans-serif;
+   font-size: 15px;
+   line-height: 1.6;
+  color: #334155; /* slate-700 */
+}
+
+/* When the parent has an error (you can use a data-attribute or a class) */
+.border-red-300 .ql-toolbar.ql-snow {
+  background-color: #fff1f2 !important; /* red-50 */
+  border-bottom: 1px solid #fecaca !important; /* red-200 */
+}
+
+/* Fix the fainting borders on the bottom of the container */
+.ql-container.ql-snow {
+   border-bottom-left-radius: 2rem;
+   border-bottom-right-radius: 2rem;
+}
+

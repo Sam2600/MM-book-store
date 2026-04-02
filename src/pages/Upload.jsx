@@ -174,7 +174,9 @@ export const Upload = () => {
 
    const onError = (error) => {
       console.log(error);
-      scrollToTop();
+      setTimeout(() => {
+         scrollToTop();
+      }, 100);   
    }
 
    const onSubmit2 = async (data) => {
@@ -438,7 +440,11 @@ export const Upload = () => {
                         error={errors.content?.message}
                         required
                      />
-                     <div className="rounded-2xl overflow-hidden border border-slate-200 shadow-sm">
+                     <div className={`rounded-[2rem] overflow-hidden border-2 transition-all ${
+                        errors.content 
+                           ? "border-red-300 bg-red-50/20 shadow-[0_0_0_4px_rgba(239,68,68,0.1)]" 
+                           : "border-slate-100 bg-white shadow-sm focus-within:border-blue-500/50 focus-within:ring-4 focus-within:ring-blue-500/10"
+                     }`}>
                         <Controller
                            control={control}
                            name="content"
@@ -447,9 +453,10 @@ export const Upload = () => {
                               <ReactQuill
                                  {...field}
                                  theme="snow"
+                                 onChange={(content) => field.onChange(content === '<p><br></p>' ? '' : content)}
                                  placeholder="Once upon a time..."
                                  modules={modules}
-                                 className="bg-white"
+                                 className="ql-custom-editor" 
                               />
                            )}
                         />

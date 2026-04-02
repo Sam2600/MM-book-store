@@ -1,4 +1,4 @@
-import { Twitter, Facebook, Instagram, Globe, Telegram } from 'iconoir-react';
+import { Twitter, Telegram } from 'iconoir-react';
 import { DEFAULT_IMG_CHAR, ROUTES } from '../consts/Consts';
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -6,107 +6,119 @@ import { getAuthorInfoAndBooks, getAuthorInfoAndBooksStatus, getAuthorInfoAndNov
 import { capitalizeFirstLetter, scrollToTop } from '../functions/helpers';
 import { NavLink, useParams } from 'react-router-dom';
 import { Loader } from '../components/Loader';
+import { BookOpenIcon, UserIcon } from '@heroicons/react/24/outline';
 
 export const ProfileDetail = () => {
    const { id } = useParams();
    const dispatch = useDispatch();
    const author = useSelector(getAuthorInfoAndBooks);
-   const authorInfoAndBooksStatus = useSelector(getAuthorInfoAndBooksStatus);
+   const status = useSelector(getAuthorInfoAndBooksStatus);
 
    useEffect(() => {
       scrollToTop();
       dispatch(getAuthorInfoAndNovels(id));
    }, [id, dispatch]);
 
-   if (authorInfoAndBooksStatus === 'pending') return <Loader />;
+   if (status === 'pending') return <Loader />;
 
    return (
-      <div className="min-h-screen pb-20">
-         {/* Top Hero Section / Profile Header */}
-         <div className="relative h-48 bg-gradient-to-r from-slate-800 to-slate-900 w-full mb-20">
-            <div className="container mx-auto px-4 relative top-24">
-               <div className="bg-white/80 backdrop-blur-md border border-white/20 p-6 rounded-2xl shadow-xl flex flex-col md:flex-row items-center md:items-end gap-6">
-                  {/* Author Avatar with Ring */}
-                  <div className="relative -mt-16 md:mt-0">
-                     <div className="w-32 h-32 rounded-2xl bg-slate-700 flex items-center justify-center text-5xl font-bold text-white shadow-2xl border-4 border-white overflow-hidden">
-                        {author?.name ? (
+      <div className="min-h-screen bg-[#F8FAFC] pb-20">
+         {/* COMPACT HEADER SECTION */}
+         <div className="bg-white border-b border-slate-100 py-8 shadow-sm">
+            <div className="container mx-auto px-4 lg:px-8">
+               <div className="flex flex-col md:flex-row items-center justify-between gap-6">
+                  
+                  {/* Left Side: Avatar + Identity */}
+                  <div className="flex flex-col md:flex-row items-center gap-6">
+                     <div className="relative shrink-0">
+                        <div className="w-24 h-24 md:w-28 md:h-28 rounded-[2rem] bg-slate-900 p-1 shadow-xl shadow-slate-200">
                            <img 
-                              src={DEFAULT_IMG_CHAR.replace(":char", author.name.charAt(0))} 
-                              alt={author.name}
-                              className="w-full h-full object-cover"
+                              src={DEFAULT_IMG_CHAR.replace(":char", author?.name?.charAt(0) || 'A')} 
+                              alt=""
+                              className="w-full h-full object-cover rounded-[1.8rem]"
                            />
-                        ) : "K"}
+                        </div>
+                        <div className="absolute -bottom-1 -right-1 bg-blue-600 text-white p-1.5 rounded-xl border-4 border-white">
+                           <UserIcon className="w-4 h-4" />
+                        </div>
+                     </div>
+
+                     <div className="text-center md:text-left">
+                        <div className="flex flex-col md:flex-row md:items-center gap-2 mb-2">
+                           <h1 className="text-3xl font-black text-slate-900 tracking-tight">
+                              {capitalizeFirstLetter(author?.name || "Author")}
+                           </h1>
+                           <span className="w-fit mx-auto md:mx-0 bg-blue-50 text-blue-600 text-[8px] font-black uppercase tracking-widest px-2 py-1 rounded-lg border border-blue-100">
+                              Verified
+                           </span>
+                        </div>
+                        <p className="text-slate-400 text-xs font-bold max-w-md leading-relaxed italic line-clamp-2">
+                           "Crafting worlds and translating high-quality light novels for the community."
+                        </p>
                      </div>
                   </div>
 
-                  {/* Author Info */}
-                  <div className="flex-1 text-center md:text-left pb-2">
-                     <h1 className="text-3xl font-black text-slate-800 tracking-tight">
-                        {capitalizeFirstLetter(author?.name || "Author Name")}
-                     </h1>
-                     <p className="text-slate-500 font-medium italic mt-1">
-                        "An author who translates high-quality light novels"
-                     </p>
-                  </div>
+                  {/* Right Side: Stats & Socials in one row */}
+                  {/* <div className="flex flex-col sm:flex-row items-center gap-4 bg-slate-50 p-2 rounded-[1.5rem] border border-slate-100">
+                     <div className="flex items-center gap-6 px-4">
+                        <div className="text-center">
+                           <p className="text-base font-black text-slate-900">{author?.novels?.length || 0}</p>
+                           <p className="text-[8px] font-black uppercase text-slate-400 tracking-tighter">Works</p>
+                        </div>
+                        <div className="w-[1px] h-6 bg-slate-200"></div>
+                        <div className="text-center">
+                           <p className="text-base font-black text-slate-900">1.2k</p>
+                           <p className="text-[8px] font-black uppercase text-slate-400 tracking-tighter">Fans</p>
+                        </div>
+                     </div>
+                     
+                     <div className="flex gap-1.5 bg-white p-1.5 rounded-xl shadow-sm">
+                        <button className="p-2 text-slate-400 hover:text-blue-500 transition-colors">
+                           <Twitter size={16} />
+                        </button>
+                        <button className="p-2 text-slate-400 hover:text-sky-500 transition-colors">
+                           <Telegram size={16} />
+                        </button>
+                     </div>
+                  </div> */}
 
-                  {/* Optional: Social Badges */}
-                  <div className="flex gap-3 pb-2">
-                     <button className="p-2 bg-slate-100 rounded-full text-slate-600 hover:bg-blue-50 hover:text-blue-600 transition-all">
-                        <Twitter size={20} />
-                     </button>
-                     <button className="p-2 bg-slate-100 rounded-full text-slate-600 hover:bg-sky-50 hover:text-sky-600 transition-all">
-                        <Telegram size={20} />
-                     </button>
-                  </div>
                </div>
             </div>
          </div>
 
-         {/* Grid Section */}
-         <div className="container mx-auto px-4 mt-32 max-w-6xl">
-            <div className="flex items-center justify-between mb-8 border-b border-slate-200 pb-4">
-               <h2 className="text-2xl font-bold text-slate-800">
-                  Published Novels
-                  <span className="ml-3 text-sm font-normal text-slate-400 bg-slate-100 px-3 py-1 rounded-full">
-                     {author?.novels?.length || 0} Books
-                  </span>
-               </h2>
+         {/* NOVELS GRID */}
+         <div className="container mx-auto px-4 lg:px-8 mt-10">
+            <div className="flex items-center gap-3 mb-8">
+               <div className="w-1.5 h-6 bg-blue-600 rounded-full"></div>
+               <h2 className="text-xl font-black text-slate-900 tracking-tight uppercase">Library</h2>
             </div>
 
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-8">
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-x-5 gap-y-8">
                {author?.novels?.map((novel) => (
                   <NavLink
                      to={ROUTES.NOVEL_BY_ID.replace(":id", novel?.id)}
                      key={novel?.id}
-                     className="group flex flex-col transition-all duration-300 transform hover:-translate-y-2"
+                     className="group flex flex-col transition-all duration-300"
                   >
-                     {/* Book Cover Container */}
-                     <div className="relative aspect-[2/3] rounded-xl overflow-hidden shadow-md group-hover:shadow-2xl transition-all duration-300">
+                     <div className="relative aspect-[2/3] rounded-[1.5rem] overflow-hidden shadow-sm group-hover:shadow-xl group-hover:shadow-blue-500/10 group-hover:-translate-y-1 transition-all duration-300 border border-slate-100 bg-white">
                         <img
                            src={novel?.cover_image}
                            alt={novel?.title}
-                           className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-500"
+                           className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                         />
-                        {/* Gradient Overlay */}
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-4">
-                           <span className="text-white text-xs font-medium uppercase tracking-wider">Read Now →</span>
-                        </div>
                      </div>
 
-                     {/* Book Details */}
-                     <div className="mt-4">
-                        <h3 className="text-md font-bold text-slate-800 line-clamp-1 group-hover:text-blue-600 transition-colors">
+                     <div className="mt-3">
+                        <h3 className="text-[13px] font-black text-slate-800 line-clamp-1 group-hover:text-blue-600 transition-colors leading-tight uppercase">
                            {novel?.title}
                         </h3>
-                        <div className="flex flex-wrap gap-1 mt-2">
-                           {novel?.categories?.slice(0, 2).map((cate) => (
-                              <span
-                                 key={cate?.id}
-                                 className="bg-slate-200 text-slate-600 text-[10px] font-bold px-2 py-0.5 rounded uppercase tracking-tighter"
-                              >
-                                 {cate?.name}
-                              </span>
-                           ))}
+                        <div className="flex items-center justify-between mt-2">
+                           <span className="text-[9px] font-black text-slate-400 uppercase">
+                              {novel?.view_count || 0} Views
+                           </span>
+                           <span className="bg-slate-100 text-slate-500 text-[8px] font-black px-1.5 py-0.5 rounded uppercase">
+                              {novel?.categories?.slice(0, 3)?.map((cat) => cat?.name)?.join(", ") || "Uncategorized"}
+                           </span>
                         </div>
                      </div>
                   </NavLink>
