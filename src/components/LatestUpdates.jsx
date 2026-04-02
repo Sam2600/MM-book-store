@@ -47,6 +47,7 @@ export const LatestUpdates = ({ latest_updates }) => {
                         <img
                            src={novel.cover_image}
                            alt={novel.title}
+                           loading="lazy"
                            className="w-20 h-28 object-cover rounded-2xl shadow-md group-hover:rotate-2 transition-transform duration-300"
                         />
                      </NavLink>

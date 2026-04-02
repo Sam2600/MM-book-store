@@ -1,24 +1,27 @@
+import { lazy, Suspense } from "react";
 import { createBrowserRouter } from "react-router-dom";
-import { NotFound } from "../pages/NotFound";
-import { Novels } from "../pages/Novels";
-import { NovelDetail } from "../pages/NovelDetail";
-import DefaultLayout from "../layouts/DefaultLayout";
-import { Chapter } from "../pages/Chapter";
-import { Register } from "../pages/Register";
-import { Upload } from "../pages/Upload";
 import { ROUTES } from "../consts/Consts";
-import { MyBooks } from "../pages/MyBooks";
-import { AuthorProfile } from "../pages/AuthorProfile";
-import { AdTestPage } from "../pages/AdTestPage";
-import { Profile } from "../pages/Profile";
-import { NormalProfile } from "../pages/NormalProfile";
-import { ProfileDetail } from "../pages/ProfileDetail";
-import { CategoryPage } from "../pages/CategoryPage";
-import { AboutUs } from "../pages/AboutUs";
-import { UserManual } from "../pages/UserManual";
-import { CheckEmail } from "../pages/CheckEmail";
-import { EmailVerified } from "../pages/EmailVerified";
-import { RegisterAuthor } from "../pages/RegisterAuthor";
+import DefaultLayout from "../layouts/DefaultLayout";
+import { Loader } from "../components/Loader";
+
+const Novels = lazy(() => import("../pages/Novels").then(m => ({ default: m.Novels })));
+const NovelDetail = lazy(() => import("../pages/NovelDetail").then(m => ({ default: m.NovelDetail })));
+const Chapter = lazy(() => import("../pages/Chapter").then(m => ({ default: m.Chapter })));
+const Register = lazy(() => import("../pages/Register").then(m => ({ default: m.Register })));
+const Upload = lazy(() => import("../pages/Upload").then(m => ({ default: m.Upload })));
+const MyBooks = lazy(() => import("../pages/MyBooks").then(m => ({ default: m.MyBooks })));
+const AuthorProfile = lazy(() => import("../pages/AuthorProfile").then(m => ({ default: m.AuthorProfile })));
+const AdTestPage = lazy(() => import("../pages/AdTestPage").then(m => ({ default: m.AdTestPage })));
+const Profile = lazy(() => import("../pages/Profile").then(m => ({ default: m.Profile })));
+const NormalProfile = lazy(() => import("../pages/NormalProfile").then(m => ({ default: m.NormalProfile })));
+const ProfileDetail = lazy(() => import("../pages/ProfileDetail").then(m => ({ default: m.ProfileDetail })));
+const CategoryPage = lazy(() => import("../pages/CategoryPage").then(m => ({ default: m.CategoryPage })));
+const AboutUs = lazy(() => import("../pages/AboutUs").then(m => ({ default: m.AboutUs })));
+const UserManual = lazy(() => import("../pages/UserManual").then(m => ({ default: m.UserManual })));
+const CheckEmail = lazy(() => import("../pages/CheckEmail").then(m => ({ default: m.CheckEmail })));
+const EmailVerified = lazy(() => import("../pages/EmailVerified").then(m => ({ default: m.EmailVerified })));
+const RegisterAuthor = lazy(() => import("../pages/RegisterAuthor").then(m => ({ default: m.RegisterAuthor })));
+const NotFound = lazy(() => import("../pages/NotFound").then(m => ({ default: m.NotFound })));
 
 export const Routes = createBrowserRouter([
    {
@@ -101,6 +104,10 @@ export const Routes = createBrowserRouter([
    },
    {
       path: "/*",
-      element: <NotFound />,
+      element: (
+         <Suspense fallback={<Loader />}>
+            <NotFound />
+         </Suspense>
+      ),
    },
 ]);

@@ -1,4 +1,5 @@
 import React, { useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import {
    Typography,
    Card,
@@ -13,6 +14,7 @@ import {
    ArrowRight,
 } from "iconoir-react";
 import { scrollToTop } from "../functions/helpers";
+import { LOCALIZE_CONST } from "../consts/Consts";
 
 /* --- Helper Component --- */
 const ManualStep = ({ icon, title, desc }) => (
@@ -32,6 +34,7 @@ const ManualStep = ({ icon, title, desc }) => (
 );
 
 export const UserManual = () => {
+   const { t } = useTranslation();
 
    useEffect(() => scrollToTop())
 
@@ -41,14 +44,13 @@ export const UserManual = () => {
             {/* --- Header --- */}
             <div className="mb-12 text-center lg:text-left">
                <Typography className="text-blue-600 font-black uppercase tracking-widest text-[11px] mb-2">
-                  Help Center
+                  {t(LOCALIZE_CONST.HELP_CENTER)}
                </Typography>
                <Typography className="text-4xl font-black text-slate-900 leading-tight">
-                  How to use <span className="text-blue-600">MM-Book-Store</span>
+                  {t(LOCALIZE_CONST.READER_GUIDE_TITLE)} <span className="text-blue-600">MM-Book-Store</span>
                </Typography>
                <Typography className="text-slate-500 mt-3 font-medium">
-                  Everything you need to know about browsing, reading, and managing
-                  your library.
+                  {t(LOCALIZE_CONST.READER_GUIDE_SUBTITLE)}
                </Typography>
             </div>
 
@@ -56,23 +58,23 @@ export const UserManual = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-10">
                <ManualStep
                   icon={<Search className="text-blue-500" />}
-                  title="Browse & Discover"
-                  desc="Use our search bar or filter by genre to find your next favorite Chinese web novel."
+                  title={t(LOCALIZE_CONST.RG_BROWSE_TITLE)}
+                  desc={t(LOCALIZE_CONST.RG_BROWSE_DESC)}
                />
                <ManualStep
                   icon={<BookSolid className="text-emerald-500" />}
-                  title="Reading Experience"
-                  desc="Customize your font size, themes, and spacing for a comfortable reading session."
+                  title={t(LOCALIZE_CONST.RG_READING_TITLE)}
+                  desc={t(LOCALIZE_CONST.RG_READING_DESC)}
                />
                <ManualStep
                   icon={<Bookmark className="text-amber-500" />}
-                  title="Save Bookmarks"
-                  desc="Keep track of your progress by adding novels to your personal library."
+                  title={t(LOCALIZE_CONST.RG_BOOKMARK_TITLE)}
+                  desc={t(LOCALIZE_CONST.RG_BOOKMARK_DESC)}
                />
                <ManualStep
                   icon={<ChatBubble className="text-indigo-500" />}
-                  title="Get in Touch"
-                  desc="Found a bug or have a suggestion? Our translation team is just a message away."
+                  title={t(LOCALIZE_CONST.RG_CONTACT_TITLE)}
+                  desc={t(LOCALIZE_CONST.RG_CONTACT_DESC)}
                />
             </div>
 
@@ -83,29 +85,23 @@ export const UserManual = () => {
                      <Accordion.Trigger
                         className="border-b-slate-50 py-4 text-slate-900 font-black text-sm uppercase tracking-wide"
                      >
-                        1. How do I browse for novels?
+                        {t(LOCALIZE_CONST.RG_FAQ_1_Q)}
                         <NavArrowDown className="h-4 w-4 group-data-[open=true]:rotate-180" />
                      </Accordion.Trigger>
                      <Accordion.Content className="text-slate-500 font-medium">
-                        You can explore our library in three ways:
+                        {t(LOCALIZE_CONST.RG_FAQ_1_INTRO)}
                         <ul className="list-disc ml-5 mt-3 space-y-2">
                            <li>
-                              <span className="text-slate-900 font-bold">Search Bar:</span>{" "}
-                              Type the title or author name in the header search input.
+                              <span className="text-slate-900 font-bold">{t(LOCALIZE_CONST.RG_FAQ_1_SEARCH_LABEL)}</span>{" "}
+                              {t(LOCALIZE_CONST.RG_FAQ_1_SEARCH_DESC)}
                            </li>
                            <li>
-                              <span className="text-slate-900 font-bold">
-                              Genre Filter:
-                              </span>{" "}
-                              Use the genre tags on the homepage to find specific themes
-                              like "Xianxia" or "Romance".
+                              <span className="text-slate-900 font-bold">{t(LOCALIZE_CONST.RG_FAQ_1_GENRE_LABEL)}</span>{" "}
+                              {t(LOCALIZE_CONST.RG_FAQ_1_GENRE_DESC)}
                            </li>
                            <li>
-                              <span className="text-slate-900 font-bold">
-                              Latest Updates:
-                              </span>{" "}
-                              Check the "Recently Added" section for the newest translated
-                              chapters.
+                              <span className="text-slate-900 font-bold">{t(LOCALIZE_CONST.RG_FAQ_1_LATEST_LABEL)}</span>{" "}
+                              {t(LOCALIZE_CONST.RG_FAQ_1_LATEST_DESC)}
                            </li>
                         </ul>
                      </Accordion.Content>
@@ -117,19 +113,19 @@ export const UserManual = () => {
                      <Accordion.Trigger
                         className="border-b-slate-50 py-4 text-slate-900 font-black text-sm uppercase tracking-wide"
                      >
-                        2. How to customize the Reader?
+                        {t(LOCALIZE_CONST.RG_FAQ_2_Q)}
                         <NavArrowDown className="h-4 w-4 group-data-[open=true]:rotate-180" />
                      </Accordion.Trigger>
                      <Accordion.Content className="text-slate-500 font-medium">
-                        While reading a chapter, click the{" "}
-                        <span className="text-blue-600 font-bold">Settings (Gear)</span>{" "}
-                        icon at the bottom right. You can adjust:
+                        {t(LOCALIZE_CONST.RG_FAQ_2_INTRO_1)}{" "}
+                        <span className="text-blue-600 font-bold">{t(LOCALIZE_CONST.RG_FAQ_2_SETTINGS)}</span>{" "}
+                        {t(LOCALIZE_CONST.RG_FAQ_2_INTRO_2)}
                         <div className="grid grid-cols-2 gap-2 mt-4">
                            <div className="bg-slate-50 p-3 rounded-xl border border-slate-100 text-[12px]">
-                              <b>Themes:</b> Light, Sepia, or Dark mode.
+                              <b>{t(LOCALIZE_CONST.RG_FAQ_2_THEMES_LABEL)}</b> {t(LOCALIZE_CONST.RG_FAQ_2_THEMES_DESC)}
                            </div>
                            <div className="bg-slate-50 p-3 rounded-xl border border-slate-100 text-[12px]">
-                              <b>Typography:</b> Font size and line spacing.
+                              <b>{t(LOCALIZE_CONST.RG_FAQ_2_TYPOGRAPHY_LABEL)}</b> {t(LOCALIZE_CONST.RG_FAQ_2_TYPOGRAPHY_DESC)}
                            </div>
                         </div>
                      </Accordion.Content>
@@ -141,15 +137,14 @@ export const UserManual = () => {
                      <Accordion.Trigger
                         className="border-b-slate-50 py-4 text-slate-900 font-black text-sm uppercase tracking-wide"
                      >
-                        3. Managing your Bookmarks
+                        {t(LOCALIZE_CONST.RG_FAQ_3_Q)}
                         <NavArrowDown className="h-4 w-4 group-data-[open=true]:rotate-180" />
                      </Accordion.Trigger>
                      <Accordion.Content className="text-slate-500 font-medium">
-                        To save a novel, ensure you are logged in. Click the{" "}
-                        <span className="text-slate-900 font-bold">"Add to Library"</span>{" "}
-                        button on the novel detail page. You can view all saved items by
-                        clicking your profile icon and selecting{" "}
-                        <span className="text-blue-600 font-bold">"Reading List"</span>.
+                        {t(LOCALIZE_CONST.RG_FAQ_3_INTRO_1)}{" "}
+                        <span className="text-slate-900 font-bold">{t(LOCALIZE_CONST.RG_FAQ_3_ADD_BTN)}</span>{" "}
+                        {t(LOCALIZE_CONST.RG_FAQ_3_INTRO_2)}{" "}
+                        <span className="text-blue-600 font-bold">{t(LOCALIZE_CONST.RG_FAQ_3_LIST_BTN)}</span>.
                      </Accordion.Content>
                   </Accordion.Item>
                </Accordion>
@@ -159,24 +154,22 @@ export const UserManual = () => {
                      <Accordion.Trigger
                            className="border-b-slate-50 py-4 text-slate-900 font-black text-sm uppercase tracking-wide"
                      >
-                        4. Contacting the Support Team
+                        {t(LOCALIZE_CONST.RG_FAQ_4_Q)}
                         <NavArrowDown className="h-4 w-4 group-data-[open=true]:rotate-180" />
                      </Accordion.Trigger>
                      <Accordion.Content className="text-slate-500 font-medium">
-                        Need help? You can reach us via the <b>Contact Us</b> page. We
-                        typically respond within 24 hours regarding:
+                        {t(LOCALIZE_CONST.RG_FAQ_4_INTRO_1)}{" "}
+                        <b>{t(LOCALIZE_CONST.CONTACT_US)}</b>{" "}
+                        {t(LOCALIZE_CONST.RG_FAQ_4_INTRO_2)}
                         <ul className="list-none mt-3 space-y-2">
                            <li className="flex items-center gap-2">
-                              <ArrowRight className="w-3 h-3 text-blue-500" /> Translation
-                              error reports
+                              <ArrowRight className="w-3 h-3 text-blue-500" /> {t(LOCALIZE_CONST.RG_FAQ_4_ITEM_1)}
                            </li>
                            <li className="flex items-center gap-2">
-                              <ArrowRight className="w-3 h-3 text-blue-500" /> Account
-                              recovery issues
+                              <ArrowRight className="w-3 h-3 text-blue-500" /> {t(LOCALIZE_CONST.RG_FAQ_4_ITEM_2)}
                            </li>
                            <li className="flex items-center gap-2">
-                              <ArrowRight className="w-3 h-3 text-blue-500" /> Novel
-                              requests
+                              <ArrowRight className="w-3 h-3 text-blue-500" /> {t(LOCALIZE_CONST.RG_FAQ_4_ITEM_3)}
                            </li>
                         </ul>
                      </Accordion.Content>

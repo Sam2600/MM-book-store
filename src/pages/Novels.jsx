@@ -28,12 +28,10 @@ export const Novels = () => {
    const content =  status == "pending" ?
       <Loader /> :
       <motion.div
-         layout
          className="flex flex-col gap-2"
          initial={{ opacity: 0 }}
-         whileInView={{ opacity: 1, transition: { duration: 0.25 } }}
+         animate={{ opacity: 1, transition: { duration: 0.25 } }}
          exit={{ opacity: 0 }}
-         viewport={{ once: true }}
       >
          <Header popular_all_time={novels?.popular_all_time} latest_novel={novels?.latest_novel} />
          <Populars popular_week={novels?.popular_week} popular_month={novels?.popular_month} />

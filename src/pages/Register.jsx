@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useForm } from "react-hook-form";
 import { Loader } from "../components/Loader";
@@ -30,9 +30,13 @@ export const Register = () => {
    const [isForRegister, setIsForRegister] = useState(true);
    const [serverError, setserverError] = useState("");
 
+   useEffect(() => scrollToTop(), []);
+
    const onSubmit = async (data) => {
       //
       setLoading(true);
+
+      scrollToTop();
 
       const { confirm_password, ...form_data } = data;
 
@@ -69,8 +73,6 @@ export const Register = () => {
          setLoading(false);
       }
 
-      scrollToTop();
-
       dispatch(addExtraMenuItems());
    };
 
@@ -80,9 +82,7 @@ export const Register = () => {
    };
 
    const component = loading ? (
-      <div className="flex justify-center items-center h-screen pb-24">
-         <Loader />
-      </div>
+      <Loader />
    ) : (
       <div className="container my-10 mx-auto px-4">
          <div className="flex flex-wrap justify-center items-center">

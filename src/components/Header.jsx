@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 import { EditorChoices } from './EditorChoices';
 import { Splide, SplideSlide } from '@splidejs/react-splide';
 import { LatestNovel } from './LatestNovel';
@@ -9,6 +9,32 @@ import { LOCALIZE_CONST, ROUTES } from '../consts/Consts';
 
 export const Header = ({ popular_all_time, latest_novel }) => {
    const { t } = useTranslation();
+
+   const editorSplideOptions = useMemo(() => ({
+      perPage: 1,
+      height: '335px',
+      type: "loop",
+      arrows: false,
+      pagination: false,
+      autoplay: true,
+      interval: 4000,
+   }), []);
+
+   const latestSplideOptions = useMemo(() => ({
+      direction: 'ttb',
+      height: '335px',
+      perPage: 3,
+      gap: '1rem',
+      type: 'loop',
+      arrows: false,
+      pagination: false,
+      autoplay: true,
+      interval: 3000,
+      wheel: true,
+      breakpoints: {
+         1024: { height: '350px', perPage: 3 },
+      },
+   }), []);
 
    useEffect(() => {
       scrollToTop();
@@ -32,17 +58,7 @@ export const Header = ({ popular_all_time, latest_novel }) => {
                         View All
                      </NavLink> */}
                   </div>
-                  <Splide
-                     options={{
-                        perPage: 1,
-                        height: '335px',
-                        type: "loop",
-                        arrows: false,
-                        pagination: false,
-                        autoplay: true,
-                        interval: 4000,
-                     }}
-                  >
+                  <Splide options={editorSplideOptions}>
                      {popular_all_time?.map((novel) => (
                         <SplideSlide key={novel.id}>
                            <NavLink to={ROUTES.NOVEL_BY_ID.replace(":id", novel?.id)}>
@@ -66,23 +82,7 @@ export const Header = ({ popular_all_time, latest_novel }) => {
                         View All
                      </NavLink> */}
                   </div>
-                  <Splide
-                     options={{
-                        direction: 'ttb',
-                        height: '335px', // Exactly matches the EditorChoices height
-                        perPage: 3,      // Shows 3 items to fill the height perfectly
-                        gap: '1rem',
-                        type: 'loop',
-                        arrows: false,
-                        pagination: false,
-                        autoplay: true,
-                        interval: 3000,
-                        wheel: true,
-                        breakpoints: {
-                           1024: { height: '350px', perPage: 3 },
-                        }
-                     }}
-                  >
+                  <Splide options={latestSplideOptions}>
                      {latest_novel?.map((novel) => (
                         <SplideSlide key={novel.id}>
                            <NavLink to={ROUTES.NOVEL_BY_ID.replace(":id", novel?.id)}>

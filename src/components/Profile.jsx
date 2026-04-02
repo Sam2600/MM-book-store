@@ -1,7 +1,8 @@
+import { memo } from "react";
 import { Card, Typography } from "@material-tailwind/react";
 import { NavLink } from "react-router-dom"; // Assuming you use this for navigation
 
-export const Profile = ({ novel }) => {
+export const Profile = memo(({ novel }) => {
    return (
       <div className="group cursor-pointer w-full">
          {/* Book Cover Container */}
@@ -25,6 +26,7 @@ export const Profile = ({ novel }) => {
                <img
                   src={novel?.cover_image}
                   alt={novel?.title}
+                  loading="lazy"
                   className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
                />
                
@@ -52,4 +54,4 @@ export const Profile = ({ novel }) => {
          </div>
       </div>
    );
-};
+});

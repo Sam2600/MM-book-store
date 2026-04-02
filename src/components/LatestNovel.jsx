@@ -1,8 +1,9 @@
+import { memo } from "react";
 import { Card, Typography } from "@material-tailwind/react";
 import { toHumanReadableDates } from "../functions/helpers";
 import { Calendar, User, Eye } from "iconoir-react"; // Matching your previous icon set
 
-export const LatestNovel = ({ novel }) => {
+export const LatestNovel = memo(({ novel }) => {
    return (
       <Card className="w-full flex flex-row items-center gap-4 p-2.5 border border-slate-100 bg-white backdrop-blur-sm shadow-none hover:shadow-xl hover:shadow-blue-500/5 hover:border-blue-100 transition-all duration-300 group overflow-hidden rounded-2xl">
          
@@ -11,6 +12,7 @@ export const LatestNovel = ({ novel }) => {
             <img
                src={novel?.cover_image}
                alt={novel?.title}
+               loading="lazy"
                className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
             />
             {/* Soft Overlay */}
@@ -51,4 +53,4 @@ export const LatestNovel = ({ novel }) => {
          </div>
       </Card>
    );
-};
+});

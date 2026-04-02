@@ -1,8 +1,9 @@
+import { memo } from "react";
 import { Card, Typography } from "@material-tailwind/react";
 import { LOCALIZE_CONST } from "../consts/Consts";
 import { useTranslation } from "react-i18next";
 
-export const EditorChoices = ({ novel }) => {
+export const EditorChoices = memo(({ novel }) => {
    const { t } = useTranslation();
 
    return (
@@ -14,6 +15,7 @@ export const EditorChoices = ({ novel }) => {
             <img
                src={novel?.cover_image}
                alt={novel?.title}
+               loading="lazy"
                /* object-cover ensures image fills the box without stretching */
                className="w-full h-full object-fill transition-transform duration-500 group-hover:scale-105"
             />
@@ -48,4 +50,4 @@ export const EditorChoices = ({ novel }) => {
          </div>
       </Card>
    );
-};
+});

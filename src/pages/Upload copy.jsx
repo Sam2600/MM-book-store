@@ -38,6 +38,8 @@ import makeAnimated from "react-select/animated";
 import { scrollToTop } from "../functions/helpers";
 import { useTranslation } from "react-i18next";
 import { LOCALIZE_CONST } from "../consts/Consts";
+import { useParams, useNavigate } from "react-router-dom"; // Add this
+import { getEditDataByChapterId, getNovelInfoByChapterId } from "../states/features/user/userSlice";
 
 const modules = {
    toolbar: [
@@ -53,23 +55,11 @@ export const Upload = () => {
 
    const { t } = useTranslation();
 
-   // Main Form
-   const {
-      register,
-      formState: { errors, isSubmitting },
-      handleSubmit,
-      reset,
-      control,
-   } = useForm();
+   const { novelId, chapterId } = useParams(); // Get the novel ID and chapter ID from URL if it exists
 
-   // Modal box form
-   const {
-      register: register2,
-      handleSubmit: handleSubmit2,
-      formState: { errors: errors2 },
-      reset: reset2,
-      control: control2
-   } = useForm();
+   const navigate = useNavigate();
+
+   const isEditMode = Boolean(chapterId);
 
    const [isPopUpOpen, setIsPopUpOpen] = useState(false);
    const [isNovelRegisterSuccess, setIsNovelRegisterSuccess] = useState(false);
@@ -81,24 +71,72 @@ export const Upload = () => {
    const novelByAuthor = useSelector(novelsByAuthor);
    const categories = useSelector(getAllMappedCategories);
    const status = useSelector(getNovelsByAuthorStatus);
+   const editData = useSelector(getNovelInfoByChapterId);
 
+   // Main Form
+   const {
+      register,
+      formState: { errors, isSubmitting },
+      handleSubmit,
+      reset,
+      control,
+   } = useForm({
+      values: {
+         novel_id: novelId,
+         volume_title: isEditMode ? editData?.volume?.volume_title : "",
+         volume_number: isEditMode ? editData?.volume?.volume_number : 1,
+         chapter_number: isEditMode ? editData?.chapter_number : 1,
+         title: isEditMode ? editData?.title || "" : "",
+         content: isEditMode ? editData?.content || "" : "",
+      }
+   });
+
+   // Modal box form
+   const {
+      register: register2,
+      handleSubmit: handleSubmit2,
+      formState: { errors: errors2 },
+      reset: reset2,
+      control: control2
+   } = useForm();
+   
+   // 1. Fetch data if in Edit Mode
+   useEffect(() => {
+      if (isEditMode) {
+         const fetchChapter = async () => {
+            try {
+               dispatch(getEditDataByChapterId({ chapterId: chapterId }));
+               // Use reset() from react-hook-form to populate the fields
+            } catch (error) {
+               setFeedback({ type: "error", message: "Failed to load chapter data." });
+            }
+         };
+         fetchChapter();
+      }
+   }, [chapterId, isEditMode, reset]);
+
+   // 2. Modified onSubmit to handle both POST and PUT
    const onSubmit = async (data) => {
       try {
-
          const novel_name = novelByAuthor?.find(nba => nba.id == data.novel_id)?.title;
-
-         await api.post("/chapters", { ...data, novel_name });
-
-         setFeedback({ type: "success", message: "Chapter uploaded successfully!" });
-
-         reset();
+         
+         if (isEditMode) {
+            // UPDATE PROCESS
+            await api.put(`/chapters/${chapterId}`, { ...data, novel_name });
+            setFeedback({ type: "success", message: "Chapter updated successfully!" });
+         } else {
+            // CREATE PROCESS
+            await api.post("/chapters", { ...data, novel_name });
+            setFeedback({ type: "success", message: "Chapter uploaded successfully!" });
+            reset();
+         }
+         scrollToTop();
       } catch (error) {
          setFeedback({ 
             type: "error", 
-            message: error?.response?.data?.message || "An error occurred during upload." 
+            message: error?.response?.data?.message || "An error occurred." 
          });
       }
-      scrollToTop();
    };
 
    const onError = (error) => {
@@ -125,6 +163,7 @@ export const Upload = () => {
          // Trigger success feedback for the user
          setFeedback({ type: "success", message: "New novel registered successfully!" });
          reset2();
+         scrollToTop();
       } catch (error) {
          setFeedback({ 
             type: "error",
@@ -228,12 +267,16 @@ export const Upload = () => {
                         className="mb-6"
                      >
                         <Alert
-                        variant="gradient"
-                        color={feedback.type === "success" ? "success" : "red"}
-                        icon={feedback.type === "success" ? <CheckCircle className="h-5 w-5" /> : <WarningTriangle className="h-5 w-5" />}
-                        onClose={() => setFeedback({ type: "", message: "" })}
+                           open={!!feedback.message}
+                           onOpenChange={(open) => { if (!open) setFeedback({ type: "", message: "" }); }}
+                           variant="gradient"
+                           color={feedback.type === "success" ? "success" : "error"}
                         >
-                        {feedback.message}
+                           <Alert.Icon>
+                              {feedback.type === "success" ? <CheckCircle className="h-5 w-5" /> : <WarningTriangle className="h-5 w-5" />}
+                           </Alert.Icon>
+                           <Alert.Content>{feedback.message}</Alert.Content>
+                           <Alert.DismissTrigger />
                         </Alert>
                      </motion.div>
                   )}
@@ -253,7 +296,7 @@ export const Upload = () => {
                            <select
                               className={`w-full bg-white p-2.5 border rounded-lg transition-all focus:ring-2 focus:ring-blue-500/20 ${errors.novel_id ? "border-red-500" : "border-slate-300"}`}
                               {...register("novel_id", {
-                              required: "Please select a novel",
+                                 required: "Please select a novel",
                               })}
                            >
                               <option value="">{t(LOCALIZE_CONST.PICK)}</option>
@@ -294,7 +337,7 @@ export const Upload = () => {
                            size="lg"
                            placeholder="e.g. The Beginning of the End"
                            className="!border-t-blue-gray-200 focus:!border-t-gray-900"
-                           labelProps={{
+                           labelprops={{
                               className: "before:content-none after:content-none",
                            }}
                            {...register("volume_title")}
@@ -309,7 +352,7 @@ export const Upload = () => {
                            size="lg"
                            defaultValue={1}
                            className="!border-t-blue-gray-200 focus:!border-t-gray-900"
-                           labelProps={{
+                           labelprops={{
                               className: "before:content-none after:content-none",
                            }}
                            {...register("volume_number", { required: true })}
@@ -327,7 +370,7 @@ export const Upload = () => {
                            type="number"
                            size="lg"
                            className="!border-t-blue-gray-200 focus:!border-t-gray-900"
-                           labelProps={{
+                           labelprops={{
                               className: "before:content-none after:content-none",
                            }}
                            {...register("chapter_number", { required: true })}
@@ -341,7 +384,7 @@ export const Upload = () => {
                            size="lg"
                            placeholder="Chapter Title"
                            className="!border-t-blue-gray-200 focus:!border-t-gray-900"
-                           labelProps={{
+                           labelprops={{
                               className: "before:content-none after:content-none",
                            }}
                            {...register("title", {
@@ -382,7 +425,7 @@ export const Upload = () => {
                      <Button
                         type="submit"
                         size="lg"
-                        fullWidth
+                        isFullWidth={false}
                         disabled={isSubmitting}
                         className="flex items-center justify-center gap-2"
                      >

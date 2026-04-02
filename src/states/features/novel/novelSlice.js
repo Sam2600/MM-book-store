@@ -1,5 +1,5 @@
 import {api} from "../../../axios/axios";
-import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import { createSlice, createAsyncThunk, createSelector } from "@reduxjs/toolkit";
 import { ROUTES } from "../../../consts/Consts";
 import { getLoginUserId } from "../../../functions/helpers";
 
@@ -233,12 +233,10 @@ export const getAllNovels = (state) => state.novel.all_novel;
 
 export const getAllCategories = (state) => state.novel.categories;
 
-export const getAllMappedCategories = (state) => state.novel.categories?.map(cate => {
-   return {
-      value: cate.id,
-      label: cate.name,
-   }
-});
+export const getAllMappedCategories = createSelector(
+   (state) => state.novel.categories,
+   (categories) => categories?.map(cate => ({ value: cate.id, label: cate.name }))
+);
 
 export const page = (state) => state.novel.page;
 
