@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useMemo } from 'react'
 import { motion, AnimatePresence } from "framer-motion";
 import { NavLink, useNavigate, useParams } from 'react-router-dom';
 import { useSelector, useDispatch } from "react-redux";
@@ -19,16 +19,19 @@ import {
    Card,
    CardBody 
 } from '@material-tailwind/react';
-import { 
-   NavArrowDown, 
-   Bookmark, 
-   Eye, 
-   User, 
-   ThumbsUp, 
-   BookStack, 
+import {
+   NavArrowDown,
+   Bookmark,
+   Eye,
+   User,
+   ThumbsUp,
+   BookStack,
    Star,
    Trash,
-   LogIn
+   LogIn,
+   Book,
+   FastArrowRight,
+   ClockRotateRight,
 } from 'iconoir-react';
 import { Loader } from '../components/Loader';
 import { scrollToTop } from '../functions/helpers';
@@ -59,6 +62,39 @@ export const NovelDetail = () => {
 
    const descriptionLimit = 300;
    const [isExpanded, setIsExpanded] = useState(false);
+
+   const [lastRead, setLastRead] = useState(null);
+
+   useEffect(() => {
+      const saved = localStorage.getItem(`last_read_${id}`);
+      if (saved) setLastRead(JSON.parse(saved));
+   }, [id]);
+
+   const { firstChapterUrl, lastChapterUrl, firstMeta, lastMeta } = useMemo(() => {
+      const vols = [...(novelById?.volumes || [])].sort((a, b) => a.volume_number - b.volume_number);
+      if (!vols.length) return {};
+
+      const firstVol = vols[0];
+      const firstCh = [...(firstVol?.chapters || [])].sort((a, b) => a.chapter_number - b.chapter_number)[0];
+
+      const lastVol = vols[vols.length - 1];
+      const lastCh = [...(lastVol?.chapters || [])].sort((a, b) => a.chapter_number - b.chapter_number).at(-1);
+
+      const build = (vol, ch) => ch
+         ? ROUTES.CHAPTER_BY_ID.replace(':novel', id).replace(':volume', vol.volume_number).replace(':chapter', ch.chapter_number)
+         : null;
+
+      return {
+         firstChapterUrl: build(firstVol, firstCh),
+         lastChapterUrl: build(lastVol, lastCh),
+         firstMeta: firstCh ? { vol: firstVol.volume_number, ch: firstCh.chapter_number, title: firstCh.title } : null,
+         lastMeta: lastCh ? { vol: lastVol.volume_number, ch: lastCh.chapter_number, title: lastCh.title } : null,
+      };
+   }, [novelById?.volumes, id]);
+
+   const continueUrl = lastRead
+      ? ROUTES.CHAPTER_BY_ID.replace(':novel', id).replace(':volume', lastRead.volume_number).replace(':chapter', lastRead.chapter_number)
+      : null;
 
    useEffect(() => {
 
@@ -303,9 +339,77 @@ export const NovelDetail = () => {
 
             {/* Volume List */}
             <div className="space-y-6">
+               {/* First / Last Chapter + Continue Reading */}
+               {(firstChapterUrl || lastChapterUrl) && (
+                  <div className="mt-10 mb-3 p-6 bg-white rounded-2xl shadow-sm border border-slate-100">
+                     <Typography className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-5">
+                        Quick Access
+                     </Typography>
+                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+
+                        {/* First Chapter */}
+                        {firstChapterUrl && firstMeta && (
+                           <NavLink to={firstChapterUrl}
+                              className="group flex items-center gap-4 p-4 rounded-xl border border-slate-100 hover:border-blue-200 hover:bg-blue-50/40 transition-all"
+                           >
+                              <div className="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center shrink-0 group-hover:bg-blue-600 transition-colors">
+                                 <Book className="w-5 h-5 text-blue-600 group-hover:text-white transition-colors" />
+                              </div>
+                              <div className="min-w-0">
+                                 <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 group-hover:text-blue-400 transition-colors">First Chapter</p>
+                                 <p className="text-sm font-bold text-slate-800 group-hover:text-blue-700 transition-colors truncate">
+                                    Vol.{firstMeta.vol} — Ch.{firstMeta.ch}
+                                    {firstMeta.title && <span className="font-medium text-slate-500 group-hover:text-blue-500"> · {firstMeta.title}</span>}
+                                 </p>
+                              </div>
+                           </NavLink>
+                        )}
+
+                        {/* Last Chapter */}
+                        {lastChapterUrl && lastMeta && (
+                           <NavLink to={lastChapterUrl}
+                              className="group flex items-center gap-4 p-4 rounded-xl border border-slate-100 hover:border-slate-300 hover:bg-slate-50/60 transition-all"
+                           >
+                              <div className="w-10 h-10 rounded-xl bg-slate-50 flex items-center justify-center shrink-0 group-hover:bg-slate-800 transition-colors">
+                                 <FastArrowRight className="w-5 h-5 text-slate-500 group-hover:text-white transition-colors" />
+                              </div>
+                              <div className="min-w-0">
+                                 <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 group-hover:text-slate-500 transition-colors">Latest Chapter</p>
+                                 <p className="text-sm font-bold text-slate-800 group-hover:text-slate-900 transition-colors truncate">
+                                    Vol.{lastMeta.vol} — Ch.{lastMeta.ch}
+                                    {lastMeta.title && <span className="font-medium text-slate-500 group-hover:text-slate-700"> · {lastMeta.title}</span>}
+                                 </p>
+                              </div>
+                           </NavLink>
+                        )}
+                     </div>
+
+                     {/* Continue Reading — full-width if present */}
+                     {continueUrl && (
+                        <NavLink to={continueUrl}
+                           className="group mt-4 flex items-center gap-4 p-4 rounded-xl border border-blue-100 bg-blue-50/50 hover:bg-blue-600 transition-all"
+                        >
+                           <div className="w-10 h-10 rounded-xl bg-white flex items-center justify-center shrink-0 shadow-sm group-hover:bg-white/20 transition-colors">
+                              <ClockRotateRight className="w-5 h-5 text-blue-600 group-hover:text-white transition-colors" />
+                           </div>
+                           <div className="flex-1 min-w-0">
+                              <p className="text-[10px] font-black uppercase tracking-widest text-blue-400 group-hover:text-blue-200 transition-colors">Continue Reading</p>
+                              <p className="text-sm font-bold text-blue-700 group-hover:text-white transition-colors truncate">
+                                 Vol.{lastRead.volume_number} — Ch.{lastRead.chapter_number}
+                                 {lastRead.chapter_title && (
+                                    <span className="font-medium opacity-70"> · {lastRead.chapter_title}</span>
+                                 )}
+                              </p>
+                           </div>
+                           <FastArrowRight className="w-4 h-4 text-blue-400 group-hover:text-white shrink-0 transition-colors" />
+                        </NavLink>
+                     )}
+                  </div>
+               )}
+
                <div className="flex items-center gap-3 mb-4">
-                  <BookStack className="w-6 h-6 text-slate-900" />
-                  <Typography type="h4" className="text-xl font-bold text-slate-900 uppercase tracking-widest">
+                  <BookStack className="w-6 h-6 mt-8 text-slate-900" />
+                  <Typography type="h4" className="text-xl mt-8 font-bold text-slate-900 uppercase tracking-widest">
                      Chapter List
                   </Typography>
                </div>
@@ -314,7 +418,7 @@ export const NovelDetail = () => {
                   <Accordion key={i} className="mb-4 border-none rounded-2xl bg-white shadow-sm overflow-hidden">
                      <Accordion.Item value={vol?.volume_number || i} className="border-none">
                         <Accordion.Trigger className="px-6 py-5 bg-white hover:bg-slate-50 transition-colors text-slate-800 font-black text-lg">
-                           {vol?.volume_title ? vol?.volume_title : `Volume ${vol?.volume_number}`}
+                           {vol?.volume_title ? `Vol ${vol?.volume_number} — ${vol?.volume_title}` : `Volume ${vol?.volume_number}`}
                            <NavArrowDown className="h-5 w-5 group-data-[open=true]:rotate-180 transition-transform" />
                         </Accordion.Trigger>
                         <Accordion.Content className="px-6 pb-6 pt-2 grid grid-cols-1 md:grid-cols-2 gap-3">

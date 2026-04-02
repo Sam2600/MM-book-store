@@ -89,6 +89,16 @@ export const Chapter = () => {
       localStorage.setItem('reader-theme', theme);
    }, [fontSize, lineHeight, theme]);
 
+   // ── Save last-read progress ──────────────────────────────────
+   useEffect(() => {
+      if (status !== 'success' || !chapterById?.chapter_number) return;
+      localStorage.setItem(`last_read_${novel}`, JSON.stringify({
+         volume_number: Number(volume),
+         chapter_number: chapterById.chapter_number,
+         chapter_title: chapterById.title,
+      }));
+   }, [status, chapterById, novel, volume]);
+
    const themeStyles = {
       light: 'bg-white text-slate-900',
       sepia: 'bg-[#f4ecd8] text-[#5b4636]',
