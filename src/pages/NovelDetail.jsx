@@ -157,6 +157,22 @@ export const NovelDetail = () => {
 
    if (status === "pending") return <Loader />;
 
+   if (status === "failed") return (
+      <div className="flex flex-col items-center justify-center min-h-screen gap-4 text-center px-4">
+         <BookStack className="w-16 h-16 text-slate-200" />
+         <Typography type="h3" className="text-2xl font-black text-slate-700">Novel Not Found</Typography>
+         <Typography className="text-slate-400 max-w-sm">
+            This novel doesn't exist or may have been removed.
+         </Typography>
+         <NavLink
+            to={ROUTES.HOME}
+            className="mt-2 px-6 py-2.5 bg-slate-900 text-white text-sm font-bold rounded-2xl hover:bg-blue-600 transition-colors"
+         >
+            Back to Home
+         </NavLink>
+      </div>
+   );
+
    return (
       <div className="min-h-screen bg-gray-50/50 pb-20">
          {/* Hero Section */}
