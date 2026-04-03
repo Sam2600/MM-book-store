@@ -6,8 +6,7 @@ import { getLoginUserId } from "../../../functions/helpers";
 const initialState = {
    novels: {},
    categories: [],
-   all_novel: [],
-   filtered_novels: [],
+   searchResults: [],
    status: {
       getNovels: "idle",
       getNovelById: "idle",
@@ -15,6 +14,7 @@ const initialState = {
       postNovels: "idle",
       getNovelsByAuthor: "idle",
       getNovelsByCategory: "idle",
+      searchNovels: "idle",
    },
    novelByAuthor: [],
    novelById: {},
@@ -60,6 +60,11 @@ export const getNovelsByCategory = createAsyncThunk("novels/getNovelsByCategory"
    return response.data; // Expecting { data: [...], current_page: 1, last_page: 10 }
 });
 
+export const searchNovels = createAsyncThunk("novels/search", async (q) => {
+   const response = await api.get(`/novels/search?q=${encodeURIComponent(q)}`);
+   return response.data;
+});
+
 export const novelSlice = createSlice({
 
    name: 'novel',
@@ -67,20 +72,6 @@ export const novelSlice = createSlice({
    initialState,
 
    reducers: {
-
-      filterNovel: (state, action) => {
-
-         if (!action.payload) {
-            state.filtered_novels = [];
-            return;
-         }
-   
-         const filter = state.all_novel.filter((novel) =>
-            novel.title.toLowerCase().includes(action.payload.toLowerCase())
-         );
-   
-         state.filtered_novels = filter;
-      },
 
       emptyNovelByIdBookmark: (state) => {
          state.novelById.isAlreadyBooked = false;
@@ -96,7 +87,6 @@ export const novelSlice = createSlice({
        */
       cleanNovels: (state) => {
          state.novels = {}
-         state.filtered_novels = []
          state.status =  {
             getNovels: "idle",
             getNovelById: "idle",
@@ -113,7 +103,12 @@ export const novelSlice = createSlice({
          state.categoryNovels = [];
          state.page = 1;
          state.hasMore = true;
-      }
+      },
+
+      clearSearchResults: (state) => {
+         state.searchResults = [];
+         state.status.searchNovels = "idle";
+      },
    },
    extraReducers: (builer) => {
       builer
@@ -126,7 +121,6 @@ export const novelSlice = createSlice({
 
             state.novels = action.payload?.data;
             state.categories = action.payload?.data?.categories;
-            state.all_novel = action.payload?.data?.all_novel;
             state.status.getNovels = "success";
          })
    
@@ -215,6 +209,20 @@ export const novelSlice = createSlice({
          .addCase(getNovelsByCategory.rejected, (state, action) => {
             console.error("Fetch Error:", action.error);
             state.status.getNovelsByCategory = "failed";
+         })
+
+         .addCase(searchNovels.pending, (state) => {
+            state.status.searchNovels = "pending";
+         })
+
+         .addCase(searchNovels.fulfilled, (state, action) => {
+            state.searchResults = action.payload?.data ?? [];
+            state.status.searchNovels = "success";
+         })
+
+         .addCase(searchNovels.rejected, (state) => {
+            state.searchResults = [];
+            state.status.searchNovels = "failed";
          });
       },
 })
@@ -226,10 +234,6 @@ export const getNovelByID = (state) => state.novel.novelById;
 export const getChapterByID = (state) => state.novel.chapterById;
 
 export const novelsByAuthor = (state) => state.novel.novelByAuthor;
-
-export const getFilteredNovels = (state) => state.novel.filtered_novels;
-
-export const getAllNovels = (state) => state.novel.all_novel;
 
 export const getAllCategories = (state) => state.novel.categories;
 
@@ -254,7 +258,11 @@ export const getChapterByIdStatus = (state) => state.novel.status.getChapterById
 
 export const getNovelsByChapterStatus = (state) => state.novel.status.getNovelsByCategory;
 
+export const getSearchResults = (state) => state.novel.searchResults;
+
+export const getSearchStatus = (state) => state.novel.status.searchNovels;
+
 
 export default novelSlice.reducer;
 
-export const { filterNovel, emptyNovelByIdBookmark, attachNovelByIdBookmark, cleanNovels, cleanCategoryNovels } = novelSlice.actions;
+export const { emptyNovelByIdBookmark, attachNovelByIdBookmark, cleanNovels, cleanCategoryNovels, clearSearchResults } = novelSlice.actions;

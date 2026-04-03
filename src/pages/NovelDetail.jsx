@@ -414,7 +414,7 @@ export const NovelDetail = () => {
                   </Typography>
                </div>
 
-               {novelById?.volumes?.map((vol, i) => (
+               {[...(novelById?.volumes || [])].reverse().map((vol, i) => (
                   <Accordion key={i} className="mb-4 border-none rounded-2xl bg-white shadow-sm overflow-hidden">
                      <Accordion.Item value={vol?.volume_number || i} className="border-none">
                         <Accordion.Trigger className="px-6 py-5 bg-white hover:bg-slate-50 transition-colors text-slate-800 font-black text-lg">

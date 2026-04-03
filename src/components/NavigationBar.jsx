@@ -14,10 +14,10 @@ import {
 } from "iconoir-react";
 import { Link, NavLink, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from 'react-redux'
-import { filterNovel, getFilteredNovels } from "../states/features/novel/novelSlice.js";
 import { useDebounce } from "../hooks/useDebounce.jsx";
 import { useEffect, useState } from "react";
 import { getFetchNavMenuList, removeExtraMenuItems } from "../states/features/nav/navMenuListSlice.js";
+import { searchNovels, clearSearchResults, getSearchResults } from "../states/features/novel/novelSlice.js";
 import { iconMap } from "../functions/helpers.js";
 import { api } from "../axios/axios.js";
 import { useTranslation } from "react-i18next";
@@ -31,8 +31,8 @@ export const NavigationBar = () => {
    const dispatch = useDispatch();
    const navigate = useNavigate();
 
-   const filteredNovels = useSelector(getFilteredNovels);
    const navMenus = useSelector(getFetchNavMenuList);
+   const searchResults = useSelector(getSearchResults);
 
    const navMenuList = navMenus.map(menu => ({
       ...menu,
@@ -43,13 +43,18 @@ export const NavigationBar = () => {
    const _search = useDebounce(search);
 
    useEffect(() => {
-      dispatch(filterNovel(_search));
+      if (!_search) {
+         dispatch(clearSearchResults());
+         return;
+      }
+      dispatch(searchNovels(_search));
    }, [_search, dispatch]);
 
    const [openNav, setOpenNav] = useState(false);
 
-   const handleNavClick = (e) => {
+   const handleNavClick = () => {
       setSearch("");
+      dispatch(clearSearchResults());
    };
 
    useEffect(() => {
@@ -139,13 +144,13 @@ export const NavigationBar = () => {
                   </div>
 
                   {/* Dropdown Results - Beautified with Glass Effect */}
-                  {filteredNovels?.length > 0 && search && (
+                  {searchResults?.length > 0 && search && (
                      <div className="absolute top-[120%] left-0 w-full bg-white/95 backdrop-blur-xl rounded-2xl shadow-2xl border border-slate-100 overflow-hidden z-[100] animate-in fade-in zoom-in-95 duration-200">
                         <div className="px-4 py-3 bg-slate-50/50 border-b border-slate-100">
                            <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Suggested Results</span>
                         </div>
                         <ul className="max-h-64 overflow-y-auto p-1.5">
-                           {filteredNovels.map((fn) => (
+                           {searchResults.map((fn) => (
                               <NavLink 
                                  key={fn?.id} 
                                  onClick={handleNavClick} 
@@ -210,13 +215,13 @@ export const NavigationBar = () => {
                      labelprops={{ className: "hidden" }}
                   />
                </div>
-               {filteredNovels?.length > 0 && search && (
+               {searchResults?.length > 0 && search && (
                   <div className="absolute left-0 w-full bg-white/95 backdrop-blur-xl rounded-2xl shadow-2xl border border-slate-100 overflow-hidden z-[100] animate-in fade-in zoom-in-95 duration-200">
                      <div className="px-4 py-3 bg-slate-50/50 border-b border-slate-100">
                         <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Suggested Results</span>
                      </div>
                      <ul className="max-h-64 overflow-y-auto p-1.5">
-                        {filteredNovels.map((fn) => (
+                        {searchResults.map((fn) => (
                            <NavLink 
                               key={fn?.id} 
                               onClick={handleNavClick} 

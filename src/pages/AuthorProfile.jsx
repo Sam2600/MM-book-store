@@ -111,10 +111,10 @@ const NovelManagementRow = ({ novel, onEdit, onDelete, isAdmin }) => {
                <div>
                   <h3 className="text-lg font-black text-slate-900 leading-tight">{novel.title}</h3>
                   <div className="flex items-center gap-3 mt-2">
-                     <span className="flex items-center gap-1 text-[11px] font-black text-yellow-700 bg-yellow-100/50 px-2 py-1 rounded-lg">
+                     {/* <span className="flex items-center gap-1 text-[11px] font-black text-yellow-700 bg-yellow-100/50 px-2 py-1 rounded-lg">
                         <CurrencyDollarIcon className="w-3.5 h-3.5" />
                         {novel.total_coins || 0}
-                     </span>
+                     </span> */}
                      <span className="flex items-center gap-1 text-[11px] font-black text-blue-600 bg-blue-100/50 px-2 py-1 rounded-lg uppercase">
                         <BookOpenIcon className="w-3.5 h-3.5" />
                         {novel.volumes?.length || 0} Volumes
@@ -272,6 +272,11 @@ export const AuthorProfile = () => {
                      <div className="space-y-6">
                         <div className="flex justify-between items-center mb-4">
                            <h2 className="text-3xl font-black text-slate-900 tracking-tight">Novels</h2>
+                           <NavLink to={ROUTES.UPLOAD_CHAPTER}>
+                              <button className="w-full md:w-auto bg-blue-600 text-white px-8 py-3.5 rounded-2xl text-xs font-black uppercase tracking-widest shadow-xl shadow-blue-500/20 hover:bg-blue-700 transition-all active:scale-95">
+                                 + New Novel
+                              </button>
+                           </NavLink>
                         </div>
                         {novels.map((novel) => (
                            <NovelManagementRow 
