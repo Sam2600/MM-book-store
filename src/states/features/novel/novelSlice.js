@@ -34,8 +34,12 @@ export const getNovels = createAsyncThunk("novels", async () => {
 export const getNovelById = createAsyncThunk("novels/:id", async (id) => {
 
    const user_id = getLoginUserId();
-   const route = ROUTES.NOVEL_BY_ID.replace(":id", id).concat(`?user_id=${user_id}`)
-   const response = await api.get(route);
+   const route = ROUTES.NOVEL_BY_ID.replace(":id", id);
+   const response = await api.get(route, {
+      params: {
+         user_id: user_id || undefined
+      }
+   });
    return response.data;
 });
 

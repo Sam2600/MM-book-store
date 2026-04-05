@@ -165,6 +165,9 @@ export const Upload = () => {
          }
          scrollToTop();
       } catch (error) {
+         setTimeout(() => {
+            scrollToTop();
+         }, 100); 
          setFeedback({ 
             type: "error", 
             message: error?.response?.data?.message || "An error occurred." 
@@ -201,6 +204,11 @@ export const Upload = () => {
          setCoverPreview(null);
          scrollToTop();
       } catch (error) {
+
+         setTimeout(() => {
+            scrollToTop();
+         }, 100); 
+
          setFeedback({
             type: "error",
             message: error?.response?.data?.message || "Failed to register novel."
@@ -406,16 +414,8 @@ export const Upload = () => {
                      </div>
                   </div>
 
-                  <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                     <div>
-                        <FieldLabel label={t(LOCALIZE_CONST.CHAPTER)} required />
-                        <input
-                           type="number"
-                           className={inputCls(errors.chapter_number)}
-                           {...register("chapter_number", { required: true })}
-                        />
-                     </div>
-                     <div className="md:col-span-3">
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                     <div className="md:col-span-2">
                         <FieldLabel
                            label={t(LOCALIZE_CONST.TITLE)}
                            error={errors.title?.message}
@@ -427,6 +427,14 @@ export const Upload = () => {
                            {...register("title", {
                               required: "Title is required",
                            })}
+                        />
+                     </div>
+                     <div>
+                        <FieldLabel label={t(LOCALIZE_CONST.CHAPTER)} required />
+                        <input
+                           type="number"
+                           className={inputCls(errors.chapter_number)}
+                           {...register("chapter_number", { required: true })}
                         />
                      </div>
                   </div>
@@ -630,7 +638,7 @@ export const Upload = () => {
                                        required: "Image is required",
                                        validate: {
                                           size: (files) =>
-                                             files?.[0]?.size < 2097152 || "Max 2MB",
+                                             files?.[0]?.size < 2097152 || "Only max 2MB is allowed",
                                           type: (files) =>
                                              files?.[0]?.type.startsWith("image/") ||
                                              "Must be an image",
