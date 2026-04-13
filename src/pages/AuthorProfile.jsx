@@ -1,20 +1,21 @@
 import React, { useEffect, useState } from 'react';
-import { 
-   EyeIcon, 
-   ChevronDownIcon, 
-   CurrencyDollarIcon, 
-   PencilSquareIcon, 
-   TrashIcon, 
+import {
+   EyeIcon,
+   ChevronDownIcon,
+   CurrencyDollarIcon,
+   PencilSquareIcon,
+   TrashIcon,
    ChevronUpIcon,
    BookOpenIcon
 } from '@heroicons/react/24/outline';
 import { scrollToTop } from '../functions/helpers';
 import { useDispatch, useSelector } from 'react-redux';
-import { cleanUserInfo, getUserInfo, getUserInfoAndBooks, getUserInfoAndBooksStatus, user } from '../states/features/user/userSlice';
+import { cleanUserInfo, getPaymentMethods, getUpdateProfileStatus, getUserInfo, getUserInfoAndBooks, getUserInfoAndBooksStatus, resetUpdateProfileStatus, selectPaymentMethods, updateUserProfile, user } from '../states/features/user/userSlice';
 import { DEFAULT_IMG_CHAR, ROUTES } from '../consts/Consts';
 import { Loader } from '../components/Loader';
 import { NavLink } from 'react-router-dom';
 import { Button } from '@material-tailwind/react';
+import { useForm } from 'react-hook-form';
 
 /**
  * Isolated Volume Component to handle internal toggle/collapse
@@ -190,16 +191,59 @@ export const AuthorProfile = () => {
    const dispatch = useDispatch();
    const userInfoAndBooks = useSelector(getUserInfoAndBooks);
    const status = useSelector(getUserInfoAndBooksStatus);
+   const updateProfileStatus = useSelector(getUpdateProfileStatus);
+   const paymentMethods = useSelector(selectPaymentMethods);
    const [activeTab, setActiveTab] = useState('works');
+   const [serverError, setServerError] = useState('');
+   const [serverSuccess, setServerSuccess] = useState('');
+
+   const { register, handleSubmit, reset, formState: { errors, isDirty } } = useForm({
+      defaultValues: {
+         name: me?.name || '',
+         email: me?.email || '',
+         payment_method_id: me?.payment_method_id || '',
+         payment_account: me?.payment_account || '',
+      }
+   });
 
    useEffect(() => {
       scrollToTop();
       dispatch(getUserInfo());
+      dispatch(getPaymentMethods());
 
       return () => {
          dispatch(cleanUserInfo());
+         dispatch(resetUpdateProfileStatus());
       }
    }, [dispatch]);
+
+   useEffect(() => {
+      reset({
+         name: me?.name || '',
+         email: me?.email || '',
+         payment_method_id: me?.payment_method_id || '',
+         payment_account: me?.payment_account || '',
+      });
+   }, [me, reset]);
+
+   const onSubmitProfile = async (data) => {
+      setServerError('');
+      setServerSuccess('');
+      scrollToTop();
+      try {
+         await dispatch(updateUserProfile(data)).unwrap();
+         setServerSuccess('Profile updated successfully!');
+      } catch (error) {
+         const msg = error?.message;
+         if (msg && typeof msg === 'object') {
+            setServerError(Object.values(msg).flat().join('\n'));
+         } else if (typeof msg === 'string') {
+            setServerError(msg);
+         } else {
+            setServerError('Failed to update profile. Please try again.');
+         }
+      }
+   };
 
    const handleDelete = (id, type) => {
       if (window.confirm(`Are you sure you want to delete this ${type}?`)) {
@@ -250,7 +294,7 @@ export const AuthorProfile = () => {
                {/* Right Content */}
                <div className="md:col-span-8 lg:col-span-9">
                   <nav className="flex gap-2 mb-8 bg-slate-100 p-1.5 rounded-2xl w-fit">
-                     <button 
+                     <button
                         onClick={() => setActiveTab('works')}
                         className={`px-8 py-2.5 rounded-xl text-xs font-black uppercase tracking-widest transition-all ${
                            activeTab === 'works' ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-500 hover:text-slate-700'
@@ -258,7 +302,7 @@ export const AuthorProfile = () => {
                      >
                         Management
                      </button>
-                     <button 
+                     <button
                         onClick={() => setActiveTab('about')}
                         className={`px-8 py-2.5 rounded-xl text-xs font-black uppercase tracking-widest transition-all ${
                            activeTab === 'about' ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-500 hover:text-slate-700'
@@ -266,9 +310,109 @@ export const AuthorProfile = () => {
                      >
                         Author Bio
                      </button>
+                     <button
+                        onClick={() => setActiveTab('edit')}
+                        className={`px-8 py-2.5 rounded-xl text-xs font-black uppercase tracking-widest transition-all ${
+                           activeTab === 'edit' ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-500 hover:text-slate-700'
+                        }`}
+                     >
+                        Edit Profile
+                     </button>
                   </nav>
 
-                  {activeTab === 'works' ? (
+                  {activeTab === 'edit' ? (
+                     <div className="relative bg-white p-10 rounded-[2.5rem] border border-slate-100">
+
+                        {updateProfileStatus === 'pending' && (
+                           <div className="absolute inset-0 bg-white/70 backdrop-blur-sm rounded-[2.5rem] flex items-center justify-center z-10">
+                              <Loader />
+                           </div>
+                        )}
+
+                        <h2 className="text-2xl font-black text-slate-900 mb-8">Edit Profile</h2>
+
+                        {serverError && (
+                           <div className="mb-6 animate-in fade-in slide-in-from-top-2 duration-300">
+                              <p className="text-sm font-bold text-red-600 bg-red-50 border border-red-200 w-full p-4 rounded-xl shadow-sm whitespace-pre-line">
+                                 {serverError}
+                              </p>
+                           </div>
+                        )}
+                        {serverSuccess && (
+                           <div className="mb-6 animate-in fade-in slide-in-from-top-2 duration-300">
+                              <p className="text-sm font-bold text-green-700 bg-green-50 border border-green-200 w-full p-4 rounded-xl shadow-sm">
+                                 {serverSuccess}
+                              </p>
+                           </div>
+                        )}
+
+                        <form onSubmit={handleSubmit(onSubmitProfile)} className="space-y-6 max-w-lg">
+
+                           {/* Name */}
+                           <div>
+                              <label className="block text-xs font-black uppercase tracking-widest text-slate-500 mb-2">Username <span className="text-red-500">*</span></label>
+                              <input
+                                 {...register('name', { required: 'Username is required' })}
+                                 type="text"
+                                 className="w-full bg-slate-50 border-2 border-slate-100 rounded-2xl px-5 py-3.5 text-sm font-bold focus:bg-white focus:border-blue-500 outline-none transition-all"
+                                 placeholder="Your author name"
+                              />
+                              {errors.name && <p className="text-red-500 text-xs font-bold mt-1">{errors.name.message}</p>}
+                           </div>
+
+                           {/* Email */}
+                           <div>
+                              <label className="block text-xs font-black uppercase tracking-widest text-slate-500 mb-2">Email</label>
+                              <input
+                                 {...register('email', {
+                                    required: 'Email is required',
+                                    pattern: { value: /^\S+@\S+$/i, message: 'Invalid email address' }
+                                 })}
+                                 type="email"
+                                 disabled
+                                 className="w-full bg-slate-50 border-2 border-slate-100 rounded-2xl px-5 py-3.5 text-sm font-bold focus:bg-white focus:border-blue-500 outline-none transition-all"
+                                 placeholder="your@email.com"
+                              />
+                              {errors.email && <p className="text-red-500 text-xs font-bold mt-1">{errors.email.message}</p>}
+                           </div>
+
+                           {/* Payment Method */}
+                           <div>
+                              <label className="block text-xs font-black uppercase tracking-widest text-slate-500 mb-2">Payment Method <span className="text-red-500">*</span></label>
+                              <select
+                                 {...register('payment_method_id', { required: 'Payment method is required' })}
+                                 className="w-full cursor-pointer bg-slate-50 border-2 border-slate-100 rounded-2xl px-5 py-3.5 text-sm font-bold focus:bg-white focus:border-blue-500 outline-none transition-all appearance-none"
+                              >
+                                 <option value="">-- Select Payment Method --</option>
+                                 {paymentMethods.map((pm) => (
+                                    <option key={pm.id} value={pm.id}>{pm.label}</option>
+                                 ))}
+                              </select>
+                              {errors.payment_method_id && <p className="text-red-500 text-xs font-bold mt-1">{errors.payment_method_id.message}</p>}
+                           </div>
+
+                           {/* Payment Account */}
+                           <div>
+                              <label className="block text-xs font-black uppercase tracking-widest text-slate-500 mb-2">Account Number <span className="text-red-500">*</span></label>
+                              <input
+                                 {...register('payment_account', { required: 'Account number is required' })}
+                                 type="text"
+                                 className="w-full bg-slate-50 border-2 border-slate-100 rounded-2xl px-5 py-3.5 text-sm font-bold focus:bg-white focus:border-blue-500 outline-none transition-all"
+                                 placeholder="xxxxxxxxx"
+                              />
+                              {errors.payment_account && <p className="text-red-500 text-xs font-bold mt-1">{errors.payment_account.message}</p>}
+                           </div>
+
+                           <button
+                              type="submit"
+                              disabled={updateProfileStatus === 'pending' || !isDirty}
+                              className="bg-blue-600 text-white px-10 py-3.5 rounded-2xl text-xs font-black uppercase tracking-widest shadow-xl shadow-blue-500/20 hover:bg-blue-700 transition-all active:scale-95 disabled:opacity-60"
+                           >
+                              {updateProfileStatus === 'pending' ? 'Saving...' : 'Save Changes'}
+                           </button>
+                        </form>
+                     </div>
+                  ) : activeTab === 'works' ? (
                      <div className="space-y-6">
                         <div className="flex justify-between items-center mb-4">
                            <h2 className="text-3xl font-black text-slate-900 tracking-tight">Novels</h2>

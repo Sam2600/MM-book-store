@@ -118,6 +118,8 @@ export const ROUTES = {
    GET_AUTHOR_INFO_NOVELS: "/author/:id",
    GET_BOOKMARK_COLLECTION: "/getBookMarkedCollection",
    GET_USER_INFO: "/me",
+   UPDATE_USER_PROFILE: "/me/profile",
+   GET_PAYMENT_METHODS: "/payment-methods",
    HOME: "/",
    LOGOUT: "/logout",
    MY_BOOKS: "/my-books",

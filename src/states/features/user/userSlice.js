@@ -9,11 +9,14 @@ const initialState = {
    userInfo: [],
    bookMarks: [],
    novelInfoByChapterId: {},
+   paymentMethods: [],
    status: {
       getBookMarkedStatus: "idle",
       getAuthorInfoAndBooksStatus: "idle",
       getUserInfoStatus: "idle",
       getNovelInfoByChapterIdStatus: "idle",
+      updateProfileStatus: "idle",
+      getPaymentMethodsStatus: "idle",
    },
 }
 
@@ -33,6 +36,20 @@ export const getUserInfo = createAsyncThunk("me", async () => {
    
    const response = await api.get(ROUTES.GET_USER_INFO);
    return response.data;
+});
+
+export const getPaymentMethods = createAsyncThunk("payment-methods", async () => {
+   const response = await api.get(ROUTES.GET_PAYMENT_METHODS);
+   return response.data;
+});
+
+export const updateUserProfile = createAsyncThunk("me/profile", async (profileData, { rejectWithValue }) => {
+   try {
+      const response = await api.patch(ROUTES.UPDATE_USER_PROFILE, profileData);
+      return response.data;
+   } catch (error) {
+      return rejectWithValue(error.response?.data);
+   }
 });
 
 export const getEditDataByChapterId = createAsyncThunk("novels/:novel/chapters/:chapter/edit", async ({ chapterId }) => {
@@ -63,6 +80,10 @@ export const userSlice = createSlice({
       cleanUserInfo: (state) => {
          state.userInfo = []
          state.status.getUserInfoStatus = "idle"
+      },
+
+      resetUpdateProfileStatus: (state) => {
+         state.status.updateProfileStatus = "idle"
       }
    },
 
@@ -116,6 +137,32 @@ export const userSlice = createSlice({
             state.status.getUserInfoStatus = "failed"
          })
       
+         .addCase(getPaymentMethods.fulfilled, (state, action) => {
+            state.paymentMethods = action?.payload?.data || [];
+            state.status.getPaymentMethodsStatus = "success";
+         })
+
+         .addCase(getPaymentMethods.rejected, (state) => {
+            state.paymentMethods = [];
+            state.status.getPaymentMethodsStatus = "failed";
+         })
+
+         .addCase(updateUserProfile.pending, (state) => {
+            state.status.updateProfileStatus = "pending";
+         })
+
+         .addCase(updateUserProfile.fulfilled, (state, action) => {
+            const updatedUser = action?.payload?.data;
+            state.user = updatedUser;
+            localStorage.setItem("user", JSON.stringify(updatedUser));
+            state.status.updateProfileStatus = "success";
+         })
+
+         .addCase(updateUserProfile.rejected, (state, action) => {
+            state.status.updateProfileStatus = "failed";
+            state.updateProfileError = action.payload;
+         })
+
          .addCase(getEditDataByChapterId.pending, (state) => {
             state.status.getNovelInfoByChapterIdStatus = "pending"
          })
@@ -149,4 +196,7 @@ export const getNovelInfoByChapterId = (state) => state.user.novelInfoByChapterI
 
 export default userSlice.reducer;
 
-export const { removeBookMark, setUser, cleanUserInfo } = userSlice.actions;
+export const getUpdateProfileStatus = (state) => state.user.status.updateProfileStatus;
+export const selectPaymentMethods = (state) => state.user.paymentMethods;
+
+export const { removeBookMark, setUser, cleanUserInfo, resetUpdateProfileStatus } = userSlice.actions;

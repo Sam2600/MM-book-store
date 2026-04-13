@@ -50,9 +50,9 @@ export const RegisterAuthor = () => {
 
    if (loading) {
       return (
-         <div className="flex justify-center items-center h-screen pb-24">
+         // <div className="flex justify-center items-center h-screen pb-24">
             <Loader />
-         </div>
+         // </div>
       );
    }
 
