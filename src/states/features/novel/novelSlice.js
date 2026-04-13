@@ -15,6 +15,7 @@ const initialState = {
       getNovelsByAuthor: "idle",
       getNovelsByCategory: "idle",
       searchNovels: "idle",
+      getEndedNovels: "idle",
    },
    novelByAuthor: [],
    novelById: {},
@@ -23,6 +24,10 @@ const initialState = {
    page: 1,
    hasMore: true,
    categoryNovels: [],
+
+   endedNovels: [],
+   endedPage: 1,
+   endedHasMore: true,
 }
 
 export const getNovels = createAsyncThunk("novels", async () => {
@@ -69,6 +74,11 @@ export const searchNovels = createAsyncThunk("novels/search", async (q) => {
    return response.data;
 });
 
+export const fetchEndedNovels = createAsyncThunk("novels/ended", async (page) => {
+   const response = await api.get(`${ROUTES.NOVELS_ENDED}?page=${page}`);
+   return response.data;
+});
+
 export const novelSlice = createSlice({
 
    name: 'novel',
@@ -107,6 +117,12 @@ export const novelSlice = createSlice({
          state.categoryNovels = [];
          state.page = 1;
          state.hasMore = true;
+      },
+
+      cleanEndedNovels: (state) => {
+         state.endedNovels = [];
+         state.endedPage = 1;
+         state.endedHasMore = true;
       },
 
       clearSearchResults: (state) => {
@@ -227,11 +243,36 @@ export const novelSlice = createSlice({
          .addCase(searchNovels.rejected, (state) => {
             state.searchResults = [];
             state.status.searchNovels = "failed";
+         })
+
+         .addCase(fetchEndedNovels.pending, (state) => {
+            state.status.getEndedNovels = "pending";
+         })
+
+         .addCase(fetchEndedNovels.fulfilled, (state, action) => {
+            state.status.getEndedNovels = "success";
+            const paginator = action.payload.data;
+            if (paginator && Array.isArray(paginator.data)) {
+               const newNovels = paginator.data.filter(
+                  (n) => !state.endedNovels.find((old) => old.id === n.id)
+               );
+               state.endedNovels = [...state.endedNovels, ...newNovels];
+               state.endedPage = paginator.current_page + 1;
+               state.endedHasMore = paginator.current_page < paginator.last_page;
+            }
+         })
+
+         .addCase(fetchEndedNovels.rejected, (state) => {
+            state.status.getEndedNovels = "failed";
          });
       },
 })
 
 export const getFetchNovels = (state) => state.novel.novels;
+export const getEndedNovels = (state) => state.novel.endedNovels;
+export const getEndedPage = (state) => state.novel.endedPage;
+export const getEndedHasMore = (state) => state.novel.endedHasMore;
+export const getEndedNovelsStatus = (state) => state.novel.status.getEndedNovels;
 
 export const getNovelByID = (state) => state.novel.novelById;
 
@@ -269,4 +310,4 @@ export const getSearchStatus = (state) => state.novel.status.searchNovels;
 
 export default novelSlice.reducer;
 
-export const { emptyNovelByIdBookmark, attachNovelByIdBookmark, cleanNovels, cleanCategoryNovels, clearSearchResults } = novelSlice.actions;
+export const { emptyNovelByIdBookmark, attachNovelByIdBookmark, cleanNovels, cleanCategoryNovels, cleanEndedNovels, clearSearchResults } = novelSlice.actions;

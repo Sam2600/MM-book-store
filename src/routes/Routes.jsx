@@ -15,12 +15,12 @@ const AdTestPage = lazy(() => import("../pages/AdTestPage").then(m => ({ default
 const Profile = lazy(() => import("../pages/Profile").then(m => ({ default: m.Profile })));
 const NormalProfile = lazy(() => import("../pages/NormalProfile").then(m => ({ default: m.NormalProfile })));
 const ProfileDetail = lazy(() => import("../pages/ProfileDetail").then(m => ({ default: m.ProfileDetail })));
-const CategoryPage = lazy(() => import("../pages/CategoryPage").then(m => ({ default: m.CategoryPage })));
 const AboutUs = lazy(() => import("../pages/AboutUs").then(m => ({ default: m.AboutUs })));
 const UserManual = lazy(() => import("../pages/UserManual").then(m => ({ default: m.UserManual })));
 const CheckEmail = lazy(() => import("../pages/CheckEmail").then(m => ({ default: m.CheckEmail })));
 const EmailVerified = lazy(() => import("../pages/EmailVerified").then(m => ({ default: m.EmailVerified })));
 const RegisterAuthor = lazy(() => import("../pages/RegisterAuthor").then(m => ({ default: m.RegisterAuthor })));
+const NovelBrowsePage = lazy(() => import("../pages/NovelBrowsePage").then(m => ({ default: m.NovelBrowsePage })));
 const NotFound = lazy(() => import("../pages/NotFound").then(m => ({ default: m.NotFound })));
 
 export const Routes = createBrowserRouter([
@@ -82,7 +82,7 @@ export const Routes = createBrowserRouter([
          },
          {
             path: ROUTES.NOVELS_BY_CATEGORY,
-            element: <CategoryPage />
+            element: <NovelBrowsePage type="category" />
          },
          {
             path: ROUTES.ABOUT_US,
@@ -99,6 +99,10 @@ export const Routes = createBrowserRouter([
          {
             path: ROUTES.EMAIL_VERIFIED,
             element: <EmailVerified />
+         },
+         {
+            path: ROUTES.ENDED_NOVELS,
+            element: <NovelBrowsePage type="ended" />
          },
       ],
    },

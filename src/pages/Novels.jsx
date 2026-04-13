@@ -1,32 +1,29 @@
 import { useEffect } from 'react'
 import { motion } from "framer-motion";
+import { useDispatch, useSelector } from 'react-redux'
+import { useTranslation } from 'react-i18next';
 import { Header } from '../components/Header'
 import { Categories } from '../components/Categories'
 import { Loader } from '../components/Loader';
-import { Populars } from '../components/Populars';
-import { LatestUpdates } from '../components/LatestUpdates';
-import { useDispatch, useSelector } from 'react-redux'
+import { LatestUpdates } from '../components/LatestUpdates'
+import { NovelCarousel } from '../components/NovelCarousel';
 import { getFetchNovels, getAllNovelsStatus, getNovels, cleanNovels } from "../states/features/novel/novelSlice.js";
+import { LOCALIZE_CONST, ROUTES } from '../consts/Consts';
 
 export const Novels = () => {
-
-   const novels = useSelector(getFetchNovels);
-
+   const { t } = useTranslation();
    const dispatch = useDispatch();
-   
+   const novels = useSelector(getFetchNovels);
    const status = useSelector(getAllNovelsStatus);
 
    useEffect(() => {
       dispatch(getNovels());
+      return () => dispatch(cleanNovels());
+   }, []);
 
-      return () => {
-         dispatch(cleanNovels());
-      }
-   }, [])
-   
+   if (status === 'pending') return <Loader />;
 
-   const content =  status == "pending" ?
-      <Loader /> :
+   return (
       <motion.div
          className="flex flex-col gap-2"
          initial={{ opacity: 0 }}
@@ -34,10 +31,11 @@ export const Novels = () => {
          exit={{ opacity: 0 }}
       >
          <Header popular_all_time={novels?.popular_all_time} latest_novel={novels?.latest_novel} />
-         <Populars popular_week={novels?.popular_week} popular_month={novels?.popular_month} />
+         <NovelCarousel title={t(LOCALIZE_CONST.POPULAR_IN_THIS_WEEK)}  novels={novels?.popular_week} />
+         <NovelCarousel title={t(LOCALIZE_CONST.POPULAR_IN_THIS_MONTH)} novels={novels?.popular_month} />
          <LatestUpdates latest_updates={novels?.latest_updates} />
+         <NovelCarousel title={t(LOCALIZE_CONST.ENDED_NOVELS)} novels={novels?.ended_novels} viewAllTo={ROUTES.ENDED_NOVELS} />
          <Categories categories={novels?.categories} />
-      </motion.div>;
-
-   return content;
+      </motion.div>
+   );
 }

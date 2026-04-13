@@ -1,0 +1,69 @@
+import { memo, useMemo } from 'react';
+import { NavLink } from 'react-router-dom';
+import { Splide, SplideSlide } from '@splidejs/react-splide';
+import '@splidejs/splide/dist/css/splide.min.css';
+import { useTranslation } from 'react-i18next';
+import { LOCALIZE_CONST, ROUTES } from '../consts/Consts';
+import { Profile } from './Profile';
+
+/**
+ * Shared carousel section for any list of novels.
+ *
+ * Props:
+ *  title     – section heading string
+ *  novels    – array of novel objects
+ *  viewAllTo – (optional) route string; renders a "View All" link when provided
+ */
+export const NovelCarousel = memo(({ title, novels, viewAllTo }) => {
+   const { t } = useTranslation();
+
+   const splideOptions = useMemo(() => ({
+      type: 'loop',
+      gap: '2rem',
+      arrows: false,
+      pagination: false,
+      drag: 'free',
+      snap: true,
+      perMove: 1,
+      perPage: 6,
+      breakpoints: {
+         1536: { perPage: 7 },
+         1280: { perPage: 6, gap: '1.5rem' },
+         1024: { perPage: 3, gap: '1rem' },
+         768:  { perPage: 2, gap: '1rem' },
+         640:  { perPage: 2, gap: '0.75rem' },
+         480:  { perPage: 1, gap: '0.5rem' },
+      },
+   }), []);
+
+   if (!novels?.length) return null;
+
+   return (
+      <div className="mx-auto container w-full p-5">
+         {/* Header */}
+         <div className="flex items-center justify-between mb-8 px-2 border-l-4 border-blue-600">
+            <h2 className="text-2xl font-black text-slate-800 tracking-tight pl-3">
+               {title}
+            </h2>
+            {viewAllTo && (
+               <NavLink
+                  to={viewAllTo}
+                  className="text-sm font-bold text-blue-600 hover:text-blue-800 transition-colors uppercase tracking-widest"
+               >
+                  View All
+               </NavLink>
+            )}
+         </div>
+
+         <Splide options={splideOptions} className="popular-carousel">
+            {novels.map((novel) => (
+               <SplideSlide key={novel?.id} className="pb-4">
+                  <NavLink to={ROUTES.NOVEL_BY_ID.replace(':id', novel?.id)}>
+                     <Profile novel={novel} />
+                  </NavLink>
+               </SplideSlide>
+            ))}
+         </Splide>
+      </div>
+   );
+});
