@@ -18,6 +18,7 @@ import { useDebounce } from "../hooks/useDebounce.jsx";
 import { useEffect, useState } from "react";
 import { getFetchNavMenuList, removeExtraMenuItems } from "../states/features/nav/navMenuListSlice.js";
 import { searchNovels, clearSearchResults, getSearchResults } from "../states/features/novel/novelSlice.js";
+import { resetUser } from "../states/features/user/userSlice.js";
 import { iconMap } from "../functions/helpers.js";
 import { api } from "../axios/axios.js";
 import { useTranslation } from "react-i18next";
@@ -98,12 +99,13 @@ export const NavigationBar = () => {
 
    const handleLogOut = async () => {
       try {
-         await api.get("/logout");
-         localStorage.clear();
-         dispatch(removeExtraMenuItems());
-      } catch (error) {
-         console.error("Logout failed:", error);
+         await api.post("/logout");
+      } catch {
+         // Token may already be invalid — proceed with local cleanup regardless
       }
+      localStorage.clear();
+      dispatch(resetUser());
+      dispatch(removeExtraMenuItems());
       navigate(ROUTES.HOME);
    }
 

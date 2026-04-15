@@ -84,6 +84,31 @@ export const userSlice = createSlice({
 
       resetUpdateProfileStatus: (state) => {
          state.status.updateProfileStatus = "idle"
+      },
+
+      cleanBookmarks: (state) => {
+         state.bookMarks = [];
+         state.status.getBookMarkedStatus = "idle";
+      },
+
+      cleanAuthorInfo: (state) => {
+         state.authorInfoAndBooks = {};
+         state.status.getAuthorInfoAndBooksStatus = "idle";
+      },
+
+      cleanNovelEditData: (state) => {
+         state.novelInfoByChapterId = {};
+         state.status.getNovelInfoByChapterIdStatus = "idle";
+      },
+
+      resetUser: (state) => {
+         state.user = {};
+         state.authorInfoAndBooks = {};
+         state.userInfo = [];
+         state.bookMarks = [];
+         state.novelInfoByChapterId = {};
+         state.paymentMethods = [];
+         Object.keys(state.status).forEach(k => { state.status[k] = "idle"; });
       }
    },
 
@@ -199,4 +224,4 @@ export default userSlice.reducer;
 export const getUpdateProfileStatus = (state) => state.user.status.updateProfileStatus;
 export const selectPaymentMethods = (state) => state.user.paymentMethods;
 
-export const { removeBookMark, setUser, cleanUserInfo, resetUpdateProfileStatus } = userSlice.actions;
+export const { removeBookMark, setUser, cleanUserInfo, resetUpdateProfileStatus, resetUser, cleanBookmarks, cleanAuthorInfo, cleanNovelEditData } = userSlice.actions;

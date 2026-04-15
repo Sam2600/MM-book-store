@@ -13,7 +13,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { cleanUserInfo, getPaymentMethods, getUpdateProfileStatus, getUserInfo, getUserInfoAndBooks, getUserInfoAndBooksStatus, resetUpdateProfileStatus, selectPaymentMethods, updateUserProfile, user } from '../states/features/user/userSlice';
 import { DEFAULT_IMG_CHAR, ROUTES } from '../consts/Consts';
 import { Loader } from '../components/Loader';
-import { NavLink } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
 import { Button } from '@material-tailwind/react';
 import { useForm } from 'react-hook-form';
 
@@ -189,6 +189,8 @@ const NovelManagementRow = ({ novel, onEdit, onDelete, isAdmin }) => {
 export const AuthorProfile = () => {
    const me = useSelector(user);
    const dispatch = useDispatch();
+   const navigate = useNavigate();
+   const isAdmin = me?.role_id === 1;
    const userInfoAndBooks = useSelector(getUserInfoAndBooks);
    const status = useSelector(getUserInfoAndBooksStatus);
    const updateProfileStatus = useSelector(getUpdateProfileStatus);
@@ -289,6 +291,16 @@ export const AuthorProfile = () => {
                         </div>
                      </div>
                   </div>
+
+                  {isAdmin && (
+                     <button
+                        onClick={() => navigate(ROUTES.ADMIN_PAYOUTS)}
+                        className="w-full flex items-center justify-center gap-2 py-3.5 rounded-2xl bg-slate-900 hover:bg-blue-600 text-white text-xs font-black uppercase tracking-widest shadow-lg transition-all duration-200 active:scale-95"
+                     >
+                        <CurrencyDollarIcon className="w-4 h-4" />
+                        Payout Dashboard
+                     </button>
+                  )}
                </aside>
 
                {/* Right Content */}

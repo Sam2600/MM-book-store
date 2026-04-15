@@ -34,7 +34,8 @@ import { scrollToTop } from "../functions/helpers";
 import { useTranslation } from "react-i18next";
 import { LOCALIZE_CONST } from "../consts/Consts";
 import { useParams, useNavigate } from "react-router-dom";
-import { getEditDataByChapterId, getNovelInfoByChapterId } from "../states/features/user/userSlice";
+import { getEditDataByChapterId, getNovelInfoByChapterId, cleanNovelEditData } from "../states/features/user/userSlice";
+import { cleanNovels } from "../states/features/novel/novelSlice";
 
 const modules = {
    toolbar: [
@@ -113,6 +114,7 @@ export const Upload = () => {
       handleSubmit,
       reset,
       control,
+      clearErrors,
    } = useForm({
       values: {
          novel_id: novelId,
@@ -163,7 +165,13 @@ export const Upload = () => {
             setFeedback({ type: "success", message: "Chapter uploaded successfully!" });
             reset();
          }
-         scrollToTop();
+         // Defer until after ReactQuill's async onChange fires on reset,
+         // otherwise its empty-content event re-triggers required validation
+         // and puts the red border back.
+         setTimeout(() => {
+            clearErrors();
+            scrollToTop();
+         }, 0);
       } catch (error) {
          setTimeout(() => {
             scrollToTop();
@@ -225,7 +233,15 @@ export const Upload = () => {
 
       dispatch(getNovelsByAuthors());
 
-   }, [isNovelRegisterSuccess])
+   }, [isNovelRegisterSuccess]);
+
+   // Cleanup on unmount: reset novel list and chapter edit data
+   useEffect(() => {
+      return () => {
+         dispatch(cleanNovels());
+         dispatch(cleanNovelEditData());
+      };
+   }, [dispatch]);
 
    const animatedComponents = makeAnimated();
 
@@ -368,7 +384,8 @@ export const Upload = () => {
                      />
                      <div className="flex gap-2">
                         <select
-                           className={inputCls(errors.novel_id) + " flex-1 appearance-none cursor-pointer"}
+                           disabled={isEditMode}
+                           className={inputCls(errors.novel_id) + " flex-1 appearance-none cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed disabled:bg-slate-100"}
                            {...register("novel_id", {
                               required: "Please select a novel",
                            })}
@@ -380,14 +397,16 @@ export const Upload = () => {
                               </option>
                            ))}
                         </select>
-                        <button
-                           type="button"
-                           onClick={() => setIsPopUpOpen(true)}
-                           title="Register New Novel"
-                           className="shrink-0 w-12 h-12 flex items-center justify-center rounded-xl bg-slate-900 hover:bg-blue-600 text-white shadow-lg shadow-slate-900/20 transition-all duration-200 active:scale-95"
-                        >
-                           <Plus strokeWidth={2.5} className="w-5 h-5" />
-                        </button>
+                        {!isEditMode && (
+                           <button
+                              type="button"
+                              onClick={() => setIsPopUpOpen(true)}
+                              title="Register New Novel"
+                              className="shrink-0 w-12 h-12 flex items-center justify-center rounded-xl bg-slate-900 hover:bg-blue-600 text-white shadow-lg shadow-slate-900/20 transition-all duration-200 active:scale-95"
+                           >
+                              <Plus strokeWidth={2.5} className="w-5 h-5" />
+                           </button>
+                        )}
                      </div>
                   </div>
 

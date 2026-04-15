@@ -30,7 +30,13 @@ export const Register = () => {
    const [isForRegister, setIsForRegister] = useState(true);
    const [serverError, setserverError] = useState("");
 
-   useEffect(() => scrollToTop(), []);
+   useEffect(() => {
+      if (localStorage.getItem("token")) {
+         navigate(ROUTES.HOME);
+         return;
+      }
+      scrollToTop();
+   }, []);
 
    const onSubmit = async (data) => {
       //

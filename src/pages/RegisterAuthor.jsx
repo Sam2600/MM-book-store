@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { useForm } from "react-hook-form";
 import { Loader } from "../components/Loader";
@@ -18,6 +18,20 @@ export const RegisterAuthor = () => {
 
    const [loading, setLoading] = useState(false);
    const [serverError, setServerError] = useState("");
+
+   useEffect(() => {
+      const token = localStorage.getItem("token");
+      const user  = JSON.parse(localStorage.getItem("user") || "{}");
+
+      if (!token) {
+         navigate(ROUTES.SIGN_IN);
+         return;
+      }
+
+      if (user?.role_id !== 1) {
+         navigate(ROUTES.HOME);
+      }
+   }, []);
 
    const onSubmit = async (data) => {
       setLoading(true);

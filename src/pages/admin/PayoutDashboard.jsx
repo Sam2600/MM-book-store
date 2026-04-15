@@ -15,6 +15,7 @@ import {
    resetCalculateStatus,
    resetBulkMarkPaidStatus,
    resetBulkCreateStatus,
+   resetPayouts,
 } from "../../states/features/admin/payoutSlice";
 import { api } from "../../axios/axios";
 import { getLoginUserId, scrollToTop } from "../../functions/helpers";
@@ -137,9 +138,7 @@ export const PayoutDashboard = () => {
       scrollToTop();
       refresh();
       return () => {
-         dispatch(resetCalculateStatus());
-         dispatch(resetBulkMarkPaidStatus());
-         dispatch(resetBulkCreateStatus());
+         dispatch(resetPayouts());
       };
    }, [period, dispatch, refresh, isAdmin]);
 

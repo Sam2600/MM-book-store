@@ -2,7 +2,7 @@ import { Twitter, Telegram } from 'iconoir-react';
 import { DEFAULT_IMG_CHAR, ROUTES } from '../consts/Consts';
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { getAuthorInfoAndBooks, getAuthorInfoAndBooksStatus, getAuthorInfoAndNovels } from '../states/features/user/userSlice';
+import { getAuthorInfoAndBooks, getAuthorInfoAndBooksStatus, getAuthorInfoAndNovels, cleanAuthorInfo } from '../states/features/user/userSlice';
 import { capitalizeFirstLetter, scrollToTop } from '../functions/helpers';
 import { NavLink, useParams } from 'react-router-dom';
 import { Loader } from '../components/Loader';
@@ -17,6 +17,7 @@ export const ProfileDetail = () => {
    useEffect(() => {
       scrollToTop();
       dispatch(getAuthorInfoAndNovels(id));
+      return () => dispatch(cleanAuthorInfo());
    }, [id, dispatch]);
 
    if (status === 'pending') return <Loader />;

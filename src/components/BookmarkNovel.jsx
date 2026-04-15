@@ -24,29 +24,32 @@ export const BookmarkNovel = ({ bookmark }) => {
 
    // 2. State to handle Modal visibility
    const [open, setOpen] = useState(false);
-   const handleOpen = () => setOpen(!open)
+   const handleOpen = () => setOpen(!open);
+
+   const [removing, setRemoving] = useState(false);
 
    const handleRemove = async (id) => {
-      
+      setRemoving(true);
       try {
 
          const response = await api.patch(`/novels/bookmarks/${id}`);
 
          if (response.data.status == "OK") {
-            console.log("Bookmark removed successfully");
             dispatch(removeBookMark(id));
-            setOpen(false); // Close modal on success
+            setOpen(false);
          }
 
       } catch (error) {
          alert("Internal Server Error. Please try again later.");
          console.error("Error bookmarking novel:", error);
+      } finally {
+         setRemoving(false);
       }
    }
 
    return (
       <>
-         <Card className="flex h-44 w-full flex-row overflow-hidden rounded-3xl border border-slate-100 bg-white shadow-sm transition-all duration-300 hover:shadow-xl group">
+         <Card className="flex cursor-pointer h-44 w-full flex-row overflow-hidden rounded-3xl border border-slate-100 bg-white shadow-sm transition-all duration-300 hover:shadow-xl group">
             <CardHeader className="m-0 w-32 shrink-0 rounded-none overflow-hidden">
                <img alt={bookmark?.title} src={bookmark?.cover_image} className="h-full w-full object-cover transition-transform group-hover:scale-110" />
             </CardHeader>
@@ -108,14 +111,29 @@ export const BookmarkNovel = ({ bookmark }) => {
                      </Typography>
 
                      <div className="flex w-full gap-3">
-                        <Dialog.DismissTrigger as={Button} className="flex-1 rounded-xl bg-slate-100 py-3 font-bold text-slate-500 shadow-none hover:bg-slate-200">
+                        <Dialog.DismissTrigger
+                           as={Button}
+                           disabled={removing}
+                           className="flex-1 rounded-xl bg-slate-100 py-3 font-bold text-slate-500 shadow-none hover:bg-slate-200 disabled:opacity-50"
+                        >
                            Cancel
                         </Dialog.DismissTrigger>
                         <Button
-                           className="flex-1 rounded-xl bg-red-500 py-3 font-bold text-white shadow-lg shadow-red-500/20 hover:bg-red-600"
+                           className="flex-1 flex items-center justify-center gap-2 rounded-xl bg-red-500 py-3 font-bold text-white shadow-lg shadow-red-500/20 hover:bg-red-600 disabled:opacity-70 disabled:cursor-not-allowed"
                            onClick={() => handleRemove(bookmark?.id)}
+                           disabled={removing}
                         >
-                           Remove
+                           {removing ? (
+                              <>
+                                 <svg className="h-4 w-4 animate-spin" viewBox="0 0 24 24" fill="none">
+                                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z" />
+                                 </svg>
+                                 Removing...
+                              </>
+                           ) : (
+                              "Remove"
+                           )}
                         </Button>
                      </div>
                   </div>

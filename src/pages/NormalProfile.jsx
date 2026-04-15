@@ -1,11 +1,10 @@
 import { Typography, Card, CardBody, Avatar, Button } from "@material-tailwind/react";
 import { Bookmark, UserCircle, Calendar, BookStack } from "iconoir-react";
 import { useDispatch, useSelector } from "react-redux";
-import { getBookMarkedCollection, getBookMarks, getBookMarkStatus, user } from "../states/features/user/userSlice";
+import { getBookMarkedCollection, getBookMarks, getBookMarkStatus, user, cleanBookmarks } from "../states/features/user/userSlice";
 import { toHumanReadableDates } from "../functions/helpers";
 import { DEFAULT_IMG_CHAR } from "../consts/Consts";
 import { useEffect } from "react";
-import { cleanNovels } from "../states/features/novel/novelSlice";
 import { BookmarkNovel } from "../components/BookmarkNovel";
 import { Loader } from "../components/Loader";
 
@@ -17,7 +16,7 @@ export const NormalProfile = () => {
 
    useEffect(() => {
       dispatch(getBookMarkedCollection());
-      return () => dispatch(cleanNovels());
+      return () => dispatch(cleanBookmarks());
    }, [dispatch]);
 
    let content = status === "pending" ? (

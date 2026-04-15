@@ -470,14 +470,14 @@ export const NovelDetail = () => {
                         <Button 
                            type="button" fullWidth 
                            onClick={() => setIsRatingModalOpen(false)}
-                           className="rounded-full text-slate-500"
+                           className="rounded-full text-white"
                         >
                            Cancel
                         </Button>
                         <Button 
                            fullWidth 
                            onClick={handleRatingSubmit}
-                           className="bg-blue-600 rounded-full shadow-lg shadow-blue-100"
+                           className="bg-blue-600 rounded-full shadow-lg shadow-blue-100 text-white"
                            disabled={userRating === 0 || isLoading}
                         >
                            Submit

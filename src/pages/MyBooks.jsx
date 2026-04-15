@@ -1,11 +1,10 @@
 import { useEffect } from "react"
 import { useDispatch, useSelector } from "react-redux"
-import { getBookMarkedCollection, getBookMarks, getBookMarkStatus } from "../states/features/user/userSlice";
+import { getBookMarkedCollection, getBookMarks, getBookMarkStatus, cleanBookmarks } from "../states/features/user/userSlice";
 import { Loader } from "../components/Loader";
 import { BookmarkNovel } from "../components/BookmarkNovel";
 import { useTranslation } from "react-i18next";
 import { LOCALIZE_CONST } from "../consts/Consts";
-import { cleanNovels } from "../states/features/novel/novelSlice";
 
 export const MyBooks = () => {
 
@@ -39,9 +38,9 @@ export const MyBooks = () => {
       dispatch(getBookMarkedCollection());
 
       return () => {
-         dispatch(cleanNovels());
+         dispatch(cleanBookmarks());
       }
-   }, []);
+   }, [dispatch]);
 
 
    

@@ -108,6 +108,8 @@ export const payoutSlice = createSlice({
          state.status.bulkCreate = "idle";
          state.error.bulkCreate = null;
       },
+
+      resetPayouts: () => initialState,
    },
    extraReducers: (builder) => {
       builder
@@ -190,6 +192,6 @@ export const selectCalculateResult  = (state) => state.payout.calculateResult;
 export const selectPayoutStatus     = (state) => state.payout.status;
 export const selectPayoutError      = (state) => state.payout.error;
 
-export const { resetCalculateStatus, resetBulkMarkPaidStatus, resetBulkCreateStatus } = payoutSlice.actions;
+export const { resetCalculateStatus, resetBulkMarkPaidStatus, resetBulkCreateStatus, resetPayouts } = payoutSlice.actions;
 
 export default payoutSlice.reducer;

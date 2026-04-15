@@ -16,6 +16,7 @@ import { scrollToTop } from '../functions/helpers'
 import { LOCALIZE_CONST, ROUTES } from "../consts/Consts";
 import { useTranslation } from 'react-i18next'
 import { useState, useEffect } from 'react'
+import DOMPurify from 'dompurify'
 
 const AD_SKIP_DELAY    = 5;
 const AD_SCRIPT_SRC = () => import.meta.env.VITE_AD_SCRIPT_SRC;
@@ -108,10 +109,16 @@ export const Chapter = () => {
    if (status === 'pending') return <Loader />;
 
    const prevUrl = chapterById?.prev_chapter
-      ? ROUTES.CHAPTER_BY_ID.replace(':novel', novel).replace(':volume', volume).replace(':chapter', chapterById.prev_chapter)
+      ? ROUTES.CHAPTER_BY_ID
+         .replace(':novel', novel)
+         .replace(':volume', chapterById.prev_chapter.volume_number)
+         .replace(':chapter', chapterById.prev_chapter.chapter_number)
       : null;
    const nextUrl = chapterById?.next_chapter
-      ? ROUTES.CHAPTER_BY_ID.replace(':novel', novel).replace(':volume', volume).replace(':chapter', chapterById.next_chapter)
+      ? ROUTES.CHAPTER_BY_ID
+         .replace(':novel', novel)
+         .replace(':volume', chapterById.next_chapter.volume_number)
+         .replace(':chapter', chapterById.next_chapter.chapter_number)
       : null;
 
    const progressPct = (countdown / AD_SKIP_DELAY) * 100;
@@ -305,7 +312,7 @@ export const Chapter = () => {
                   className={`font-poppins antialiased transition-all duration-300 selection:bg-blue-100 selection:text-blue-900
                      ${theme === 'dark' ? 'text-gray-400' : 'text-inherit'}`}
                   style={{ fontSize: `${fontSize}px`, lineHeight, fontWeight: 450 }}
-                  dangerouslySetInnerHTML={{ __html: chapterById?.content }}
+                  dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(chapterById?.content ?? '') }}
                />
             </Card>
 
