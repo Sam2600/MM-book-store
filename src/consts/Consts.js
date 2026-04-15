@@ -110,6 +110,7 @@ export const LOCALIZE_CODE = {
 }
 
 export const ROUTES = {
+   ADMIN_PAYOUTS: "/admin/payouts",
    AUTHOR_PROFILE: "/author-profile",
    CHECK_EMAIL: "/check-email",
    EMAIL_VERIFIED: "/email-verified",
