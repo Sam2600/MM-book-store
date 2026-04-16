@@ -115,8 +115,8 @@ export const NavigationBar = () => {
             {/* Left: Brand and Links */}
             <div className="flex items-center gap-10">
                <Link to="/" className="flex items-center gap-2 group transition-all duration-300">
-                  <div className="h-8 w-8 bg-blue-600 rounded-lg flex items-center justify-center shadow-lg shadow-blue-500/30 group-hover:rotate-6 transition-transform">
-                     <span className="text-white font-black text-xs">MM</span>
+                  <div className="h-8 w-10 bg-blue-600 rounded-lg flex items-center justify-center shadow-lg shadow-blue-500/30 group-hover:rotate-6 transition-transform">
+                     <span className="text-white font-black text-xs">AKY</span>
                   </div>
                   <Typography className="text-xl font-black tracking-tighter text-slate-900 font-poppins uppercase">
                      {t(LOCALIZE_CONST.APP_NAME)}

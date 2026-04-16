@@ -47,7 +47,7 @@ export const UserManual = () => {
                   {t(LOCALIZE_CONST.HELP_CENTER)}
                </Typography>
                <Typography className="text-4xl font-black text-slate-900 leading-tight">
-                  {t(LOCALIZE_CONST.READER_GUIDE_TITLE)} <span className="text-blue-600">MM-Book-Store</span>
+                  {t(LOCALIZE_CONST.READER_GUIDE_TITLE)} <span className="text-blue-600">Akkhayer</span>
                </Typography>
                <Typography className="text-slate-500 mt-3 font-medium">
                   {t(LOCALIZE_CONST.READER_GUIDE_SUBTITLE)}

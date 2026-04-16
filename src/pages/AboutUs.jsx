@@ -60,7 +60,7 @@ export const AboutUs = () => {
                      <div className="space-y-6">
                         <Step number="01" title="Selection" description="We hand-pick the most popular and compelling Chinese web novels that have already gained international acclaim." />
                         <Step number="02" title="Linguistic Adaptation" description="Our experts translate from English to Burmese, focusing on keeping the original author's voice alive." />
-                        <Step number="03" title="Digital Polishing" description="Formatted for the best mobile and desktop reading experience on MM-BOOK-STORE." />
+                        <Step number="03" title="Digital Polishing" description="Formatted for the best mobile and desktop reading experience on Akkhayer." />
                      </div>
                   </div>
                   <div className="relative flex justify-center">
