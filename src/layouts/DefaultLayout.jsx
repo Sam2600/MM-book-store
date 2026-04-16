@@ -7,7 +7,7 @@ import { Loader } from "../components/Loader";
 const DefaultLayout = () => {
 
    return (
-      <div className="flex flex-col h-screen">
+      <div className="flex flex-col min-h-screen">
          <NavigationBar />
          <main className="flex-grow flex flex-col">
             <Suspense fallback={<Loader />}>

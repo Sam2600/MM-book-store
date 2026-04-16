@@ -21,6 +21,8 @@ const CheckEmail = lazy(() => import("../pages/CheckEmail").then(m => ({ default
 const EmailVerified = lazy(() => import("../pages/EmailVerified").then(m => ({ default: m.EmailVerified })));
 const RegisterAuthor = lazy(() => import("../pages/RegisterAuthor").then(m => ({ default: m.RegisterAuthor })));
 const NovelBrowsePage = lazy(() => import("../pages/NovelBrowsePage").then(m => ({ default: m.NovelBrowsePage })));
+const BrowsePage  = lazy(() => import("../pages/BrowsePage").then(m => ({ default: m.BrowsePage })));
+const RankingsPage = lazy(() => import("../pages/RankingsPage").then(m => ({ default: m.RankingsPage })));
 const NotFound = lazy(() => import("../pages/NotFound").then(m => ({ default: m.NotFound })));
 const PayoutDashboard = lazy(() => import("../pages/admin/PayoutDashboard").then(m => ({ default: m.PayoutDashboard })));
 
@@ -104,6 +106,14 @@ export const Routes = createBrowserRouter([
          {
             path: ROUTES.ENDED_NOVELS,
             element: <NovelBrowsePage type="ended" />
+         },
+         {
+            path: ROUTES.BROWSE,
+            element: <BrowsePage />
+         },
+         {
+            path: ROUTES.RANKINGS,
+            element: <RankingsPage />
          },
          {
             path: ROUTES.ADMIN_PAYOUTS,

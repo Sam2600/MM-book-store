@@ -3,6 +3,8 @@ import {
    ProfileCircle,
    SelectFace3d,
    CloudUpload,
+   GridPlus,
+   Trophy,
 } from "iconoir-react";
 
 export const getApiPath = () => import.meta.env.VITE_API_BASE_URL;
@@ -34,6 +36,8 @@ export const iconMap = {
    ProfileCircle,
    SelectFace3d,
    CloudUpload,
+   GridPlus,
+   Trophy,
 };
 
 export const getLoginUserId = () => {

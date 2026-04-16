@@ -16,6 +16,7 @@ const initialState = {
       getNovelsByCategory: "idle",
       searchNovels: "idle",
       getEndedNovels: "idle",
+      browse: "idle",
    },
    novelByAuthor: [],
    novelById: {},
@@ -28,6 +29,10 @@ const initialState = {
    endedNovels: [],
    endedPage: 1,
    endedHasMore: true,
+
+   browseNovels: [],
+   browsePage: 1,
+   browseHasMore: true,
 }
 
 export const getNovels = createAsyncThunk("novels", async () => {
@@ -79,6 +84,15 @@ export const fetchEndedNovels = createAsyncThunk("novels/ended", async (page) =>
    return response.data;
 });
 
+export const fetchBrowseNovels = createAsyncThunk("novels/browse", async ({ category, status, sort, page }) => {
+   const params = new URLSearchParams({ page });
+   if (category) params.append('category', category);
+   if (status)   params.append('status', status);
+   if (sort)     params.append('sort', sort);
+   const response = await api.get(`/novels/browse?${params}`);
+   return response.data;
+});
+
 export const novelSlice = createSlice({
 
    name: 'novel',
@@ -123,6 +137,13 @@ export const novelSlice = createSlice({
          state.endedNovels = [];
          state.endedPage = 1;
          state.endedHasMore = true;
+      },
+
+      cleanBrowseNovels: (state) => {
+         state.browseNovels = [];
+         state.browsePage = 1;
+         state.browseHasMore = true;
+         state.status.browse = "idle";
       },
 
       clearSearchResults: (state) => {
@@ -264,6 +285,27 @@ export const novelSlice = createSlice({
 
          .addCase(fetchEndedNovels.rejected, (state) => {
             state.status.getEndedNovels = "failed";
+         })
+
+         .addCase(fetchBrowseNovels.pending, (state) => {
+            state.status.browse = "pending";
+         })
+
+         .addCase(fetchBrowseNovels.fulfilled, (state, action) => {
+            state.status.browse = "success";
+            const paginator = action.payload.data;
+            if (paginator && Array.isArray(paginator.data)) {
+               const newNovels = paginator.data.filter(
+                  (n) => !state.browseNovels.find((old) => old.id === n.id)
+               );
+               state.browseNovels = [...state.browseNovels, ...newNovels];
+               state.browsePage = paginator.current_page + 1;
+               state.browseHasMore = paginator.current_page < paginator.last_page;
+            }
+         })
+
+         .addCase(fetchBrowseNovels.rejected, (state) => {
+            state.status.browse = "failed";
          });
       },
 })
@@ -307,7 +349,11 @@ export const getSearchResults = (state) => state.novel.searchResults;
 
 export const getSearchStatus = (state) => state.novel.status.searchNovels;
 
+export const getBrowseNovels = (state) => state.novel.browseNovels;
+export const getBrowsePage = (state) => state.novel.browsePage;
+export const getBrowseHasMore = (state) => state.novel.browseHasMore;
+export const getBrowseStatus = (state) => state.novel.status.browse;
 
 export default novelSlice.reducer;
 
-export const { emptyNovelByIdBookmark, attachNovelByIdBookmark, cleanNovels, cleanCategoryNovels, cleanEndedNovels, clearSearchResults } = novelSlice.actions;
+export const { emptyNovelByIdBookmark, attachNovelByIdBookmark, cleanNovels, cleanCategoryNovels, cleanEndedNovels, clearSearchResults, cleanBrowseNovels } = novelSlice.actions;

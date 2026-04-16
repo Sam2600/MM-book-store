@@ -10,7 +10,7 @@ export const Profile = memo(({ novel }) => {
             
             {/* Status Badge - Made smaller/slimmer */}
             <div
-               className={`absolute top-0 left-0 z-20 px-3 py-1 rounded-br-xl font-poppins shadow-lg
+               className={`absolute top-0 left-0 z-10 px-3 py-1 rounded-br-xl font-poppins shadow-lg
                   ${novel?.status === 'completed'
                      ? 'bg-gradient-to-r from-green-600 to-emerald-400 text-white'
                      : 'bg-gradient-to-r from-amber-500 to-orange-300 text-white'

@@ -64,6 +64,8 @@ export const LOCALIZE_CONST = {
    UPLOAD_CHAPTER: "UPLOAD_CHAPTER",
    VOLUME: "VOLUME",
    VOLUME_TITLE: "VOLUME_TITLE",
+   BROWSE: "BROWSE",
+   RANKINGS: "RANKINGS",
    HELP_CENTER: "HELP_CENTER",
    READER_GUIDE_TITLE: "READER_GUIDE_TITLE",
    READER_GUIDE_SUBTITLE: "READER_GUIDE_SUBTITLE",
@@ -133,6 +135,8 @@ export const ROUTES = {
    NOVELS_ENDED: "/novels/ended",
    ENDED_NOVELS: "/ended-novels",
    RATE_NOVEL: "/novels/:id/rate",
+   BROWSE: "/browse",
+   RANKINGS: "/rankings",
    READER_GUIDE: "/guides",
    SEARCH: "/search",
    REGISTER_AUTHOR: "/register-author",
@@ -144,6 +148,16 @@ export const ROUTES = {
 }
 
 export const LINKS = [
+   {
+      icon: "GridPlus",
+      title: LOCALIZE_CONST.BROWSE,
+      href: ROUTES.BROWSE,
+   },
+   {
+      icon: "Trophy",
+      title: LOCALIZE_CONST.RANKINGS,
+      href: ROUTES.RANKINGS,
+   },
    {
       icon: "SelectFace3d",
       title: LOCALIZE_CONST.READER_GUIDE,
