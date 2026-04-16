@@ -18,31 +18,13 @@ import { useTranslation } from 'react-i18next'
 import { useState, useEffect } from 'react'
 import DOMPurify from 'dompurify'
 
-// ── Interstitial ad constants (temporarily disabled) ─────────────
-// const AD_SKIP_DELAY    = 5;
-// const SOCIAL_BAR_SRC = () => import.meta.env.VITE_SOCIAL_BAR_SRC;
-
-// ── Inline / mid-article banner (original ad network) ────────────
-const AD_SCRIPT_SRC  = () => import.meta.env.VITE_AD_SCRIPT_SRC;
+const AD_SKIP_DELAY    = 5;
+const AD_SCRIPT_SRC = () => import.meta.env.VITE_AD_SCRIPT_SRC;
 const AD_CONTAINER_ID = () => import.meta.env.VITE_AD_CONTAINER_ID;
+const SOCIAL_BAR_SRC = () => import.meta.env.VITE_SOCIAL_BAR_SRC;
+
+// Shared srcDoc template for both popup and inline iframes
 const adSrcDoc = `<!DOCTYPE html><html><head><style>*{margin:0;padding:0;box-sizing:border-box;}body{background:transparent;display:flex;align-items:center;justify-content:center;min-height:100%;}</style></head><body><div id="${AD_CONTAINER_ID()}"></div><script async data-cfasync="false" src="${AD_SCRIPT_SRC()}"><\/script></body></html>`;
-
-// ── Native banner ad ──────────────────────────────────────────────
-// Each instance is an isolated iframe so the ad script runs in its own
-// window context — this is the only reliable way to load multiple
-// instances of the same ad network script on one page.
-const makeBannerSrcDoc = (width, height) =>
-   `<!DOCTYPE html><html><head><style>*{margin:0;padding:0;box-sizing:border-box;}body{background:transparent;display:flex;align-items:center;justify-content:center;min-height:100%;}</style></head><body><script>atOptions={'key':'af8aec05f6d4837d2909b35633aaf85b','format':'iframe','height':${height},'width':${width},'params':{}}<\/script><script src="https://www.highperformanceformat.com/af8aec05f6d4837d2909b35633aaf85b/invoke.js"><\/script></body></html>`;
-
-const NativeBannerAd = ({ iframeKey, width = 160, height = 300 }) => (
-   <iframe
-      key={iframeKey}
-      title="Advertisement"
-      srcDoc={makeBannerSrcDoc(width, height)}
-      style={{ width, height, border: 'none', display: 'block' }}
-      scrolling="no"
-   />
-);
 
 export const Chapter = () => {
    const { t } = useTranslation();
@@ -53,49 +35,51 @@ export const Chapter = () => {
    const chapterById = useSelector(getChapterByID);
    const status      = useSelector(getChapterByIdStatus);
 
-   const [fontSize,        setFontSize]       = useState(() => Number(localStorage.getItem('reader-fs'))  || 18);
-   const [lineHeight,      setLineHeight]     = useState(() => Number(localStorage.getItem('reader-lh'))  || 1.8);
-   const [theme,           setTheme]          = useState(() => localStorage.getItem('reader-theme')        || 'light');
-   const [showFloatingAd,  setShowFloatingAd] = useState(false);
+   const [fontSize,   setFontSize]   = useState(() => Number(localStorage.getItem('reader-fs'))  || 18);
+   const [lineHeight, setLineHeight] = useState(() => Number(localStorage.getItem('reader-lh'))  || 1.8);
+   const [theme,      setTheme]      = useState(() => localStorage.getItem('reader-theme')        || 'light');
 
-   // ── Ad interstitial (temporarily disabled) ───────────────────
-   // const [showAd,      setShowAd]      = useState(false);
-   // const [pendingUrl,  setPendingUrl]  = useState(null);
-   // const [navDir,      setNavDir]      = useState('next');
-   // const [countdown,   setCountdown]   = useState(AD_SKIP_DELAY);
-   // const [popupKey,    setPopupKey]    = useState(0);
+   // ── Ad interstitial ──────────────────────────────────────────
+   const [showAd,      setShowAd]      = useState(false);
+   const [pendingUrl,  setPendingUrl]  = useState(null);
+   const [navDir,      setNavDir]      = useState('next');   // 'next' | 'prev'
+   const [countdown,   setCountdown]   = useState(AD_SKIP_DELAY);
+   const [popupKey,    setPopupKey]    = useState(0);        // forces iframe remount on each open
 
-   // // Countdown tick
-   // useEffect(() => {
-   //    if (!showAd || countdown <= 0) return;
-   //    const t = setTimeout(() => setCountdown((c) => c - 1), 1000);
-   //    return () => clearTimeout(t);
-   // }, [showAd, countdown]);
+   // Countdown tick
+   useEffect(() => {
+      if (!showAd || countdown <= 0) return;
+      const t = setTimeout(() => setCountdown((c) => c - 1), 1000);
+      return () => clearTimeout(t);
+   }, [showAd, countdown]);
 
-   // // Inject social bar once per session
-   // useEffect(() => {
-   //    if (document.querySelector(`script[src="${SOCIAL_BAR_SRC()}"]`)) return;
-   //    const s = document.createElement('script');
-   //    s.src = SOCIAL_BAR_SRC();
-   //    document.body.appendChild(s);
-   // }, []);
+   // Inject social bar once per session (floating widget, no cleanup)
+   useEffect(() => {
+      if (document.querySelector(`script[src="${SOCIAL_BAR_SRC()}"]`)) return;
+      const s = document.createElement('script');
+      s.src = SOCIAL_BAR_SRC();
+      document.body.appendChild(s);
+   }, []);
 
-   const handleChapterNav = (url) => {
+   const handleChapterNav = (url, direction) => {
       if (!url) return;
-      navigate(url);
+      setPendingUrl(url);
+      setNavDir(direction);
+      setCountdown(AD_SKIP_DELAY);
+      setPopupKey((k) => k + 1);
+      setShowAd(true);
    };
 
-   // const handleCloseAd = () => {
-   //    const url = pendingUrl;
-   //    setShowAd(false);
-   //    setPendingUrl(null);
-   //    if (url) navigate(url);
-   // };
+   const handleCloseAd = () => {
+      const url = pendingUrl;
+      setShowAd(false);
+      setPendingUrl(null);
+      if (url) navigate(url);
+   };
 
    // ── Reader prefs / data fetch ────────────────────────────────
    useEffect(() => {
       scrollToTop();
-      setShowFloatingAd(false); // reset on each chapter navigation
       dispatch(getChapterByNovel({ novel, chapter, volume }));
       return () => { dispatch(cleanNovels()); };
    }, [novel, volume, chapter, dispatch]);
@@ -106,7 +90,7 @@ export const Chapter = () => {
       localStorage.setItem('reader-theme', theme);
    }, [fontSize, lineHeight, theme]);
 
-   // ── Save last-read progress + show floating ad on load ──────
+   // ── Save last-read progress ──────────────────────────────────
    useEffect(() => {
       if (status !== 'success' || !chapterById?.chapter_number) return;
       localStorage.setItem(`last_read_${novel}`, JSON.stringify({
@@ -114,7 +98,6 @@ export const Chapter = () => {
          chapter_number: chapterById.chapter_number,
          chapter_title: chapterById.title,
       }));
-      setShowFloatingAd(true);
    }, [status, chapterById, novel, volume]);
 
    const themeStyles = {
@@ -138,35 +121,70 @@ export const Chapter = () => {
          .replace(':chapter', chapterById.next_chapter.chapter_number)
       : null;
 
-   // const progressPct = (countdown / AD_SKIP_DELAY) * 100; // interstitial disabled
+   const progressPct = (countdown / AD_SKIP_DELAY) * 100;
 
    return (
       <div className={`min-h-screen transition-colors duration-500 ${themeStyles[theme]}`}>
 
-         {/* ── Ad Interstitial Popup (temporarily disabled) ────────
+         {/* ── Ad Interstitial Popup ───────────────────────────── */}
          {showAd && (
-            <div ...> ... </div>
-         )}
-         ────────────────────────────────────────────────────────── */}
+            <div
+               className="fixed inset-0 z-[9999] flex flex-col items-center justify-center p-4 gap-5"
+               style={{ background: 'rgba(5,5,15,0.93)', backdropFilter: 'blur(10px)' }}
+            >
+               {/* Header labels */}
+               <div className="w-full max-w-xl flex justify-between items-center">
+                  <span className="text-[10px] font-black uppercase tracking-[0.2em] text-white/25">
+                     Advertisement
+                  </span>
+                  <span className="text-[10px] font-black uppercase tracking-[0.15em] text-white/35">
+                     {navDir === 'next' ? 'Next Chapter →' : '← Previous Chapter'}
+                  </span>
+               </div>
 
-         {/* ── Floating Dismissible Ad ─────────────────────────── */}
-         {showFloatingAd && (
-            <div className="fixed top-20 right-4 z-50 animate-in fade-in slide-in-from-right-4 duration-300">
-               <div className="relative bg-white rounded-2xl shadow-2xl shadow-black/20 border border-slate-100 overflow-hidden">
-                  {/* Close button */}
-                  <button
-                     onClick={() => setShowFloatingAd(false)}
-                     className="absolute top-1.5 right-1.5 z-10 w-6 h-6 flex items-center justify-center rounded-full bg-slate-800/70 hover:bg-red-500 text-white transition-colors duration-150"
-                     aria-label="Close ad"
-                  >
-                     <svg viewBox="0 0 24 24" className="w-3 h-3" fill="none" stroke="currentColor" strokeWidth="3">
-                        <path strokeLinecap="round" d="M6 6l12 12M18 6L6 18" />
-                     </svg>
-                  </button>
-                  <p className="text-[8px] font-black uppercase tracking-widest text-slate-400 text-center pt-2 pb-1 select-none">
-                     Ad
-                  </p>
-                  <NativeBannerAd iframeKey="floating" />
+               {/* Ad iframe — isolated window per open so script always re-runs */}
+               <div className="w-full max-w-xl rounded-2xl overflow-hidden shadow-2xl shadow-black/60 bg-[#111827]">
+                  <iframe
+                     key={popupKey}
+                     title="Advertisement"
+                     srcDoc={adSrcDoc}
+                     style={{ width: '100%', height: '280px', border: 'none', display: 'block' }}
+                  />
+               </div>
+
+               {/* Support message */}
+               <p className="text-white/30 text-xs text-center">
+                  Ads keep this story free to read — thank you for your support ♥
+               </p>
+
+               {/* Progress bar */}
+               <div className="w-full max-w-xl">
+                  <div className="h-[3px] bg-white/10 rounded-full overflow-hidden">
+                     <div
+                        className="h-full bg-blue-500 rounded-full transition-all duration-1000 ease-linear"
+                        style={{ width: `${progressPct}%` }}
+                     />
+                  </div>
+
+                  {/* Countdown / close button */}
+                  <div className="mt-4 min-h-[44px] flex items-center justify-center">
+                     {countdown > 0 ? (
+                        <span className="text-white/40 text-sm font-mono tracking-widest">
+                           Continue in&nbsp;
+                           <span className="text-white font-black text-base tabular-nums">{countdown}</span>
+                           &nbsp;s
+                        </span>
+                     ) : (
+                        <button
+                           onClick={handleCloseAd}
+                           className="px-8 py-3 bg-white text-black font-black text-sm rounded-xl
+                                      hover:bg-blue-500 hover:text-white transition-all duration-200
+                                      shadow-lg shadow-white/10"
+                        >
+                           Continue Reading →
+                        </button>
+                     )}
+                  </div>
                </div>
             </div>
          )}
@@ -255,7 +273,7 @@ export const Chapter = () => {
 
                <div className="flex gap-3">
                   <button
-                     onClick={() => handleChapterNav(prevUrl)}
+                     onClick={() => handleChapterNav(prevUrl, 'prev')}
                      disabled={!prevUrl}
                      className={`flex items-center gap-2 px-4 py-2 rounded-xl font-bold text-xs transition-all
                         ${prevUrl
@@ -266,7 +284,7 @@ export const Chapter = () => {
                   </button>
 
                   <button
-                     onClick={() => handleChapterNav(nextUrl)}
+                     onClick={() => handleChapterNav(nextUrl, 'next')}
                      disabled={!nextUrl}
                      className={`flex items-center gap-2 px-4 py-2 rounded-xl font-bold text-xs transition-all
                         ${nextUrl
@@ -290,65 +308,34 @@ export const Chapter = () => {
                   <div className="h-1.5 w-16 bg-blue-500/20 mx-auto mt-8 rounded-full" />
                </header>
 
-               {(() => {
-                  const clean  = DOMPurify.sanitize(chapterById?.content ?? '');
-                  const mid    = Math.floor(clean.length / 2);
-                  // Snap to the next closing tag so we don't cut mid-tag
-                  const split  = clean.indexOf('>', mid) + 1 || mid;
-                  const first  = clean.slice(0, split);
-                  const second = clean.slice(split);
-                  const articleCls = `font-poppins antialiased transition-all duration-300 selection:bg-blue-100 selection:text-blue-900 ${theme === 'dark' ? 'text-gray-400' : 'text-inherit'}`;
-                  const articleStyle = { fontSize: `${fontSize}px`, lineHeight, fontWeight: 450 };
-                  return (
-                     <>
-                        <article
-                           className={articleCls}
-                           style={articleStyle}
-                           dangerouslySetInnerHTML={{ __html: first }}
-                        />
-                        {/* ── Mid-article banner ad ── */}
-                        <div className="my-10">
-                           <p className="text-[9px] text-center text-slate-300 mb-2 uppercase tracking-[0.2em] font-bold select-none">
-                              Advertisement
-                           </p>
-                           <div className="rounded-xl overflow-hidden bg-slate-50">
-                              <iframe
-                                 title="Mid Ad"
-                                 srcDoc={adSrcDoc}
-                                 style={{ width: '100%', height: '250px', border: 'none', display: 'block' }}
-                              />
-                           </div>
-                        </div>
-                        <article
-                           className={articleCls}
-                           style={articleStyle}
-                           dangerouslySetInnerHTML={{ __html: second }}
-                        />
-                     </>
-                  );
-               })()}
+               <article
+                  className={`font-poppins antialiased transition-all duration-300 selection:bg-blue-100 selection:text-blue-900
+                     ${theme === 'dark' ? 'text-gray-400' : 'text-inherit'}`}
+                  style={{ fontSize: `${fontSize}px`, lineHeight, fontWeight: 450 }}
+                  dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(chapterById?.content ?? '') }}
+               />
             </Card>
 
-            {/* ── Bottom banner ad (original) ── */}
+            {/* ── Inline passive banner ──────────────────────────── */}
             <div className="mb-16">
                <p className="text-[9px] text-center text-slate-300 mb-2 uppercase tracking-[0.2em] font-bold select-none">
                   Advertisement
                </p>
                <div className="rounded-xl overflow-hidden bg-slate-50">
                   <iframe
-                     title="Bottom Ad"
+                     title="Inline Ad"
                      srcDoc={adSrcDoc}
                      style={{ width: '100%', height: '250px', border: 'none', display: 'block' }}
                   />
                </div>
             </div>
 
-            {/* Next chapter CTA */}
+            {/* Next chapter CTA — drives another ad impression */}
             {nextUrl && (
                <div className="mb-16 text-center">
                   <p className="text-xs text-slate-400 mb-3">Finished this chapter?</p>
                   <button
-                     onClick={() => handleChapterNav(nextUrl)}
+                     onClick={() => handleChapterNav(nextUrl, 'next')}
                      className="inline-flex items-center gap-2 px-6 py-3 bg-blue-600 text-white font-black text-sm rounded-xl hover:bg-blue-700 transition-all shadow-lg shadow-blue-500/30"
                   >
                      Read Next Chapter <SkipNext className="h-4 w-4" />
