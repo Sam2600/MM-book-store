@@ -137,6 +137,8 @@ export const ROUTES = {
    RATE_NOVEL: "/novels/:id/rate",
    BROWSE: "/browse",
    RANKINGS: "/rankings",
+   FORGOT_PASSWORD: "/forgot-password",
+   RESET_PASSWORD: "/reset-password",
    READER_GUIDE: "/guides",
    SEARCH: "/search",
    REGISTER_AUTHOR: "/register-author",

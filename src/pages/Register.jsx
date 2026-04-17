@@ -9,7 +9,7 @@ import { addExtraMenuItems } from "../states/features/nav/navMenuListSlice";
 import { useTranslation } from "react-i18next";
 import { LOCALIZE_CONST, ROUTES } from "../consts/Consts";
 import { setUser } from "../states/features/user/userSlice";
-import { useNavigate } from "react-router-dom";
+import { NavLink, useNavigate, useLocation } from "react-router-dom";
 import { Typography } from "@material-tailwind/react";
 
 export const Register = () => {
@@ -25,10 +25,13 @@ export const Register = () => {
    // Useful Form states
    const { errors, isSubmitting } = formState;
 
+   const location = useLocation();
+
    const [success, setSuccess] = useState(false);
    const [loading, setLoading] = useState(false);
    const [isForRegister, setIsForRegister] = useState(true);
    const [serverError, setserverError] = useState("");
+   const [resetSuccess] = useState(location.state?.resetSuccess === true);
 
    useEffect(() => {
       if (localStorage.getItem("token")) {
@@ -95,6 +98,14 @@ export const Register = () => {
          <div className="flex flex-col w-full lg:w-1/2 max-w-lg">
             {/* Status Messages */}
             <div className="mb-6">
+               {resetSuccess && (
+               <div className="flex items-center justify-center animate-in fade-in slide-in-from-top-2 duration-300">
+                  <p className="text-sm font-bold text-green-600 bg-green-50 border border-green-200 w-full p-4 rounded-xl text-center shadow-sm">
+                     Password reset successful! Please log in with your new password.
+                  </p>
+               </div>
+               )}
+
                {success && (
                <div className="flex items-center justify-center animate-in fade-in slide-in-from-top-2 duration-300">
                   <p className="text-sm font-bold text-green-600 bg-green-50 border border-green-200 w-full p-4 rounded-xl text-center shadow-sm">
@@ -243,6 +254,17 @@ export const Register = () => {
                      })}
                      />
                   </div>
+
+                  {!isForRegister && (
+                     <div className="flex justify-end mb-5 -mt-2">
+                        <NavLink
+                           to={ROUTES.FORGOT_PASSWORD}
+                           className="text-xs font-bold text-blue-600 hover:text-blue-700 transition-colors"
+                        >
+                           Forgot Password?
+                        </NavLink>
+                     </div>
+                  )}
 
                   {isForRegister && (
                      <div className="mb-8 w-full">
