@@ -17,6 +17,8 @@ const initialState = {
       searchNovels: "idle",
       getEndedNovels: "idle",
       browse: "idle",
+      getPopularWeekNovels: "idle",
+      getPopularMonthNovels: "idle",
    },
    novelByAuthor: [],
    novelById: {},
@@ -33,6 +35,14 @@ const initialState = {
    browseNovels: [],
    browsePage: 1,
    browseHasMore: true,
+
+   popularWeekNovels: [],
+   popularWeekPage: 1,
+   popularWeekHasMore: true,
+
+   popularMonthNovels: [],
+   popularMonthPage: 1,
+   popularMonthHasMore: true,
 }
 
 export const getNovels = createAsyncThunk("novels", async () => {
@@ -93,6 +103,16 @@ export const fetchBrowseNovels = createAsyncThunk("novels/browse", async ({ cate
    return response.data;
 });
 
+export const fetchPopularWeekNovels = createAsyncThunk("novels/popular/week", async (page) => {
+   const response = await api.get(`/novels/popular/week?page=${page}`);
+   return response.data;
+});
+
+export const fetchPopularMonthNovels = createAsyncThunk("novels/popular/month", async (page) => {
+   const response = await api.get(`/novels/popular/month?page=${page}`);
+   return response.data;
+});
+
 export const novelSlice = createSlice({
 
    name: 'novel',
@@ -144,6 +164,20 @@ export const novelSlice = createSlice({
          state.browsePage = 1;
          state.browseHasMore = true;
          state.status.browse = "idle";
+      },
+
+      cleanPopularWeekNovels: (state) => {
+         state.popularWeekNovels = [];
+         state.popularWeekPage = 1;
+         state.popularWeekHasMore = true;
+         state.status.getPopularWeekNovels = "idle";
+      },
+
+      cleanPopularMonthNovels: (state) => {
+         state.popularMonthNovels = [];
+         state.popularMonthPage = 1;
+         state.popularMonthHasMore = true;
+         state.status.getPopularMonthNovels = "idle";
       },
 
       clearSearchResults: (state) => {
@@ -306,6 +340,44 @@ export const novelSlice = createSlice({
 
          .addCase(fetchBrowseNovels.rejected, (state) => {
             state.status.browse = "failed";
+         })
+
+         .addCase(fetchPopularWeekNovels.pending, (state) => {
+            state.status.getPopularWeekNovels = "pending";
+         })
+         .addCase(fetchPopularWeekNovels.fulfilled, (state, action) => {
+            state.status.getPopularWeekNovels = "success";
+            const paginator = action.payload.data;
+            if (paginator && Array.isArray(paginator.data)) {
+               const newNovels = paginator.data.filter(
+                  (n) => !state.popularWeekNovels.find((old) => old.id === n.id)
+               );
+               state.popularWeekNovels = [...state.popularWeekNovels, ...newNovels];
+               state.popularWeekPage = paginator.current_page + 1;
+               state.popularWeekHasMore = paginator.current_page < paginator.last_page;
+            }
+         })
+         .addCase(fetchPopularWeekNovels.rejected, (state) => {
+            state.status.getPopularWeekNovels = "failed";
+         })
+
+         .addCase(fetchPopularMonthNovels.pending, (state) => {
+            state.status.getPopularMonthNovels = "pending";
+         })
+         .addCase(fetchPopularMonthNovels.fulfilled, (state, action) => {
+            state.status.getPopularMonthNovels = "success";
+            const paginator = action.payload.data;
+            if (paginator && Array.isArray(paginator.data)) {
+               const newNovels = paginator.data.filter(
+                  (n) => !state.popularMonthNovels.find((old) => old.id === n.id)
+               );
+               state.popularMonthNovels = [...state.popularMonthNovels, ...newNovels];
+               state.popularMonthPage = paginator.current_page + 1;
+               state.popularMonthHasMore = paginator.current_page < paginator.last_page;
+            }
+         })
+         .addCase(fetchPopularMonthNovels.rejected, (state) => {
+            state.status.getPopularMonthNovels = "failed";
          });
       },
 })
@@ -354,6 +426,16 @@ export const getBrowsePage = (state) => state.novel.browsePage;
 export const getBrowseHasMore = (state) => state.novel.browseHasMore;
 export const getBrowseStatus = (state) => state.novel.status.browse;
 
+export const getPopularWeekNovels = (state) => state.novel.popularWeekNovels;
+export const getPopularWeekPage = (state) => state.novel.popularWeekPage;
+export const getPopularWeekHasMore = (state) => state.novel.popularWeekHasMore;
+export const getPopularWeekStatus = (state) => state.novel.status.getPopularWeekNovels;
+
+export const getPopularMonthNovels = (state) => state.novel.popularMonthNovels;
+export const getPopularMonthPage = (state) => state.novel.popularMonthPage;
+export const getPopularMonthHasMore = (state) => state.novel.popularMonthHasMore;
+export const getPopularMonthStatus = (state) => state.novel.status.getPopularMonthNovels;
+
 export default novelSlice.reducer;
 
-export const { emptyNovelByIdBookmark, attachNovelByIdBookmark, cleanNovels, cleanCategoryNovels, cleanEndedNovels, clearSearchResults, cleanBrowseNovels } = novelSlice.actions;
+export const { emptyNovelByIdBookmark, attachNovelByIdBookmark, cleanNovels, cleanCategoryNovels, cleanEndedNovels, clearSearchResults, cleanBrowseNovels, cleanPopularWeekNovels, cleanPopularMonthNovels } = novelSlice.actions;

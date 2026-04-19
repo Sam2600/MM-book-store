@@ -110,6 +110,14 @@ export const Routes = createBrowserRouter([
             element: <NovelBrowsePage type="ended" />
          },
          {
+            path: ROUTES.POPULAR_WEEK,
+            element: <NovelBrowsePage type="popular_week" />
+         },
+         {
+            path: ROUTES.POPULAR_MONTH,
+            element: <NovelBrowsePage type="popular_month" />
+         },
+         {
             path: ROUTES.FORGOT_PASSWORD,
             element: <ForgotPassword />
          },

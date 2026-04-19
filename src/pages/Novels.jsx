@@ -31,8 +31,8 @@ export const Novels = () => {
          exit={{ opacity: 0 }}
       >
          <Header popular_all_time={novels?.popular_all_time} latest_novel={novels?.latest_novel} />
-         <NovelCarousel title={t(LOCALIZE_CONST.POPULAR_IN_THIS_WEEK)}  novels={novels?.popular_week} />
-         <NovelCarousel title={t(LOCALIZE_CONST.POPULAR_IN_THIS_MONTH)} novels={novels?.popular_month} />
+         <NovelCarousel title={t(LOCALIZE_CONST.POPULAR_IN_THIS_WEEK)}  novels={novels?.popular_week}  viewAllTo={ROUTES.POPULAR_WEEK} />
+         <NovelCarousel title={t(LOCALIZE_CONST.POPULAR_IN_THIS_MONTH)} novels={novels?.popular_month} viewAllTo={ROUTES.POPULAR_MONTH} />
          <LatestUpdates latest_updates={novels?.latest_updates} />
          <NovelCarousel title={t(LOCALIZE_CONST.ENDED_NOVELS)} novels={novels?.ended_novels} viewAllTo={ROUTES.ENDED_NOVELS} />
          <Categories categories={novels?.categories} />

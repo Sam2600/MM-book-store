@@ -134,6 +134,8 @@ export const ROUTES = {
    NOVELS: "/novels",
    NOVELS_ENDED: "/novels/ended",
    ENDED_NOVELS: "/ended-novels",
+   POPULAR_WEEK: "/popular-week",
+   POPULAR_MONTH: "/popular-month",
    RATE_NOVEL: "/novels/:id/rate",
    BROWSE: "/browse",
    RANKINGS: "/rankings",
