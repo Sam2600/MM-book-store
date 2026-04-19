@@ -6,7 +6,8 @@ import {
    PencilSquareIcon,
    TrashIcon,
    ChevronUpIcon,
-   BookOpenIcon
+   BookOpenIcon,
+   PlusCircleIcon
 } from '@heroicons/react/24/outline';
 import { StatusBadge } from '../components/commons/StatusBadge';
 import { scrollToTop } from '../functions/helpers';
@@ -289,13 +290,22 @@ export const AuthorProfile = () => {
                   </div>
 
                   {isAdmin && (
-                     <button
+                     <>
+                        <button
                         onClick={() => navigate(ROUTES.ADMIN_PAYOUTS)}
-                        className="w-full flex items-center justify-center gap-2 py-3.5 rounded-2xl bg-slate-900 hover:bg-blue-600 text-white text-xs font-black uppercase tracking-widest shadow-lg transition-all duration-200 active:scale-95"
-                     >
-                        <CurrencyDollarIcon className="w-4 h-4" />
-                        Payout Dashboard
-                     </button>
+                        className="w-full flex items-center justify-center gap-2 py-3.5 rounded-2xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-black uppercase tracking-widest shadow-lg transition-all duration-200 active:scale-95"
+                        >
+                           <CurrencyDollarIcon className="w-4 h-4" />
+                           To Payout Dashboard
+                        </button>
+                        <button
+                           onClick={() => navigate(ROUTES.REGISTER_AUTHOR)}
+                           className="w-full flex items-center justify-center gap-2 py-3.5 rounded-2xl bg-green-600 hover:bg-green-700 text-white text-xs font-black uppercase tracking-widest shadow-lg transition-all duration-200 active:scale-95"
+                        >
+                           <PlusCircleIcon className="w-4 h-4" />
+                           Register Author
+                        </button>
+                     </>
                   )}
                </aside>
 
