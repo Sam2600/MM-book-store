@@ -39,7 +39,7 @@ export const NovelCarousel = memo(({ title, novels, viewAllTo }) => {
    if (!novels?.length) return null;
 
    return (
-      <div className="mx-auto container w-full p-5">
+      <div className="mx-auto container w-full px-5">
          {/* Header */}
          <div className="flex items-center justify-between mb-8 px-2 border-l-4 border-blue-600">
             <h2 className="text-2xl font-black text-slate-800 tracking-tight pl-3">

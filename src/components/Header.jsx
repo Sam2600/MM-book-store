@@ -42,7 +42,7 @@ export const Header = ({ popular_all_time, latest_novel }) => {
    }, []);
 
    return (
-      <header className="w-full h-auto pt-8 pb-3">
+      <header className="w-full h-auto pt-8 mb-6">
          <div className="container mx-auto px-4">
             <div className="flex flex-col lg:flex-row gap-8">
                

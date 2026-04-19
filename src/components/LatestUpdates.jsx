@@ -18,7 +18,7 @@ export const LatestUpdates = ({ latest_updates }) => {
    const { t } = useTranslation();
 
    return (
-      <div className="mx-auto container w-full lg:p-1 bg-transparent">
+      <div className="mx-auto container w-full px-4 mb-6 bg-transparent">
          {/* SECTION HEADER */}
          <div className="flex items-center justify-between px-4">
             <SectionHeader title={t(LOCALIZE_CONST.LATEST_UPDATES)} className="mb-8" />

@@ -25,7 +25,7 @@ export const Novels = () => {
 
    return (
       <motion.div
-         className="flex flex-col gap-2"
+         className="flex flex-col gap-8"
          initial={{ opacity: 0 }}
          animate={{ opacity: 1, transition: { duration: 0.25 } }}
          exit={{ opacity: 0 }}
