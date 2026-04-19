@@ -6,6 +6,7 @@ import { NavLink } from 'react-router-dom';
 import { scrollToTop } from '../functions/helpers';
 import { useTranslation } from 'react-i18next';
 import { LOCALIZE_CONST, ROUTES } from '../consts/Consts';
+import { SectionHeader } from './commons/SectionHeader';
 
 export const Header = ({ popular_all_time, latest_novel }) => {
    const { t } = useTranslation();
@@ -47,17 +48,7 @@ export const Header = ({ popular_all_time, latest_novel }) => {
                
                {/* Left Section: Editor's Choices */}
                <section className="flex flex-col gap-5 w-full lg:w-7/12">
-                  <div className="flex items-center justify-between mb-3 px-2 border-l-4 border-blue-600">
-                     <h2 className="text-2xl font-black text-slate-800 tracking-tight pl-3">
-                        {t(LOCALIZE_CONST.EDITOR_CHOICES)}
-                     </h2>
-                     {/* <NavLink 
-                        to={ROUTES.BROWSE} // Replace with your actual browse route
-                        className="text-sm font-bold text-blue-600 hover:text-blue-800 transition-colors uppercase tracking-widest"
-                     >
-                        View All
-                     </NavLink> */}
-                  </div>
+                  <SectionHeader title={t(LOCALIZE_CONST.EDITOR_CHOICES)} />
                   <Splide options={editorSplideOptions}>
                      {popular_all_time?.map((novel) => (
                         <SplideSlide key={novel.id}>
@@ -71,17 +62,7 @@ export const Header = ({ popular_all_time, latest_novel }) => {
 
                {/* Right Section: Latest Novels (Vertical Splide) */}
                <section className="flex flex-col gap-5 w-full lg:w-5/12 ">
-                  <div className="flex items-center justify-between mb-3">
-                     <h2 className="text-2xl font-black text-slate-800 tracking-tight pl-1">
-                        {t(LOCALIZE_CONST.LATEST_NOVELS)}
-                     </h2>
-                     {/* <NavLink 
-                        to={ROUTES.BROWSE} // Replace with your actual browse route
-                        className="text-sm font-bold text-blue-600 hover:text-blue-800 transition-colors uppercase tracking-widest"
-                     >
-                        View All
-                     </NavLink> */}
-                  </div>
+                  <SectionHeader title={t(LOCALIZE_CONST.LATEST_NOVELS)} showBorder={false} />
                   <Splide options={latestSplideOptions}>
                      {latest_novel?.map((novel) => (
                         <SplideSlide key={novel.id}>

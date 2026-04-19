@@ -3,7 +3,10 @@ import { useSearchParams, NavLink } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { useInView } from 'react-intersection-observer';
 import { Typography, Input } from '@material-tailwind/react';
-import { Search, GridPlus, Xmark, NavArrowLeft, NavArrowDown } from 'iconoir-react';
+import { Search, GridPlus, Xmark, NavArrowLeft } from 'iconoir-react';
+import { PillButton } from '../components/commons/PillButton';
+import { FilterSection } from '../components/commons/FilterSection';
+import { EmptyState } from '../components/commons/EmptyState';
 import {
    getNovels,
    fetchBrowseNovels,
@@ -31,48 +34,6 @@ const SORT_OPTIONS = [
    { value: 'rating', label: 'Top Rated' },
 ];
 
-const PillButton = ({ active, onClick, children }) => (
-   <button
-      onClick={onClick}
-      className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all duration-200 whitespace-nowrap
-         ${active
-            ? 'bg-blue-600 text-white shadow-sm'
-            : 'bg-slate-100 text-slate-500 hover:bg-blue-50 hover:text-blue-600'
-         }`}
-   >
-      {children}
-   </button>
-);
-
-/** Accordion section used inside the filter sidebar */
-const FilterSection = ({ title, badge, isOpen, onToggle, children }) => (
-   <div className="border-b border-slate-100 last:border-0">
-      <button
-         onClick={onToggle}
-         className="flex items-center justify-between w-full py-3 text-left group"
-      >
-         <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest group-hover:text-slate-600 transition-colors">
-            {title}
-         </span>
-         <div className="flex items-center gap-2">
-            {/* Badge shows the active value when section is collapsed */}
-            {!isOpen && badge && (
-               <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-blue-50 text-blue-600 max-w-[90px] truncate">
-                  {badge}
-               </span>
-            )}
-            <NavArrowDown
-               className={`h-3.5 w-3.5 text-slate-400 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`}
-            />
-         </div>
-      </button>
-      {isOpen && (
-         <div className="pb-4">
-            {children}
-         </div>
-      )}
-   </div>
-);
 
 export const BrowsePage = () => {
    const dispatch = useDispatch();
@@ -378,10 +339,11 @@ export const BrowsePage = () => {
                      ))}
                   </div>
                ) : (
-                  <div className="text-center py-20">
-                     <Typography variant="h5" color="blue-gray">No novels found.</Typography>
-                     <Typography className="text-slate-400 mt-2 text-sm">Try adjusting your filters.</Typography>
-                  </div>
+                  <EmptyState
+                     icon={<GridPlus className="w-8 h-8 text-slate-200" />}
+                     message="No novels found."
+                     description="Try adjusting your filters."
+                  />
                )}
                {status === 'pending' && novels.length > 0 ? <Loader /> : (
                   <div ref={ref} className="h-20 flex items-center justify-center mt-8">

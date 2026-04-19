@@ -38,6 +38,8 @@ import { scrollToTop } from '../functions/helpers';
 import { api } from '../axios/axios';
 import { ROUTES } from '../consts/Consts';
 import { renderStars } from '../components/commons/Star';
+import { MetaChip } from '../components/commons/MetaChip';
+import { QuickAccessLink } from '../components/commons/QuickAccessLink';
 
 export const NovelDetail = () => {
 
@@ -237,15 +239,16 @@ export const NovelDetail = () => {
 
                      {/* Stats Row */}
                      <div className="flex flex-wrap justify-center lg:justify-start gap-6 mb-6">
-                        <div className="flex items-center gap-2 text-slate-600 bg-white px-3 py-1.5 rounded-full border border-slate-100 shadow-sm">
-                           <Eye className="w-4 h-4 text-blue-500" />
-                           <span className="text-sm font-bold">{novelById?.view_count} views</span>
-                        </div>
+                        <MetaChip
+                           icon={<Eye className="w-4 h-4 text-blue-500" />}
+                           label={`${novelById?.view_count} views`}
+                        />
                         <NavLink to={ROUTES.TO_AUTHOR.replace(":id", novelById?.translator?.id)}>
-                           <div className="flex items-center gap-2 text-slate-600 bg-white px-3 py-1.5 rounded-full border border-slate-100 shadow-sm hover:border-blue-400 transition-colors">
-                              <User className="w-4 h-4 text-purple-500" />
-                              <span className="text-sm font-bold">{novelById?.translator?.name}</span>
-                           </div>
+                           <MetaChip
+                              icon={<User className="w-4 h-4 text-purple-500" />}
+                              label={novelById?.translator?.name}
+                              className="hover:border-blue-400 transition-colors"
+                           />
                         </NavLink>
                         <div className="flex items-center gap-2">
                            {renderStars(novelRating)}
@@ -346,41 +349,25 @@ export const NovelDetail = () => {
                         Quick Access
                      </Typography>
                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-
-                        {/* First Chapter */}
                         {firstChapterUrl && firstMeta && (
-                           <NavLink to={firstChapterUrl}
-                              className="group flex items-center gap-4 p-4 rounded-xl border border-slate-100 hover:border-blue-200 hover:bg-blue-50/40 transition-all"
-                           >
-                              <div className="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center shrink-0 group-hover:bg-blue-600 transition-colors">
-                                 <Book className="w-5 h-5 text-blue-600 group-hover:text-white transition-colors" />
-                              </div>
-                              <div className="min-w-0">
-                                 <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 group-hover:text-blue-400 transition-colors">First Chapter</p>
-                                 <p className="text-sm font-bold text-slate-800 group-hover:text-blue-700 transition-colors truncate">
-                                    Vol.{firstMeta.vol} — Ch.{firstMeta.ch}
-                                    {firstMeta.title && <span className="font-medium text-slate-500 group-hover:text-blue-500"> · {firstMeta.title}</span>}
-                                 </p>
-                              </div>
-                           </NavLink>
+                           <QuickAccessLink
+                              to={firstChapterUrl}
+                              icon={<Book className="w-5 h-5 text-blue-600 group-hover:text-white transition-colors" />}
+                              label="First Chapter"
+                              value={`Vol.${firstMeta.vol} — Ch.${firstMeta.ch}`}
+                              subValue={firstMeta.title}
+                              variant="blue"
+                           />
                         )}
-
-                        {/* Last Chapter */}
                         {lastChapterUrl && lastMeta && (
-                           <NavLink to={lastChapterUrl}
-                              className="group flex items-center gap-4 p-4 rounded-xl border border-slate-100 hover:border-slate-300 hover:bg-slate-50/60 transition-all"
-                           >
-                              <div className="w-10 h-10 rounded-xl bg-slate-50 flex items-center justify-center shrink-0 group-hover:bg-slate-800 transition-colors">
-                                 <FastArrowRight className="w-5 h-5 text-slate-500 group-hover:text-white transition-colors" />
-                              </div>
-                              <div className="min-w-0">
-                                 <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 group-hover:text-slate-500 transition-colors">Latest Chapter</p>
-                                 <p className="text-sm font-bold text-slate-800 group-hover:text-slate-900 transition-colors truncate">
-                                    Vol.{lastMeta.vol} — Ch.{lastMeta.ch}
-                                    {lastMeta.title && <span className="font-medium text-slate-500 group-hover:text-slate-700"> · {lastMeta.title}</span>}
-                                 </p>
-                              </div>
-                           </NavLink>
+                           <QuickAccessLink
+                              to={lastChapterUrl}
+                              icon={<FastArrowRight className="w-5 h-5 text-slate-500 group-hover:text-white transition-colors" />}
+                              label="Latest Chapter"
+                              value={`Vol.${lastMeta.vol} — Ch.${lastMeta.ch}`}
+                              subValue={lastMeta.title}
+                              variant="slate"
+                           />
                         )}
                      </div>
 

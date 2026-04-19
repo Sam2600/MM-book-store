@@ -8,6 +8,7 @@ import {
    ChevronUpIcon,
    BookOpenIcon
 } from '@heroicons/react/24/outline';
+import { StatusBadge } from '../components/commons/StatusBadge';
 import { scrollToTop } from '../functions/helpers';
 import { useDispatch, useSelector } from 'react-redux';
 import { cleanUserInfo, getPaymentMethods, getUpdateProfileStatus, getUserInfo, getUserInfoAndBooks, getUserInfoAndBooksStatus, resetUpdateProfileStatus, selectPaymentMethods, updateUserProfile, user } from '../states/features/user/userSlice';
@@ -62,12 +63,7 @@ const VolumeSection = ({ volume, novelId, localSearch }) => {
                         <div className="flex flex-col">
                            <span className="text-sm font-bold text-slate-700 leading-snug">{chapter.title}</span>
                            <div className="flex items-center gap-2 mt-1">
-                              <span className={`text-[9px] font-black uppercase px-2 py-0.5 rounded-md ${
-                                 chapter.status === 'approved' ? 'bg-green-100 text-green-700' : 
-                                 chapter.status === 'pending' ? 'bg-yellow-100 text-yellow-700' : 'bg-slate-100 text-slate-500'
-                              }`}>
-                                 {chapter.status}
-                              </span>
+                              <StatusBadge status={chapter.status} />
                               {/* <span className="text-[10px] text-slate-400 font-bold">• {chapter.coin_cost} Coins</span> */}
                            </div>
                         </div>

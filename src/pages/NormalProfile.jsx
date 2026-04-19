@@ -1,5 +1,6 @@
 import { Typography, Card, CardBody, Avatar, Button } from "@material-tailwind/react";
 import { Bookmark, UserCircle, Calendar, BookStack } from "iconoir-react";
+import { EmptyState } from "../components/commons/EmptyState";
 import { useDispatch, useSelector } from "react-redux";
 import { getBookMarkedCollection, getBookMarks, getBookMarkStatus, user, cleanBookmarks } from "../states/features/user/userSlice";
 import { toHumanReadableDates } from "../functions/helpers";
@@ -26,10 +27,10 @@ export const NormalProfile = () => {
          {bookMarks.map(bm => <BookmarkNovel key={bm?.id} bookmark={bm} />)}
       </div>
    ) : (
-      <div className="text-center py-20 bg-white rounded-2xl border border-dashed border-slate-300 shadow-sm">
-         <UserCircle className="h-16 w-16 mx-auto text-slate-200 mb-4" />
-         <Typography className="text-slate-500 font-medium font-poppins">သိမ်းဆည်းထားသော စာအုပ်မရှိသေးပါ။</Typography>
-      </div>
+      <EmptyState
+         icon={<UserCircle className="h-16 w-16 text-slate-200" />}
+         message="သိမ်းဆည်းထားသော စာအုပ်မရှိသေးပါ။"
+      />
    );
 
    return (

@@ -3,6 +3,7 @@ import { NavLink } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { Typography } from '@material-tailwind/react';
 import { Trophy } from 'iconoir-react';
+import { PillButton } from '../components/commons/PillButton';
 import {
    getNovels,
    getAllNovelsStatus,
@@ -67,17 +68,13 @@ export const RankingsPage = () => {
          <div className="w-11/12 mx-auto mb-8">
             <div className="flex gap-1 bg-white border border-gray-100 rounded-xl p-1 w-fit shadow-sm">
                {TABS.map((tab) => (
-                  <button
+                  <PillButton
                      key={tab.key}
+                     active={activeTab === tab.key}
                      onClick={() => setActiveTab(tab.key)}
-                     className={`px-5 py-2 rounded-lg text-sm font-bold transition-all duration-200
-                        ${activeTab === tab.key
-                           ? 'bg-blue-600 text-white shadow-sm'
-                           : 'text-slate-500 hover:text-blue-600 hover:bg-blue-50'
-                        }`}
                   >
                      {tab.label}
-                  </button>
+                  </PillButton>
                ))}
             </div>
          </div>

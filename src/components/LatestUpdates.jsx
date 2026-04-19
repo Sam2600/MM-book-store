@@ -2,6 +2,8 @@ import { NavLink } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { LOCALIZE_CONST, ROUTES } from '../consts/Consts';
 import { EyeIcon } from '@heroicons/react/16/solid';
+import { SectionHeader } from './commons/SectionHeader';
+import { EmptyState } from './commons/EmptyState';
 
 const timeAgo = (dateStr) => {
    const diff = Math.floor((Date.now() - new Date(dateStr)) / 1000);
@@ -19,17 +21,8 @@ export const LatestUpdates = ({ latest_updates }) => {
       <div className="mx-auto container w-full lg:p-1 bg-transparent">
          {/* SECTION HEADER */}
          <div className="flex items-center justify-between px-4">
-            {/* <div className="flex flex-col gap-1"> */}
-               <div className="flex items-center justify-between mb-8 px-2 border-l-4 border-blue-600">
-                  <h2 className="text-2xl font-black text-slate-800 tracking-tight pl-3">
-                     {t(LOCALIZE_CONST.LATEST_UPDATES)}
-                  </h2>
-               </div>
-            {/* </div> */}
+            <SectionHeader title={t(LOCALIZE_CONST.LATEST_UPDATES)} className="mb-8" />
             <p className="text-sm font-bold text-slate-400 ml-5 uppercase tracking-widest">Fresh from our authors</p>
-            {/* <button className="hidden md:block text-xs font-black text-blue-600 uppercase tracking-widest hover:bg-blue-50 px-4 py-2 rounded-xl transition-all">
-               View All Updates
-            </button> */}
          </div>
 
          {latest_updates?.length > 0 ? (
@@ -97,15 +90,10 @@ export const LatestUpdates = ({ latest_updates }) => {
                ))}
             </div>
          ) : (
-            /* ENHANCED EMPTY STATE */
-            <div className="py-20 flex flex-col items-center justify-center bg-white rounded-[3rem] border-2 border-dashed border-slate-100 shadow-inner">
-               <div className="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center mb-4">
-                  <EyeIcon className="w-8 h-8 text-slate-200" />
-               </div>
-               <p className="text-slate-400 font-black uppercase tracking-widest text-xs">
-                  {t(LOCALIZE_CONST.NO_BOOKS_FOUND)}
-               </p>
-            </div>
+            <EmptyState
+               icon={<EyeIcon className="w-8 h-8 text-slate-200" />}
+               message={t(LOCALIZE_CONST.NO_BOOKS_FOUND)}
+            />
          )}
       </div>
    );
